@@ -1,0 +1,54 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tanml"
+version = "0.1.6"
+description = "Automated validation toolkit for tabular ML models in finance and regulated domains."
+readme = "README.md"
+requires-python = ">=3.8"
+license = {text = "MIT"}
+
+authors = [
+  { name = "Tanmay Sah", email = "tradertanmay@gmail.com" },
+  { name = "Dolly Sah" }
+]
+
+dependencies = [
+  "scikit-learn",
+  "pandas",
+  "matplotlib",
+  "seaborn",
+  "shap",
+  "docxtpl",
+  "python-docx",
+  "docxcompose",
+  "PyYAML",
+  "scipy",
+  "statsmodels",
+  "joblib",
+  "tzlocal",
+  "tqdm",
+  "imgkit",
+  "xgboost"
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "black", "isort"]
+
+[project.scripts]
+tanml = "tanml.cli.main:main"
+
+[project.urls]
+"Homepage" = "https://github.com/tdlabs-ai/tanml"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+include = ["tanml*"]
+
+[tool.setuptools.package-data]
+"tanml.report.templates" = ["report_template.docx"]
+"tanml.config_templates" = ["*.yaml"]

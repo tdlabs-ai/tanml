@@ -1,0 +1,143 @@
+# ============================================================
+# TanML Validation Configuration File: Scenario A
+# ------------------------------------------------------------
+# 🧪 Scenario: One model, one cleaned dataset (no segmentation)
+#
+# ✅ Required:
+#   - Choose ONE set of paths (Option A or Option B)
+#   - Choose ONE model source block (Option A or Option B)
+#   - Fill in your feature names and target column
+#   - Adjust any thresholds or check options as needed
+# ============================================================
+
+
+# ------------------------------------------
+# REQUIRED: Model Input Schema
+# ------------------------------------------
+model:
+  features:
+    - feature_0     # 👉 replace with actual feature names used in your model
+    - feature_1
+    - feature_2
+    - feature_3
+    - feature_4
+  target: default_flag             # 👉 replace with actual target column
+
+# ------------------------------------------
+# OUTPUT: Report Path
+# ------------------------------------------
+output:
+  report_path: /mnt/c/Users/you/Desktop/tanml_output/scenario_a_report.docx  # 👉 customize as needed
+
+
+# ------------------------------------------
+# ✅ OPTION A — Use a Pretrained Model (.pkl)
+# ------------------------------------------
+# Use this option when you already have a trained model saved as a `.pkl` file.
+# You must provide the path to:
+#   - The cleaned dataset used during training
+#   - The raw dataset (optional, but recommended)
+#   - The trained model file via `paths.model`
+#
+# Be sure to:
+#   - Keep `from_pickle: true` in `model_source`
+#   - Match the `path` in `model_source` and `paths.model`
+#   - Comment out OPTION B block if using this
+# ------------------------------------------
+paths:
+  raw_data: /mnt/c/Users/your_name/Desktop/data/raw.csv      # 👉 optional — use null if raw data is not available
+  cleaned_data: data/cleaned_a.csv
+  model: models/logistic/model_a.pkl
+
+model_source:
+  from_pickle: true
+  
+
+# ------------------------------------------
+# 🔁 OPTION B — Retrain Model from Scratch
+# ------------------------------------------
+# Use this option if you want TanML to retrain the model for you
+# using the cleaned dataset and the specified algorithm + hyperparameters.
+#
+# You must provide:
+#   - Path to the raw dataset (optional)
+#   - Path to the cleaned dataset (required)
+#   - The full model definition: type, module, and hyperparameters
+#
+# Be sure to:
+#   - Set `from_pickle: false`
+#   - Omit or comment out the `paths.model` line
+#   - Comment out the OPTION A block above
+# ------------------------------------------
+# paths:
+#   raw_data: /mnt/c/Users/your_name/Desktop/data/raw.csv
+#   cleaned_data: data/cleaned_a.csv
+
+# model_source:
+#   from_pickle: false
+#   type: LogisticRegression
+#   module: sklearn.linear_model
+#   hyperparameters:
+#     penalty: "l2"
+#     C: 1.0
+#     solver: "liblinear"
+#     class_weight: "balanced"
+#     max_iter: 100
+#     random_state: 42
+
+# ------------------------------------------
+# PERFORMANCE THRESHOLDS
+# ------------------------------------------
+auc_roc:
+  min: 0.60
+
+f1:
+  min: 0.60
+
+ks:
+  min: 0.20
+
+# ------------------------------------------
+# VALIDATION CHECKS
+# ------------------------------------------
+
+EDACheck:
+  enabled: true
+  max_plots: -1             # -1 = all numeric; or set number of columns
+
+correlation:
+  enabled: true
+
+VIFCheck:
+  enabled: true
+  
+raw_data_check:
+  enabled: true
+
+model_meta:
+  enabled: true
+
+# ------------------------------------------
+# STRESS TESTING (Robustness Check)
+# ------------------------------------------
+StressTestCheck:
+  enabled: true
+  epsilon: 0.01             # ➜ 1% noise
+  perturb_fraction: 0.2     # ➜ 20% of rows
+
+# ------------------------------------------
+# INPUT CLUSTER COVERAGE
+# ------------------------------------------
+InputClusterCoverageCheck:
+  enabled: true
+  n_clusters: 5             # ➜ fixed clusters for coverage bar chart
+  max_k: 10                 # ➜ elbow method search (if needed)
+
+# ------------------------------------------
+# EXPLAINABILITY
+# ------------------------------------------
+explainability:
+  shap:
+    enabled: true
+    background_sample_size: 100   # ➜ SHAP explainer training background
+    test_sample_size: 200         # ➜ test rows to explain

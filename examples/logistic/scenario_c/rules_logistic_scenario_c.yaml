@@ -1,0 +1,77 @@
+# ============================================================
+# TanML Validation Configuration File: Scenario C
+# ------------------------------------------------------------
+# 🧪 Scenario: One dataset with a segment column, one model per segment
+# ============================================================
+
+model:
+  features:
+    - feature_0
+    - feature_1
+    - feature_2
+  target: default_flag
+
+paths:
+  cleaned_data: data/cleaned_c.csv
+  raw_data: null  # optional
+
+output:
+  report_path_template: reports/scenario_c/{segment}_report.docx
+
+segment:
+  column: segment
+  runs:
+    segment_A:
+      model: models/logistic/model_a.pkl
+    segment_B:
+      model: models/logistic/model_b_segment1.pkl
+
+model_source:
+  from_pickle: true
+  type: LogisticRegression
+  module: sklearn.linear_model
+  hyperparameters:
+    penalty: "l2"
+    solver: "liblinear"
+    random_state: 42
+    class_weight: "balanced"
+    max_iter: 100
+
+auc_roc:
+  min: 0.60
+f1:
+  min: 0.60
+ks:
+  min: 0.20
+
+EDACheck:
+  enabled: true
+  max_plots: -1
+
+correlation:
+  enabled: true
+
+VIFCheck:
+  enabled: true
+
+raw_data_check:
+  enabled: true
+
+model_meta:
+  enabled: true
+
+StressTestCheck:
+  enabled: true
+  epsilon: 0.01
+  perturb_fraction: 0.2
+
+InputClusterCoverageCheck:
+  enabled: true
+  n_clusters: 5
+  max_k: 10
+
+explainability:
+  shap:
+    enabled: true
+    background_sample_size: 100
+    test_sample_size: 200
