@@ -1,0 +1,144 @@
+# ============================================================
+# TanML Validation Configuration File: Scenario B
+# ------------------------------------------------------------
+# 🧪 Scenario: One model and one cleaned dataset per segment
+#
+# ✅ Required:
+#   - Define segment-wise cleaned data and model path (or retrain)
+#   - Choose ONE model source strategy (Option A or Option B)
+#   - Set input features and target column
+#   - Optional: provide global raw data
+#   - Adjust thresholds and check options as needed
+# ============================================================
+
+# ------------------------------------------
+# REQUIRED: Model Input Schema
+# ------------------------------------------
+model:
+  features:
+    - feature_0    # 👉 replace with actual feature names used in all segment models
+    - feature_1    # 👉 remove or add more lines if needed
+    - feature_2
+  target: default_flag   # 👉 replace with your actual target column
+
+# ------------------------------------------
+# OPTIONAL: Raw Data Path
+# ------------------------------------------
+paths:
+  raw_data: data/raw.csv                # 👉 optional – provide full path if you have original raw dataset otherwise use null
+
+output:
+  report_path_template: /absolute/path/to/output/{segment} # 👉 Output path template – {segment} will be replaced dynamically, it is folder path
+
+# ------------------------------------------
+# ✅ OPTION A — Pretrained Model per Segment (.pkl)
+# ------------------------------------------
+# Use this option when each segment has its own trained model and cleaned dataset.
+# You must provide:
+#   - model: path to the pretrained `.pkl` file
+#   - cleaned: path to the cleaned CSV used for that segment
+#
+# 👉 Comment out the OPTION B block below if using this
+# ------------------------------------------
+segment:
+  runs:
+    segment_A:                           # 👉 rename (e.g., high_risk, bronze, tier_1)
+      model: models/logistic/model_b_segment1.pkl
+      cleaned: data/scenario_b_segment1.csv
+
+    segment_B:
+      model: models/logistic/model_b_segment1.pkl
+      cleaned: data/scenario_b_segment2.csv
+
+# ------------------------------------------
+# 🔁 OPTION B — Retrain Model from Cleaned Data (Per Segment)
+# ------------------------------------------
+# Use this when you want to retrain a model for each segment
+# using the corresponding cleaned dataset and shared model config.
+#
+# 👉 If using this, comment out OPTION A (i.e., segment.runs[].model lines)
+# 👉 Each segment must still have its own cleaned dataset
+# ------------------------------------------
+
+# segment:
+#   runs:
+#     segment_A:
+#       cleaned: data/cleaned_a.csv
+#     segment_B:
+#       cleaned: data/cleaned_b.csv
+
+# ------------------------------------------
+# MODEL SOURCE CONFIG
+# ------------------------------------------
+# This tells TanML how to load or build the model(s) for each segment.
+#
+# 👉 If using pretrained models (Option A): set `from_pickle: true`
+# 👉 If retraining per segment (Option B): set `from_pickle: false`
+# ------------------------------------------
+model_source:
+  from_pickle: true     # 👉 change to false if using retraining (Option B)
+  type: LogisticRegression
+  module: sklearn.linear_model
+  hyperparameters:
+    penalty: "l2"
+    solver: "liblinear"
+    random_state: 42
+    class_weight: "balanced"
+    max_iter: 100
+
+# ------------------------------------------
+# PERFORMANCE THRESHOLDS
+# ------------------------------------------
+auc_roc:
+  min: 0.60
+
+f1:
+  min: 0.60
+
+ks:
+  min: 0.20
+
+# ------------------------------------------
+# VALIDATION CHECKS
+# ------------------------------------------
+
+EDACheck:
+  enabled: true
+  max_plots: -1             # -1 = all numeric; or set number of columns
+
+correlation:
+  enabled: true
+
+VIFCheck:
+  enabled: true
+  
+raw_data_check:
+  enabled: true
+
+model_meta:
+  enabled: true
+
+# ------------------------------------------
+# STRESS TESTING (Robustness Check)
+# ------------------------------------------
+StressTestCheck:
+  enabled: true
+  epsilon: 0.01             # ➜ 1% noise
+  perturb_fraction: 0.2     # ➜ 20% of rows
+
+# ------------------------------------------
+# INPUT CLUSTER COVERAGE
+# ------------------------------------------
+InputClusterCoverageCheck:
+  enabled: true
+  n_clusters: 5             # ➜ fixed clusters for coverage bar chart
+  max_k: 10                 # ➜ elbow method search (if needed)
+
+# ------------------------------------------
+# EXPLAINABILITY
+# ------------------------------------------
+explainability:
+  shap:
+    enabled: true
+    background_sample_size: 100   # ➜ SHAP explainer training background
+    test_sample_size: 200         # ➜ test rows to explain

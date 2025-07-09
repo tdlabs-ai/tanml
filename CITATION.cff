@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+message: "If you use TanML, please cite this repository as follows."
+authors:
+  - family-names: Sah
+    given-names: Tanmay
+    orcid: https://orcid.org/0009-0004-8583-2208
+  - family-names: Sah
+    given-names: Dolly
+
+title: TanML: Automated Model Validation Toolkit for Tabular Machine Learning
+version: 0.1.0
+license: MIT
+repository-code: https://github.com/tanml/tanml
+keywords:
+  - machine learning
+  - model validation
+  - interpretability
+  - SHAP
+  - credit risk
+  - tabular data
+
+date-released: 2025-07-08

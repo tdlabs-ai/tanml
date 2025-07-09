@@ -1,0 +1,140 @@
+# ============================================================
+# TanML Validation Configuration File: Scenario C
+# ------------------------------------------------------------
+# 🧪 Scenario: One dataset with a segment column, one model per segment
+#
+# ✅ Required:
+#   - Provide cleaned data (includes all segments)
+#   - Define the segment column used to split the data
+#   - Choose ONE model source strategy (Option A or Option B)
+#   - Set input features and target column
+#   - Optional: provide global raw data
+#   - Adjust thresholds and check options as needed
+# ============================================================
+
+# ------------------------------------------
+# REQUIRED: Model Input Schema
+# ------------------------------------------
+model:
+  features:
+    - feature_0    # 👉 replace with actual feature names used across all segment models
+    - feature_1
+    - feature_2
+  target: default_flag   # 👉 replace with your actual target column
+
+# ------------------------------------------
+# REQUIRED: File Paths
+# ------------------------------------------
+paths:
+  cleaned_data: data/cleaned.csv          # 👉 path to full cleaned dataset (includes all segments)
+  raw_data: data/raw.csv                  # 👉 optional — use null if raw data not available
+
+# ------------------------------------------
+# OUTPUT CONFIGURATION
+# ------------------------------------------
+# Path template where validation reports will be saved.
+# 👉 Use `{segment}` as a placeholder for the segment name.
+# ------------------------------------------
+output:
+  report_path_template: reports/scenario_c/{segment}_report.docx  # 👉 customize this path as needed
+
+# ------------------------------------------
+# ✅ OPTION A — Pretrained Models per Segment (.pkl)
+# ------------------------------------------
+# Provide one model per segment (already trained)
+# This is the default option.
+# 👉 Comment out the OPTION B block below if using this
+# ------------------------------------------
+segment:
+  column: customer_segment                # 👉 column used to split segments
+
+  runs:
+    segment_A:
+      model: models/logistic/model_a.pkl
+    segment_B:
+      model: models/logistic/model_b.pkl
+
+# ------------------------------------------
+# 🔁 OPTION B — Retrain Models per Segment from Cleaned Data
+# ------------------------------------------
+# Use this if you want TanML to retrain a model for each segment
+# from the common cleaned dataset.
+# 👉 Comment out the OPTION A block above if using this
+# 👉 `segment.runs` must list segment values (no model paths needed)
+# ------------------------------------------
+# segment:
+#   column: customer_segment
+#   runs:
+#     segment_A: {}
+#     segment_B: {}
+
+# ------------------------------------------
+# MODEL SOURCE CONFIGURATION
+# ------------------------------------------
+# 👉 If using pretrained models: set `from_pickle: true`
+# 👉 If retraining per segment: set `from_pickle: false`
+# ------------------------------------------
+model_source:
+  from_pickle: true
+  type: LogisticRegression
+  module: sklearn.linear_model
+  hyperparameters:
+    penalty: "l2"
+    solver: "liblinear"
+    random_state: 42
+    class_weight: "balanced"
+    max_iter: 100
+
+# ------------------------------------------
+# PERFORMANCE THRESHOLDS
+# ------------------------------------------
+auc_roc:
+  min: 0.60
+f1:
+  min: 0.60
+ks:
+  min: 0.20
+
+# ------------------------------------------
+# VALIDATION CHECKS
+# ------------------------------------------
+EDACheck:
+  enabled: true
+  max_plots: -1
+
+correlation:
+  enabled: true
+
+VIFCheck:
+  enabled: true
+
+raw_data_check:
+  enabled: true
+
+model_meta:
+  enabled: true
+
+# ------------------------------------------
+# STRESS TESTING (Robustness Check)
+# ------------------------------------------
+StressTestCheck:
+  enabled: true
+  epsilon: 0.01
+  perturb_fraction: 0.2
+
+# ------------------------------------------
+# INPUT CLUSTER COVERAGE
+# ------------------------------------------
+InputClusterCoverageCheck:
+  enabled: true
+  n_clusters: 5
+  max_k: 10
+
+# ------------------------------------------
+# EXPLAINABILITY
+# ------------------------------------------
+explainability:
+  shap:
+    enabled: true
+    background_sample_size: 100
+    test_sample_size: 200

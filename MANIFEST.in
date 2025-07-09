@@ -1,0 +1,6 @@
+include README.md
+include LICENSE
+include pyproject.toml
+
+include tanml/report/templates/*.docx
+include tanml/config_templates/*.yaml
