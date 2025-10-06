@@ -1,0 +1,43 @@
+cff-version: 1.2.0
+message: "If you use TanML, please cite this repository as follows."
+title: "TanML: Automated Model Validation Toolkit for Tabular Machine Learning"
+license: MIT
+repository-code: https://github.com/tdlabs-ai/tanml
+keywords:
+  - model validation
+  - model risk management
+  - model governance
+  - SR 11-7
+  - tabular ML
+  - credit risk
+  - insurance analytics
+  - explainability
+  - XAI
+  - SHAP
+  - stress testing
+  - reporting
+  - docx
+  - streamlit
+  - xgboost
+  - lightgbm
+  - catboost
+
+authors:
+  - family-names: Sah
+    given-names: Tanmay
+    orcid: https://orcid.org/0009-0004-8583-2208
+  - family-names: Sah
+    given-names: Dolly
+
+preferred-citation:
+  type: software
+  title: "TanML: Automated Model Validation Toolkit for Tabular Machine Learning"
+  authors:
+    - family-names: Sah
+      given-names: Tanmay
+      orcid: https://orcid.org/0009-0004-8583-2208
+    - family-names: Sah
+      given-names: Dolly
+  repository-code: https://github.com/tdlabs-ai/tanml
+  license: MIT
+  year: 2025

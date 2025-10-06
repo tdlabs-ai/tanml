@@ -1,0 +1,31 @@
+# venv & editors
+.venv/
+.venv_wsl/
+.vscode/
+.idea/
+
+# builds & packaging
+dist/
+build/
+*.egg-info/
+
+# caches
+__pycache__/
+*.pyc
+.pytest_cache/
+.ipynb_checkpoints/
+
+# local outputs (don’t commit)
+.ui_runs/
+reports/
+data/
+models/
+catboost_info/
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# secrets
+.env
+.streamlit/secrets.toml
