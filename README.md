@@ -1,15 +1,10 @@
 # TanML: Automated Model Validation Toolkit for Tabular Machine Learning
 
 
-[![PyPI version](https://img.shields.io/pypi/v/tanml.svg)](https://pypi.org/project/tanml/)
-[![Python versions](https://img.shields.io/pypi/pyversions/tanml.svg)](https://pypi.org/project/tanml/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Downloads](https://img.shields.io/pypi/dm/tanml.svg)](https://pypi.org/project/tanml/)
 
 
 
 [![PyPI](https://img.shields.io/pypi/v/tanml.svg)](https://pypi.org/project/tanml/)
-[![Python Versions](https://img.shields.io/pypi/pyversions/tanml.svg)](https://pypi.org/project/tanml/)
 [![Downloads](https://pepy.tech/badge/tanml)](https://pepy.tech/project/tanml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 [![Cite this repo](https://img.shields.io/badge/Cite-this_repo-blue)](https://github.com/tdlabs-ai/tanml#license--citation)
@@ -193,3 +188,4 @@ Or in BibTeX (version-agnostic):
 ```
 
 A machine-readable citation file (`CITATION.cff`) is included for citation tools and GitHub’s “Cite this repository” button.
+
