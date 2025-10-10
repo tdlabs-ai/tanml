@@ -1,0 +1,16 @@
+name: Feature request
+description: Suggest an idea for TanML
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem / Use case
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context / alternatives
