@@ -1,0 +1,25 @@
+name: Bug report
+description: File a bug report
+labels: [bug]
+body:
+  - type: textarea
+    id: desc
+    attributes:
+      label: Describe the bug
+      placeholder: What happened? What did you expect?
+  - type: input
+    id: version
+    attributes:
+      label: Versions
+      placeholder: "TanML x.y.z, Python 3.x, OS"
+  - type: textarea
+    id: repro
+    attributes:
+      label: Minimal repro
+      placeholder: Steps/commands/data subset to reproduce
+      render: bash
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs/traceback
+      render: text
