@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Q&A / Ideas (GitHub Discussions)
+    url: https://github.com/tdlabs-ai/tanml/discussions
+    about: Ask questions, share ideas, and discuss features

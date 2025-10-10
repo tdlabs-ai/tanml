@@ -1,8 +1,13 @@
 # TanML: Automated Model Validation Toolkit for Tabular Machine Learning
 
-[![Cite this repo](https://img.shields.io/badge/Cite-this_repo-blue)](https://github.com/tdlabs-ai/tanml#license--citation)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
+
+
+
+
+[![PyPI](https://img.shields.io/pypi/v/tanml.svg)](https://pypi.org/project/tanml/)
 [![Downloads](https://pepy.tech/badge/tanml)](https://pepy.tech/project/tanml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
+[![Cite this repo](https://img.shields.io/badge/Cite-this_repo-blue)](https://github.com/tdlabs-ai/tanml#license--citation)
 
 **TanML** validates tabular ML models with a zero-config **Streamlit UI** and exports an audit-ready, **editable Word report (.docx)**. It covers data quality, correlation/VIF, performance, explainability (SHAP), and robustness/stress tests—built for regulated settings (MRM, credit risk, insurance, etc.).
 
@@ -10,6 +15,21 @@
 * **License:** MIT
 * **Python:** 3.8–3.12
 * **OS:** Linux / macOS / Windows (incl. WSL)
+
+---
+
+## Table of Contents
+
+- Why TanML?
+- Install
+- Quick Start (UI)
+- What TanML Checks
+- Optional CLI Flags
+- Templates
+- Troubleshooting
+- Data Privacy
+- Contributing
+- License & Citation
 
 ---
 
@@ -111,12 +131,34 @@ TanML ships DOCX templates (packaged in wheel & sdist):
 
 ---
 
+## Data Privacy
+
+- TanML runs locally; no data is sent to external services.
+- Telemetry is disabled by default (and can be forced off via `--no-telemetry`).
+- UI artifacts and reports are written under `./.ui_runs/<session>/` in your working directory.
+
+---
+
 ## Troubleshooting
 
 * **Page didn’t open?** Visit `http://127.0.0.1:8501` or run `tanml ui --port 9000`.
 * **Large CSVs are slow/heavy?** Prefer **Parquet**; CSV → DataFrame can use several GB RAM.
 * **Artifacts missing?** Check `./.ui_runs/<session>/artifacts/`.
 * **Corporate networks:** use `tanml ui --public` to share on LAN.
+
+---
+
+## Contributing
+
+We welcome issues and PRs!
+
+- Create a virtual environment and install dev extras:
+  - `python -m venv .venv && source .venv/bin/activate` (or `\.venv\Scripts\activate` on Windows)
+  - `pip install -e .[dev]`
+- Format/lint: `black . && isort .`
+- Run tests: `pytest`
+
+Before opening a PR, please describe the change and include a brief test or reproduction steps where applicable.
 
 ---
 
@@ -146,3 +188,4 @@ Or in BibTeX (version-agnostic):
 ```
 
 A machine-readable citation file (`CITATION.cff`) is included for citation tools and GitHub’s “Cite this repository” button.
+
