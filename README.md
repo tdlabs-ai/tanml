@@ -174,21 +174,26 @@ SPDX-License-Identifier: MIT
 
 If TanML helps your work or publications, please cite:
 
-> Sah, T., & Sah, D. (2025). *TanML: Automated Model Validation Toolkit for Tabular Machine Learning* [Software]. Available at https://github.com/tdlabs-ai/tanml
+> Sah, T., & Sah, D. (2025). *TanML: Automated Model Validation Toolkit for Tabular Machine Learning* [Software]. Zenodo. [https://doi.org/10.5281/zenodo.17317165](https://doi.org/10.5281/zenodo.17317165)
+
+Or in BibTeX (version-agnostic):. Available at https://github.com/tdlabs-ai/tanml
 
 Or in BibTeX (version-agnostic):
 
 ```bibtex
-@misc{tanml,
-  author = {Sah, Tanmay and Sah, Dolly},
-  title  = {TanML: Automated Model Validation Toolkit for Tabular Machine Learning},
-  year   = {2025},
-  note   = {Software; MIT License},
-  url    = {https://github.com/tdlabs-ai/tanml}
+@software{tanml_2025,
+  author       = {Sah, Tanmay and Sah, Dolly},
+  title        = {TanML: Automated Model Validation Toolkit for Tabular Machine Learning},
+  year         = {2025},
+  publisher    = {Zenodo},
+  doi          = {10.5281/zenodo.17317165},
+  url          = {https://doi.org/10.5281/zenodo.17317165},
+  license      = {MIT}
 }
 ```
 
 A machine-readable citation file (`CITATION.cff`) is included for citation tools and GitHub’s “Cite this repository” button.
+
 
 
 
