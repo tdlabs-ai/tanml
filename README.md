@@ -10,9 +10,10 @@
 [![Give Feedback](https://img.shields.io/badge/Feedback-Give%20Now-blue?style=for-the-badge)](https://forms.gle/oG2JHvt7tLXE5Atu7)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17317165.svg)](https://doi.org/10.5281/zenodo.17317165)
 
-[![Watch the TanML Demo](https://img.youtube.com/vi/KlqJrVgj670/0.jpg)](https://youtu.be/KlqJrVgj670)  
+[![Watch the TanML Demo](https://img.youtube.com/vi/KlqJrVgj670/maxresdefault.jpg)](https://youtu.be/KlqJrVgj670)  
 🎥 **[Watch the 5-Minute TanML Walkthrough on YouTube →](https://youtu.be/KlqJrVgj670)**  
-*(End-to-end demo of UI, validation checks, and automated report generation)*  
+*(End-to-end demo of UI, validation checks, and automated report generation)*
+
 
 **TanML** validates tabular ML models with a zero-config **Streamlit UI** and exports an audit-ready, **editable Word report (.docx)**. It covers data quality, correlation/VIF, performance, explainability (SHAP), and robustness/stress tests—built for regulated settings (MRM, credit risk, insurance, etc.).
 
@@ -197,6 +198,7 @@ Or in BibTeX (version-agnostic):
 ```
 
 A machine-readable citation file (`CITATION.cff`) is included for citation tools and GitHub’s “Cite this repository” button.
+
 
 
 
