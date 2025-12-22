@@ -124,39 +124,9 @@ from tanml.ui.narratives import (
     story_shap as _story_shap,
 )
 
-# --- REPORT HELPERS ---
-GLOSSARY = {
-    # General Concepts
-    "Cross-Validation": "A technique to assess model performance by training and testing on multiple different subsets of data. Ensures the model generalizes well.",
-    "Confusion Matrix": "A table showing the breakdown of correct predictions vs. errors (False Positives vs. False Negatives).",
-    "Feature Importance": "Ranking of which features contributed most to the model's predictions.",
-    "Drift": "A change in the data distribution between training and production (or test) sets. Significant drift can degrade model performance.",
-    
-    # Classification Metrics
-    "Accuracy": "The percentage of correct predictions. Can be misleading if classes are imbalanced (e.g., 99% non-fraud).",
-    "Precision": "Of all instances predicted as Positive, how many were actually Positive? (Quality of positive predictions).",
-    "Recall": "Of all actual Positive instances, how many did the model correctly identify? (Also called Sensitivity).",
-    "F1 Score": "The harmonic mean of Precision and Recall. A balanced metric useful for imbalanced datasets.",
-    "ROC AUC": "Area Under the ROC Curve. Measures the model's ability to distinguish between classes. 0.5 is random guessing; 1.0 is perfect.",
-    "PR AUC": "Area Under the Precision-Recall Curve. Focuses on the performance on the Positive class, critical for rare events.",
-    "Log Loss": "Measures determination and confidence. Heavily penalizes confident wrong answers. Lower is better.",
-    "Brier Score": "Mean squared difference between predicted probabilities and actual outcomes. Lower is better.",
-    "MCC": "Matthews Correlation Coefficient. A correlation coefficient between observed and predicted binary classifications. +1 is perfect, 0 is random.",
-    "KS Statistic": "Kolmogorov-Smirnov statistic. Measures the maximum separation between the True Positive and False Positive distributions. Higher is better.",
-    
-    # Regression Metrics
-    "RMSE": "Root Mean Squared Error. The average prediction error in the same units as the target variable. Penalizes large errors heavily. Lower is better.",
-    "MAE": "Mean Absolute Error. The average size of errors, treating all errors equally. Lower is better.",
-    "R2 Score": "Coefficient of Determination. Explains what percentage of the variance in the target is captured by the model. 1.0 is perfect fitting.",
-    "Median AE": "Median Absolute Error. Similar to MAE but robust to outliers.",
-    
-    # Evaluation/Ranking
-    "Power Score": "A measure of feature value (e.g., Correlation or Importance). High scores indicate the feature carries strong signal for prediction.",
-    "PSI": "Population Stability Index. Quantifies how much a feature's distribution has shifted. PSI < 0.1 is stable; > 0.2 is significant drift.",
-    "Stress Test": "Tests model robustness by adding noise to data. Small performance drops indicate a stable, reliable model.",
-    "SHAP": "SHapley Additive exPlanations. Explains *why* a model made a specific prediction by attributing impact to each feature.",
-    "Cluster Coverage": "Measures how well test data covers the training data's input space using K-Means clustering. Low coverage suggests test data may be out-of-distribution."
-}
+# --- REPORT HELPERS (GLOSSARY imported from glossary module) ---
+from tanml.ui.glossary import GLOSSARY
+
 
 def _generate_dev_report_docx(dev_data):
     from docx import Document
