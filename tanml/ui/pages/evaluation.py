@@ -721,11 +721,14 @@ def render_model_evaluation_page(run_dir):
                     with st.expander(f"📋 View & Download OOD Samples ({cr['ood_count']} samples)", expanded=False):
                         ood_df = st.session_state["eval_ood_samples"]
                         
-                        st.write("**Out-of-Distribution Samples** (sorted by distance from nearest cluster center)")
+                        st.write("**Out-of-Distribution Samples**")
                         st.caption("These test samples are far from any training cluster center, suggesting they may represent data patterns not seen during training.")
                         
-                        # Show dataframe
-                        display_df = ood_df.sort_values('_ood_distance', ascending=False).reset_index(drop=True)
+                        # Show dataframe (sort by first column if _ood_distance not available)
+                        if '_ood_distance' in ood_df.columns:
+                            display_df = ood_df.sort_values('_ood_distance', ascending=False).reset_index(drop=True)
+                        else:
+                            display_df = ood_df.reset_index(drop=True)
                         st.dataframe(display_df, use_container_width=True, height=300)
                         
                         # Download button
@@ -805,10 +808,10 @@ def render_model_evaluation_page(run_dir):
                 
                 if "eval_cluster_pca" in st.session_state:
                     pca_data = st.session_state["eval_cluster_pca"]
-                    train_pca = pca_data["train_pca"]
-                    test_pca = pca_data["test_pca"]
-                    centers_pca = pca_data["centers_pca"]
-                    test_labels = pca_data["test_labels"]
+                    train_pca = np.array(pca_data["train_pca"])
+                    test_pca = np.array(pca_data["test_pca"])
+                    centers_pca = np.array(pca_data["centers_pca"])
+                    test_labels = np.array(pca_data["test_labels"])
                     n_clusters = pca_data["n_clusters"]
                     explained_var = pca_data.get("explained_variance", [0, 0])
                     train_counts = pca_data.get("train_cluster_counts", {})
