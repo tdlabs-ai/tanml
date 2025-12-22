@@ -55,15 +55,14 @@ def tvr_reset(section_id: str, filter_metrics_fn=None) -> None:
 
     # Hard-reset: clear widget states so UI returns to coded defaults
     keys_to_clear = [
-        # Uploaders (single-file flow)
-        "upl_cleaned", "upl_raw_single",
-        # Uploaders (train/test flow)
-        "upl_train", "upl_test", "upl_raw_global",
+        # Uploaders
+        "upl_cleaned",
+        "upl_train", "upl_test",
 
         # Sidebar options
         "opt_eda", "opt_eda_max",
         "opt_corr", "opt_vif",
-        "opt_rawcheck", "opt_modelmeta",
+        "opt_modelmeta",
         "opt_stress", "opt_stress_eps", "opt_stress_frac",
         "opt_cluster", "opt_cluster_k", "opt_cluster_maxk",
         "opt_shap", "opt_shap_bg", "opt_shap_test",
