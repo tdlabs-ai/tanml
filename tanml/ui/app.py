@@ -228,9 +228,17 @@ def _generate_eval_report_docx(buf):
     from docx import Document
     from docx.shared import Inches
     import io
+    
+    # Defensive type check - ensure buf is a dict
+    if isinstance(buf, list):
+        buf = buf[0] if buf else {}
+    if not isinstance(buf, dict):
+        buf = {}
+    
     doc = Document()
     doc.add_heading('Model Evaluation Report', 0)
     doc.add_paragraph(f"Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M')}")
+
     
     # Glossary
     doc.add_heading('Guide to Metrics', level=2)
@@ -351,7 +359,14 @@ def _generate_eval_report_docx(buf):
         doc.add_paragraph(nar)
     
     if drift_data:
-        table = doc.add_table(rows=1, cols=5)
+        # Ensure drift_data is a list of dicts
+        if isinstance(drift_data, dict):
+            drift_data = [drift_data]
+        if not isinstance(drift_data, list) or not drift_data:
+            doc.add_paragraph("Drift analysis not run.")
+        else:
+            table = doc.add_table(rows=1, cols=5)
+
         table.style = 'Table Grid'
         h = table.rows[0].cells
         h[0].text = 'Feature'; h[1].text = 'PSI'; h[2].text = 'PSI Status'; h[3].text = 'KS Stat'; h[4].text = 'KS Status'
@@ -379,8 +394,17 @@ def _generate_eval_report_docx(buf):
         doc.add_paragraph(nar_stress)
         
     if stress_data:
-            doc.add_paragraph("Stress Test Results (Perturbed Data)")
-            table = doc.add_table(rows=1, cols=len(stress_data[0]))
+            # Ensure stress_data is a list of dicts
+            if isinstance(stress_data, dict):
+                stress_data = [stress_data]
+            if not isinstance(stress_data, list) or not stress_data:
+                doc.add_paragraph("Stress test not run.")
+            elif not isinstance(stress_data[0], dict):
+                doc.add_paragraph("Invalid stress test data format.")
+            else:
+                doc.add_paragraph("Stress Test Results (Perturbed Data)")
+                table = doc.add_table(rows=1, cols=len(stress_data[0]))
+
             table.style = 'Table Grid'
             # simplistic table dump
             hdr = table.rows[0].cells
@@ -397,8 +421,15 @@ def _generate_eval_report_docx(buf):
     doc.add_heading('2.3 Input Cluster Coverage Check', level=2)
     
     if cluster_data:
+        # Ensure cluster_data is a dict (not a list)
+        if isinstance(cluster_data, list):
+            cluster_data = cluster_data[0] if cluster_data else {}
+        if not isinstance(cluster_data, dict):
+            cluster_data = {}
+        
         # Summary narrative
         coverage_pct = cluster_data.get("coverage_pct", 0)
+
         ood_pct = cluster_data.get("ood_pct", 0)
         n_clusters = cluster_data.get("n_clusters", 0)
         uncovered = cluster_data.get("uncovered_clusters", 0)
