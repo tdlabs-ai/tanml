@@ -11,10 +11,7 @@ import streamlit as st
 import pandas as pd
 
 from tanml.ui.reports import _fmt2
-from tanml.ui.app import _g  # We need _g, but app imports renderers. Circular?
-# _g is a simple helper. Maybe move _g to helpers or services?
-# For now, I'll copy _g here to avoid circular dependencies if app depends on renderers.
-# Or better, move _g to helpers/utils.py.
+
 
 # Let's move _g to helpers.py (if it exists) or keep local copy. 
 # Copying local for safety and simplicity as it is very small.
