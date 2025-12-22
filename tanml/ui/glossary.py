@@ -128,6 +128,10 @@ GLOSSARY: Dict[str, str] = {
         "Features with only one unique value. Provide no predictive power "
         "and should be removed."
     ),
+    "Power Score": (
+        "A normalized metric (0-100) representing the relative importance of a feature "
+        "for predicting the target. 100 is the most important feature."
+    ),
 }
 
 

@@ -556,7 +556,7 @@ def _generate_ranking_report_docx(metrics_df, corr_df, method, target, task_type
     doc.add_paragraph(f"Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     
     doc.add_heading('Metric Definition', level=2)
-    doc.add_paragraph(f"**Power Score**: {GLOSSARY['Power Score']}", style='List Bullet')
+    doc.add_paragraph(f"**Power Score**: {GLOSSARY.get('Power Score', 'Relative importance of a feature.')}", style='List Bullet')
     
     # Automated Narrative
     narrative = _story_features(metrics_df)
