@@ -27,8 +27,6 @@ from sklearn.preprocessing import OneHotEncoder, LabelEncoder
 # TanML internals
 from tanml.utils.data_loader import load_dataframe
 from tanml.ui.services.data import _save_upload
-from tanml.engine.core_engine_agent import ValidationEngine
-from tanml.report.report_builder import ReportBuilder
 from importlib.resources import files
 
 # Model registry (20-model suite)

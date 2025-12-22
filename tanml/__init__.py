@@ -6,29 +6,12 @@ TanML provides comprehensive model validation, testing, and reporting
 for machine learning models in production environments.
 
 Quick Start:
-    from tanml import ValidationEngine, ReportBuilder
+    # Launch the UI
+    tanml ui
     
-    # Create validation engine
-    engine = ValidationEngine(
-        model=my_model,
-        X_train=X_train,
-        X_test=X_test,
-        y_train=y_train,
-        y_test=y_test,
-        config=config,
-        cleaned_data=df,
-    )
-    
-    # Run all validation checks
-    results = engine.run_all_checks()
-    
-    # Generate report
-    builder = ReportBuilder(results, template_path, output_path)
-    builder.build()
-
-For Contributors:
-    See tanml/check_runners/base_runner.py for creating custom checks.
-    See tanml/engine/check_agent_registry.py for registering new checks.
+    # Or run checks programmatically
+    from tanml.checks.stress_test import StressTestCheck
+    from tanml.checks.explainability.shap_check import SHAPCheck
 """
 
 __version__ = "0.1.8"
@@ -46,19 +29,6 @@ from tanml.core import (
 # Configuration
 from tanml.config import settings, TanMLSettings
 
-# Main components
-from tanml.engine.core_engine_agent import ValidationEngine
-from tanml.report.report_builder import ReportBuilder
-
-# Check runner base class (for contributors)
-from tanml.check_runners.base_runner import BaseCheckRunner
-
-# Registry functions (for contributors)
-from tanml.engine.check_agent_registry import (
-    register_check,
-    list_available_checks,
-)
-
 __all__ = [
     # Version
     "__version__",
@@ -72,11 +42,4 @@ __all__ = [
     # Configuration
     "settings",
     "TanMLSettings",
-    # Main components
-    "ValidationEngine",
-    "ReportBuilder",
-    # For contributors
-    "BaseCheckRunner",
-    "register_check",
-    "list_available_checks",
 ]
