@@ -26,10 +26,15 @@ except Exception:
 
 
 
+from pathlib import Path
+
 from tanml.ui.config import load_css
 from tanml.ui.services.session import _session_dir
 from tanml.ui.pages.setup import render_setup_page
 from tanml.ui.pages.evaluation import render_model_evaluation_page
+
+# Logo path
+_LOGO_PATH = Path(__file__).parent / "assets" / "tanml_logo_4.png"
 
 def main():
     st.set_page_config(page_title="TanML", layout="wide")
@@ -38,6 +43,8 @@ def main():
     run_dir = _session_dir()
     
     with st.sidebar:
+        if _LOGO_PATH.exists():
+            st.image(str(_LOGO_PATH), use_container_width=True)
         st.title("TanML")
         
         # Sidebar global config
