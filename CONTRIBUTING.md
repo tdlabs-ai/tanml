@@ -55,39 +55,45 @@ class MyFeatureCheck(BaseCheck):
 
 ### Step 2: Add UI Tab in Evaluation Page
 
-Add your tab to `tanml/ui/pages/evaluation.py`:
+Instead of modifying a monolithic file, simply create a **new file** in `tanml/ui/pages/evaluation/tabs/` (e.g., `my_tab.py`).
+
+1. **Create File**: `tanml/ui/pages/evaluation/tabs/my_feature.py`
+2. **Use Decorator**: Register your tab.
+3. **Implement Render**:
 
 ```python
-# In the render function, add your tab
-with tab_my_feature:
-    from tanml.checks.my_feature import MyFeatureCheck
+# tanml/ui/pages/evaluation/tabs/my_feature.py
+import streamlit as st
+from tanml.ui.pages.evaluation.tabs import register_tab, TabContext
+
+@register_tab(name="My Feature", order=50, key="tab_my_feature")
+def render(context: TabContext):
+    st.header("My Feature Analysis")
     
-    check = MyFeatureCheck(model, X_train, X_test, y_train, y_test)
-    result = check.run()
+    # Access standardized data via context
+    st.write(f"Analyzing {context.task_type} model...")
+    st.dataframe(context.X_test.head())
     
-    st.subheader(result.name)
-    st.write(f"Status: {result.status}")
-    st.json(result.metrics)
+    # Save results to context if needed for report
+    context.results["my_feature"] = {"score": 0.99}
 ```
 
-### Step 3: Add Report Section (Optional)
+The system will **automatically discover** this file and add the tab to the Evaluation page!
+
+### Step 3: Add Report Section
+
+Currently, report generation is handled in `tanml/ui/reports/generators.py`.
+
+1. Open `tanml/ui/reports/generators.py`.
+2. Locate `_generate_eval_report_docx`.
+3. Add logic to extract your data from `eval_data` (which comes from `context.results`) and add paragraphs/tables to the `doc`.
 
 ```python
-# tanml/ui/reports/sections/my_feature.py
-from tanml.ui.reports.base import ReportSection, SectionRegistry
-
-@SectionRegistry.register("evaluation")
-class MyFeatureSection(ReportSection):
-    name = "My Feature Analysis"
-    order = 60  # Controls position in report
-    
-    def should_include(self, context) -> bool:
-        return context.has("my_feature_results")
-    
-    def add_to_document(self, doc, context) -> None:
-        doc.add_heading(self.name, level=2)
-        results = context.get("my_feature_results")
-        doc.add_paragraph(f"Score: {results['score']:.2f}")
+    # In _generate_eval_report_docx
+    my_data = buf.get("my_feature")
+    if my_data:
+        doc.add_heading('My Feature Analysis', level=2)
+        doc.add_paragraph(f"Score: {my_data['score']}")
 ```
 
 ## Using Analysis Modules
