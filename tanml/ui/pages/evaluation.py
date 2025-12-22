@@ -488,47 +488,23 @@ def render_model_evaluation_page(run_dir):
              _update_report_buffer("evaluation", eval_payload)
              # Note: Drift and Stress save individually, but this covers the main comparison plots.
              
-        # 3. Drift Analysis (PSI + KS)
+        # 3. Drift Analysis (PSI + KS) - Using tanml.analysis module
         with tab_drift:
             st.markdown("### Feature Drift Analysis")
             st.caption("Measures the shift in feature distributions between **Training** (Expected) and **Testing** (Actual) datasets. Uses both **PSI** and **KS Statistic** for robust drift detection.")
             
-            def calculate_psi_numeric(expected, actual, buckets=10):
-                try:
-                    # Define breakpoints using expected data
-                    breakpoints = np.percentile(expected, np.linspace(0, 100, buckets + 1))
-                    
-                    # Compute counts
-                    expected_percents = np.histogram(expected, breakpoints)[0] / len(expected)
-                    actual_percents = np.histogram(actual, breakpoints)[0] / len(actual)
-                    
-                    # Avoid zero division
-                    expected_percents = np.where(expected_percents == 0, 0.0001, expected_percents)
-                    actual_percents = np.where(actual_percents == 0, 0.0001, actual_percents)
-                    
-                    psi_value = np.sum((actual_percents - expected_percents) * np.log(actual_percents / expected_percents))
-                    return psi_value
-                except:
-                    return np.nan
+            # Use the analysis module for drift calculations
+            from tanml.analysis.drift import calculate_psi, calculate_ks
             
-            def calculate_ks_statistic(expected, actual):
-                """Calculate Kolmogorov-Smirnov statistic for continuous features."""
-                from scipy.stats import ks_2samp
-                try:
-                    ks_stat, p_value = ks_2samp(expected, actual)
-                    return ks_stat, p_value
-                except:
-                    return np.nan, np.nan
-
             drift_results = []
             # Calculate PSI and KS for all numeric features
             for col in features:
                 if pd.api.types.is_numeric_dtype(X_train[col]):
-                    train_vals = X_train[col].dropna().values
-                    test_vals = X_test[col].dropna().values
+                    train_vals = X_train[col].dropna()
+                    test_vals = X_test[col].dropna()
                     
-                    psi = calculate_psi_numeric(train_vals, test_vals)
-                    ks_stat, ks_pval = calculate_ks_statistic(train_vals, test_vals)
+                    psi = calculate_psi(train_vals, test_vals)
+                    ks_stat, ks_pval = calculate_ks(train_vals, test_vals)
                     
                     # PSI Status
                     psi_status = "🟢 Stable"
