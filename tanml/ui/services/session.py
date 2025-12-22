@@ -20,3 +20,16 @@ def _session_dir() -> Path:
     d.mkdir(parents=True, exist_ok=True)
     (d / "artifacts").mkdir(parents=True, exist_ok=True)
     return d
+
+def _update_report_buffer(phase, data):
+    """Update the global report buffer in session state."""
+    if "report_buffer" not in st.session_state:
+        st.session_state["report_buffer"] = {}
+    if phase not in st.session_state["report_buffer"]:
+        st.session_state["report_buffer"][phase] = {}
+    
+    # Merge if possible, else assign
+    if isinstance(st.session_state["report_buffer"][phase], dict) and isinstance(data, dict):
+         st.session_state["report_buffer"][phase].update(data)
+    else:
+         st.session_state["report_buffer"][phase] = data

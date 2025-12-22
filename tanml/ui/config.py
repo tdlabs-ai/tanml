@@ -85,7 +85,7 @@ def get_custom_css() -> str:
         margin-top: 4px;
     }
     
-    /* Card styling */
+    /* Card styling - Merged Base */
     .tanml-card {
         background: white;
         border-radius: 0.5rem;
@@ -104,67 +104,123 @@ def get_custom_css() -> str:
     }
     
     /* Status badges */
-    .tanml-badge-ok {
-        background-color: #dcfce7;
-        color: #166534;
-        padding: 0.25rem 0.5rem;
-        border-radius: 0.25rem;
-        font-size: 0.75rem;
-        font-weight: 500;
-    }
-    
-    .tanml-badge-warning {
-        background-color: #fef3c7;
-        color: #92400e;
-        padding: 0.25rem 0.5rem;
-        border-radius: 0.25rem;
-        font-size: 0.75rem;
-        font-weight: 500;
-    }
-    
-    .tanml-badge-error {
-        background-color: #fecaca;
-        color: #991b1b;
-        padding: 0.25rem 0.5rem;
-        border-radius: 0.25rem;
-        font-size: 0.75rem;
-        font-weight: 500;
-    }
+    .tanml-badge-ok { background-color: #dcfce7; color: #166534; padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem; font-weight: 500; }
+    .tanml-badge-warning { background-color: #fef3c7; color: #92400e; padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem; font-weight: 500; }
+    .tanml-badge-error { background-color: #fecaca; color: #991b1b; padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem; font-weight: 500; }
     
     /* Metric tables */
-    .tanml-metrics-table td {
-        padding: 0.5rem;
-        border-bottom: 1px solid #e5e7eb;
-    }
-    
-    .tanml-metrics-table th {
-        padding: 0.5rem;
-        background-color: #f9fafb;
-        font-weight: 600;
-        text-align: left;
-    }
+    .tanml-metrics-table td { padding: 0.5rem; border-bottom: 1px solid #e5e7eb; }
+    .tanml-metrics-table th { padding: 0.5rem; background-color: #f9fafb; font-weight: 600; text-align: left; }
     
     /* Hide Streamlit branding */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     
     /* Custom scrollbar */
-    ::-webkit-scrollbar {
-        width: 8px;
-        height: 8px;
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: #f1f1f1; }
+    ::-webkit-scrollbar-thumb { background: #888; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #555; }
+    
+    /* --- APP SPECIFIC STYLES (Merged from app.py) --- */
+    
+    /* Global Background */
+    .stApp {
+        background-color: #f8fafc; /* Slate-50 */
     }
     
-    ::-webkit-scrollbar-track {
-        background: #f1f1f1;
+    /* Layout Fixes */
+    .block-container {
+        padding-top: 1rem !important; 
+        padding-bottom: 2rem !important;
+        margin-top: 0px !important;
     }
     
-    ::-webkit-scrollbar-thumb {
-        background: #888;
-        border-radius: 4px;
+    header[data-testid="stHeader"] {
+        background-color: transparent;
+        height: 3rem;
     }
     
-    ::-webkit-scrollbar-thumb:hover {
-        background: #555;
+    /* Typography */
+    html, body, [class*="css"] {
+        font-family: 'Source Sans Pro', sans-serif;
+    }
+    h1, h2, h3 {
+        color: #1e293b;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        margin-top: 0px !important; 
+        padding-top: 0px !important;
+    }
+    h4 {
+        color: #334155;
+        margin-top: 1rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    /* Navbar / Sidebar items */
+    .stRadio label {
+        font-size: 15px !important;
+        padding-top: 4px;
+        padding-bottom: 4px;
+    }
+    
+    /* Primary Action Buttons */
+    div.stButton > button:first-child {
+        background-color: #2563eb;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        padding: 0.5rem 1rem;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        transition: all 0.2s;
+    }
+    div.stButton > button:first-child:hover {
+        background-color: #1d4ed8;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    div.stButton > button:first-child:disabled {
+        background-color: #cbd5e1;
+        color: #94a3b8;
+        cursor: not-allowed;
+    }
+    
+    /* File Uploader Container */
+    [data-testid='stFileUploader'] {
+        background-color: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 1rem;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Enhanced Card Styling */
+    [data-testid="stVerticalBlockBorderWrapper"] {
+        background-color: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        padding: 2rem;
+    }
+    
+    /* Task Badges */
+    .task-badge {
+        background-color: #dbeafe;
+        color: #1e40af;
+        padding: 4px 12px;
+        border-radius: 16px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        display: inline-block;
+        border: 1px solid #bfdbfe;
+    }
+    
+    /* Success/Info boxes - Make them flatter */
+    .stAlert {
+        border-radius: 6px;
+        border: none;
+        box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05);
     }
     </style>
     """
