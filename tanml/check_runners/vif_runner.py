@@ -1,60 +1,91 @@
 # tanml/check_runners/vif_runner.py
+"""
+VIF (Variance Inflation Factor) check runner.
+
+This check detects multicollinearity between features by computing
+VIF scores. High VIF values indicate features that are highly correlated
+with other features and may cause instability in linear models.
+"""
+
 from __future__ import annotations
 
-import os
-from pathlib import Path
+from typing import Any, Dict
+
 import pandas as pd
 
-from tanml.utils.data_loader import load_dataframe
-from tanml.checks.vif import VIFCheck  
+from tanml.check_runners.base_runner import BaseCheckRunner
+from tanml.checks.vif import VIFCheck
 
 
-def VIFCheckRunner(
-    model, X_train, X_test, y_train, y_test,
-    rule_config, cleaned_df, *args, **kwargs
-):
+class VIFCheckRunner(BaseCheckRunner):
     """
-    Ensure cleaned_df is a DataFrame; if a path (csv/xlsx/parquet/etc.),
-    load it via the universal loader, then run VIFCheck.
+    Runner for VIF multicollinearity analysis.
+    
+    Computes Variance Inflation Factor for each feature to detect
+    multicollinearity issues in the dataset.
+    
+    Configuration Options:
+        threshold: VIF threshold for flagging features (default: 5.0)
+        
+    Output:
+        - vif_scores: Dictionary of feature -> VIF score
+        - high_vif_features: Features with VIF above threshold
+        - summary: Overall multicollinearity assessment
     """
-    # 1) Normalize cleaned_df to a DataFrame
-    try:
-        if isinstance(cleaned_df, (str, bytes, os.PathLike, Path)):
-            cleaned_df = load_dataframe(cleaned_df)
-        elif not isinstance(cleaned_df, pd.DataFrame):
-            msg = "cleaned_df is not a DataFrame or loadable path; skipping VIF."
-            print(f"ℹ️ {msg}")
-            return {"vif_table": [], "high_vif_features": [], "error": msg}
-    except Exception as e:
-        err = f"Could not load cleaned_df: {e}"
-        print(f"⚠️ {err}")
-        return {"vif_table": [], "high_vif_features": [], "error": err}
+    
+    @property
+    def name(self) -> str:
+        return "VIFCheck"
+    
+    def execute(self) -> Dict[str, Any]:
+        """
+        Compute VIF scores for all features.
+        
+        Returns:
+            Dictionary containing VIF scores and analysis
+        """
+        threshold = float(self.get_config_value("threshold", 5.0))
+        
+        # Get output directory
+        output_dir = str(self.get_output_dir())
+        
+        check = VIFCheck(
+            cleaned_data=self.context.cleaned_df,
+            threshold=threshold,
+            output_dir=output_dir,
+        )
+        
+        return check.run()
 
-    # 2) Run the check
-    try:
-        check = VIFCheck(model, X_train, X_test, y_train, y_test, rule_config, cleaned_df)
-        result = check.run()  
-        # 3) Normalize result
-        if isinstance(result, dict) and "vif_table" in result:
-            vif_rows = result["vif_table"]
-        elif isinstance(result, list):
-            vif_rows = result
-        else:
-            raise ValueError("Unexpected VIFCheck return shape")
 
-        # 4) Canonicalize keys and values
-        for row in vif_rows:
-            if "Feature" not in row and "feature" in row:
-                row["Feature"] = row.pop("feature")
-            if "VIF" in row and row["VIF"] is not None:
-                row["VIF"] = round(float(row["VIF"]), 2)
+# =============================================================================
+# Legacy Compatibility
+# =============================================================================
 
-        # 5) Identify high VIF features
-        threshold = rule_config.get("vif_threshold", 5)
-        high_vif = [r["Feature"] for r in vif_rows if r.get("VIF") is not None and r["VIF"] > threshold]
-
-        return {"vif_table": vif_rows, "high_vif_features": high_vif, "error": None}
-
-    except Exception as e:
-        print(f"⚠️ VIFCheck failed: {e}")
-        return {"vif_table": [], "high_vif_features": [], "error": str(e)}
+def VIFCheckRunnerLegacy(
+    model,
+    X_train,
+    X_test,
+    y_train,
+    y_test,
+    config: Dict[str, Any],
+    cleaned_df: pd.DataFrame,
+    raw_df: pd.DataFrame | None = None,
+    ctx=None,
+) -> Dict[str, Any] | None:
+    """Legacy function interface for VIFCheck."""
+    from tanml.core.context import CheckContext
+    
+    context = CheckContext(
+        model=model,
+        X_train=X_train,
+        X_test=X_test,
+        y_train=y_train,
+        y_test=y_test,
+        config=config,
+        cleaned_df=cleaned_df,
+        raw_df=raw_df,
+    )
+    
+    runner = VIFCheckRunner(context)
+    return runner.run()

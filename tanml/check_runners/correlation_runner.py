@@ -1,26 +1,107 @@
 # tanml/check_runners/correlation_runner.py
+"""
+Correlation check runner for analyzing feature correlations.
+
+This check computes Pearson and Spearman correlation matrices,
+identifies highly correlated pairs, and generates heatmap visualizations.
+"""
+
 from __future__ import annotations
-import os
-from typing import Any, Dict, List
+
+from typing import Any, Dict
+
 import pandas as pd
 
-from tanml.checks.correlation import CorrelationCheck  
+from tanml.check_runners.base_runner import BaseCheckRunner
+from tanml.checks.correlation import CorrelationCheck
 
-def _resolve_outdir(config: Dict[str, Any]) -> str:
-    base = (config.get("options") or {}).get("save_artifacts_dir") or "reports"
-    outdir = os.path.join(base, "correlation")
-    os.makedirs(outdir, exist_ok=True)
-    return outdir
 
-def _df_features_only(cleaned_df: pd.DataFrame) -> pd.DataFrame:
-    if cleaned_df is None or cleaned_df.empty:
-        return cleaned_df
-    cols = list(cleaned_df.columns)
-    if len(cols) >= 2:
-        return cleaned_df[cols[:-1]]
-    return cleaned_df
+class CorrelationCheckRunner(BaseCheckRunner):
+    """
+    Runner for correlation analysis between features.
+    
+    Computes correlation matrices (Pearson/Spearman), identifies
+    highly correlated feature pairs, and generates visualizations.
+    
+    Configuration Options:
+        method: "pearson" or "spearman" (default: "pearson")
+        high_corr_threshold: Threshold for flagging pairs (default: 0.8)
+        heatmap_max_features_default: Default features in heatmap (default: 20)
+        heatmap_max_features_limit: Max features allowed (default: 60)
+        subset_strategy: "cluster" or "degree" (default: "cluster")
+        sample_rows: Max rows for computation (default: 150000)
+        seed: Random seed for sampling (default: 42)
+        
+    Output Artifacts:
+        - pearson_corr.csv: Full Pearson correlation matrix
+        - spearman_corr.csv: Full Spearman correlation matrix
+        - correlation_top_pairs.csv: Highly correlated pairs
+        - heatmap.png: Correlation heatmap visualization
+    """
+    
+    @property
+    def name(self) -> str:
+        return "CorrelationCheck"
+    
+    def execute(self) -> Dict[str, Any]:
+        """
+        Run correlation analysis on the cleaned data.
+        
+        Returns:
+            Dictionary containing correlation results, file paths, and summary
+        """
+        # Build configuration from various sources
+        cfg: Dict[str, Any] = {
+            "method": self.get_config_value("method", "pearson"),
+            "high_corr_threshold": float(
+                self.get_config_value("high_corr_threshold", 0.8)
+            ),
+            "heatmap_max_features_default": int(
+                self.get_config_value("heatmap_max_features_default", 20)
+            ),
+            "heatmap_max_features_limit": int(
+                self.get_config_value("heatmap_max_features_limit", 60)
+            ),
+            "subset_strategy": self.get_config_value("subset_strategy", "cluster"),
+            "sample_rows": int(
+                self.get_config_value("sample_rows", 150_000)
+            ),
+            "seed": int(self.get_config_value("seed", 42)),
+            "save_csv": True,
+            "save_fig": True,
+            "appendix_csv_cap": self.get_config_value("appendix_csv_cap"),
+        }
+        
+        # Get features only (exclude target column)
+        df = self._get_features_only(self.context.cleaned_df)
+        
+        # Run the check
+        check = CorrelationCheck(
+            cleaned_data=df,
+            cfg=cfg,
+            output_dir=str(self.get_output_dir()),
+        )
+        
+        return check.run()
+    
+    def _get_features_only(self, df: pd.DataFrame) -> pd.DataFrame:
+        """
+        Extract feature columns only (exclude target).
+        
+        The target is assumed to be the last column in the DataFrame.
+        """
+        if df is None or df.empty:
+            return df
+        if len(df.columns) >= 2:
+            return df.iloc[:, :-1]
+        return df
 
-def CorrelationCheckRunner(
+
+# =============================================================================
+# Legacy Compatibility - Function interface for backward compatibility
+# =============================================================================
+
+def CorrelationCheckRunnerLegacy(
     model,
     X_train,
     X_test,
@@ -29,24 +110,26 @@ def CorrelationCheckRunner(
     config: Dict[str, Any],
     cleaned_df: pd.DataFrame,
     raw_df: pd.DataFrame | None = None,
-):
-    ui_block: Dict[str, Any] = (config.get("CorrelationCheck") or {})
-    legacy: Dict[str, Any] = (config.get("correlation") or {})
-    if not bool(ui_block.get("enabled", legacy.get("enabled", True))):
-        return None
-
-    df = _df_features_only(cleaned_df)
-    cfg: Dict[str, Any] = {
-        "method": ui_block.get("method", "pearson"),
-        "high_corr_threshold": float(ui_block.get("high_corr_threshold", 0.8)),
-        "heatmap_max_features_default": int(ui_block.get("heatmap_max_features_default", 20)),
-        "heatmap_max_features_limit": int(ui_block.get("heatmap_max_features_limit", 60)),
-        "subset_strategy": ui_block.get("subset_strategy", "cluster"),
-        "sample_rows": int(ui_block.get("sample_rows", 150_000)),
-        "seed": int(ui_block.get("seed", 42)),
-        "save_csv": True,
-        "save_fig": True,
-        "appendix_csv_cap": ui_block.get("appendix_csv_cap", None),
-    }
-    outdir = _resolve_outdir(config)
-    return CorrelationCheck(cleaned_data=df, cfg=cfg, output_dir=outdir).run()
+    ctx=None,
+) -> Dict[str, Any] | None:
+    """
+    Legacy function interface for CorrelationCheck.
+    
+    This function maintains backward compatibility with the old runner interface.
+    New code should use CorrelationCheckRunner class directly.
+    """
+    from tanml.core.context import CheckContext
+    
+    context = CheckContext(
+        model=model,
+        X_train=X_train,
+        X_test=X_test,
+        y_train=y_train,
+        y_test=y_test,
+        config=config,
+        cleaned_df=cleaned_df,
+        raw_df=raw_df,
+    )
+    
+    runner = CorrelationCheckRunner(context)
+    return runner.run()

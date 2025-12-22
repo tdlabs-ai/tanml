@@ -1,0 +1,8 @@
+[server]
+maxUploadSize = 2048
+
+[browser]
+gatherUsageStats = false
+
+[theme]
+primaryColor = "#2563eb"

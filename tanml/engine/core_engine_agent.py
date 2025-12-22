@@ -236,6 +236,10 @@ class ValidationEngine:
                 failed += 1
         summary["rules_failed"] = failed
 
+        # Inject robust CV stats if available in config
+        if "cv_stats" in self.config:
+            summary["cv_stats"] = self.config["cv_stats"]
+
         self.results["summary"] = summary
         self.results["check_results"] = dict(self.results)
         return self.results

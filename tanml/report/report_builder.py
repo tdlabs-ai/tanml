@@ -1,12 +1,16 @@
 # tanml/report/report_builder.py
 from docx import Document
+from docxtpl import DocxTemplate
 from docx.shared import Inches, Mm
 from pathlib import Path
 import os, re, math, copy as pycopy
+import datetime
 from importlib.resources import files
 import numpy as np  # needed for rounding helpers etc.
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.enum.table import WD_ALIGN_VERTICAL
+
+
 
 
 
@@ -229,13 +233,34 @@ def insert_after(doc, anchor, tbl):
             return
     print(f"⚠️ anchor «{anchor}» not found")
 
+def insert_image_after(doc, anchor, img_path, width_in=6.5):
+    """
+    Inserts a single image after the paragraph containing 'anchor'.
+    """
+    from docx.shared import Inches
+    for p in doc.paragraphs:
+        if anchor.lower() in p.text.lower():
+            # Create new paragraph
+            new_p = doc.add_paragraph() 
+            run = new_p.add_run()
+            try:
+                run.add_picture(img_path, width=Inches(width_in))
+                # Move it after 'p'
+                p._p.addnext(new_p._p)
+            except Exception as e:
+                print(f"Failed to add picture {img_path}: {e}")
+            return
+    print(f"⚠️ anchor «{anchor}» not found (for image)")
+
 def insert_image_grid(doc, anchor: str, img_paths, cols: int = 3, width_in: float = 2.2):
     paths = [p for p in (img_paths or []) if p and os.path.exists(p)]
     if not paths:
         for p in doc.paragraphs:
             if anchor.lower() in p.text.lower():
-                after = p.insert_paragraph_after()
-                after.add_run("(no plots available)")
+                # Correctly insert paragraph AFTER 'p'
+                new_p = p._parent.add_paragraph()
+                new_p.add_run("(no plots available)")
+                p._p.addnext(new_p._p)
                 return
         print(f"⚠️ anchor «{anchor}» not found (no plots)")
         return
@@ -255,10 +280,82 @@ def insert_image_grid(doc, anchor: str, img_paths, cols: int = 3, width_in: floa
                 i += 1
             else:
                 cell.text = ""
+                cell.text = ""
     insert_after(doc, anchor, tbl)
 
+def _log_debug(msg):
+    with open("/tmp/tanml_report_debug.log", "a") as f:
+        f.write(f"{datetime.datetime.now()} - {msg}\n")
+
+def _replace_placeholder_with_kv_table(doc, placeholder: str, data: dict):
+    """
+    Finds 'placeholder' in doc (paragraphs or table cells) and replaces it with
+    a 2-column key-value table.
+    """
+    if not data or not isinstance(data, dict):
+        return False
+
+    # Helper to populate table
+    def _fill(tbl):
+        # tbl.style = "Table Grid"  # Optional: might inherit from parent if nested
+        for k, v in data.items():
+            row = tbl.add_row().cells
+            row[0].text = str(k)
+            row[1].text = str(v)
+
+    # 2. Search in existing tables (including nested tables)
+    def _traverse_tables(tables_list, depth=0):
+        for t_idx, t in enumerate(tables_list):
+            for r_idx, row in enumerate(t.rows):
+                for c_idx, cell in enumerate(row.cells):
+                    # Check strictly inside this cell's direct text first
+                    # We try to find it in paragraphs
+                    for p in cell.paragraphs:
+                        # Use regex to be robust against spaces: {{ ModelMetaCheck.target_balance }}
+                        # Regex pattern: {{ ?ModelMetaCheck\.target_balance ?}}
+                        if re.search(r"\{\{\s*ModelMetaCheck\.target_balance\s*\}\}", p.text):
+                            # Remove placeholder using regex sub
+                            p.text = re.sub(r"\{\{\s*ModelMetaCheck\.target_balance\s*\}\}", "", p.text)
+                            
+                            # Create nested table here
+                            try:
+                                nested = cell.add_table(rows=0, cols=2)
+                                nested.style = "Table Grid"
+                                _fill(nested)
+                                # Move nested table after the modified paragraph
+                                p._p.addnext(nested._tbl)
+                            except Exception as e:
+                                print(f"Failed to add nested table: {e}")
+                                # Fallback
+                                for k, v in data.items():
+                                    cell.add_paragraph(f"{k}: {v}")
+                            return True
+                    
+                    # Recurse into nested tables
+                    if cell.tables:
+                         if _traverse_tables(cell.tables, depth=depth+1):
+                             return True
+        return False
+
+    # 1. Search in body paragraphs
+    for p_idx, p in enumerate(doc.paragraphs):
+        # Use regex to be robust against spaces: {{ ModelMetaCheck.target_balance }}
+        # Regex pattern: {{ ?ModelMetaCheck\.target_balance ?}}
+        if re.search(r"\{\{\s*ModelMetaCheck\.target_balance\s*\}\}", p.text):
+            p.text = re.sub(r"\{\{\s*ModelMetaCheck\.target_balance\s*\}\}", "", p.text)
+            
+            # Create isolated table
+            tbl = doc.add_table(rows=0, cols=2)
+            tbl.style = "Table Grid"
+            _fill(tbl)
+            # Move after p
+            p._p.addnext(tbl._tbl)
+            return True
+            
+    return _traverse_tables(doc.tables)
+
 # ---------- placeholder & image replacement ----------
-_PLACEHOLDER = re.compile(r"\{\{([A-Za-z0-9_\.]+)\}\}")
+_PLACEHOLDER = re.compile(r"\{\{\s*([A-Za-z0-9_\.]+)\s*\}\}")
 _IMG_MARKER  = re.compile(r"\[\[IMG:([A-Za-z0-9_\-]+)\]\]")
 
 def _get_nested(d, dotted, default=""):
@@ -523,10 +620,23 @@ class ReportBuilder:
         eda = self._grab("EDACheck", {})
         ctx["eda_summary_path"] = eda.get("summary_stats", "N/A")
         ctx["eda_missing_path"] = eda.get("missing_values", "N/A")
+        # Helper to resolve path
+        def _resolve_eda_path(fn):
+            # If it's already a valid path, use it
+            if os.path.exists(fn):
+                return fn
+            # Otherwise try joining with reports/eda
+            joined = os.path.join("reports/eda", fn)
+            if os.path.exists(joined):
+                return joined
+            return None
+
         ctx["eda_images_paths"] = [
-            os.path.join("reports/eda", fn)
-            for fn in (eda.get("visualizations", []) or [])
-            if os.path.exists(os.path.join("reports/eda", fn))
+            p for p in [
+                _resolve_eda_path(fn) 
+                for fn in (eda.get("visualizations", []) or [])
+            ] 
+            if p is not None
         ]
 
         # Correlation
@@ -737,27 +847,119 @@ class ReportBuilder:
         )
 
         # ===== 2) Open template, replace text placeholders & images ==========
-        doc = Document(str(self.template_path))
+        # Use DocxTemplate for Jinja2 conditionals ({% if %}, etc.)
+        # Add use_cv flag to context for conditional rendering
+        cv_stats = ctx.get("summary", {}).get("cv_stats", {})
+        ctx["use_cv"] = bool(cv_stats)  # True if CV was run
+        
+        # For docxtpl: we only need to process {% if %} conditionals
+        # Other {{placeholders}} will be handled by _replace_text_placeholders later
+        # Custom undefined class that renders undefined variables back to {{var}} syntax
+        from jinja2 import Environment, Undefined
+        
+        class PassthroughUndefined(Undefined):
+            def __str__(self):
+                return '{{' + self._undefined_name + '}}'
+            
+            def __getattr__(self, name):
+                # For nested attributes like ModelMetaCheck.target_balance
+                return PassthroughUndefined(name=f'{self._undefined_name}.{name}')
+        
+        jinja_env = Environment(undefined=PassthroughUndefined)
+        tpl = DocxTemplate(str(self.template_path))
+        
+        # --- Prepare Jinja2 Context for docxtpl ---
+        # We must provide keys for ALL {% if %} blocks and {{ variables }} handled by docxtpl.
+        jinja_ctx = {"use_cv": ctx["use_cv"]}
+
+        # 1. EDA Placeholders (must pass to render so they aren't stripped/broken)
+        jinja_ctx["eda_summary_path"] = ctx.get("eda_summary_path") or "(not available)"
+        jinja_ctx["eda_missing_path"] = ctx.get("eda_missing_path") or "(not available)"
+        
+        # Replicate EDA count note logic
+        all_eda = ctx.get("eda_images_paths") or []
+        opts = ctx.get("report_options") or {}
+        max_p = opts.get("max_plots", -1)
+        if max_p in (-1, None):
+            eda_subset = all_eda
+        else:
+            eda_subset = all_eda[:int(max_p)]
+        jinja_ctx["eda_count_note"] = f"(showing {len(eda_subset)} of {len(all_eda)})" if len(all_eda) != len(eda_subset) else ""
+
+        # 2. CV Regression Flags
+        # Optimistically set True if we are in CV Regression mode, so {% if %} blocks render.
+        # The actual images will be filled in by _replace_image_markers later.
+        oof = cv_stats.get("oof", {})
+        if ctx["use_cv"] and "y_pred" in oof:
+            for k in [
+                "cv_reg_residuals_vs_pred", "cv_reg_residual_hist", 
+                "cv_reg_qq", "cv_reg_abs_error_box", "cv_reg_abs_error_violin"
+            ]:
+                jinja_ctx[k] = True
+
+        try:
+
+            tpl.render(jinja_ctx, jinja_env=jinja_env)  # Render logic
+
+            doc = tpl  # DocxTemplate is a Document subclass
+        except Exception as e:
+            print(f"Warning: docxtpl render failed: {e}, falling back to Document")
+            doc = Document(str(self.template_path))
 
         # -------- scalar_map (text placeholders) ----------------------------
+        from datetime import datetime, timezone
+        now_str = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+        
+        # Determine model name
+        mm = ctx.get("ModelMetaCheck", {}) or {}
+        m_name = mm.get("model_class") or "Model"
+        
         scalar_map = {
-            "validation_date": ctx.get("validation_date", "") or "",
-            "validated_by": ctx.get("validated_by", "") or "",
-            "model_path": ctx.get("model_path", "") or "",
+            "generated_on": now_str,
+            "validation_date": now_str,
+            "validated_by": "TanML",
+            "model_file": f"{m_name}.pkl",
+            "model_path": ctx.get("model_path", f"{m_name}.pkl"),
             "task_type": (ctx.get("task_type") or "classification").title(),
-            "ModelMetaCheck.model_class":  (ctx.get("ModelMetaCheck", {}) or {}).get("model_class", ""),   
+            "ModelMetaCheck.model_class":  mm.get("model_class", ""),   
             "ModelMetaCheck.module":       (ctx.get("ModelMetaCheck", {}) or {}).get("module", ""),        
             "ModelMetaCheck.model_type":   (ctx.get("ModelMetaCheck", {}) or {}).get("model_type", ""),
             "ModelMetaCheck.n_features":   (ctx.get("ModelMetaCheck", {}) or {}).get("n_features", ""),
             "ModelMetaCheck.feature_names": _fmt_feature_names((ctx.get("ModelMetaCheck", {}) or {}).get("feature_names")),
             "ModelMetaCheck.n_train_rows": (ctx.get("ModelMetaCheck", {}) or {}).get("n_train_rows", ""),
-            "ModelMetaCheck.target_balance": _fmt_target_balance((ctx.get("ModelMetaCheck", {}) or {}).get("target_balance")),
         }
 
         # --- Logistic (Logit) summary text for classification template ---
         logit_ctx = ctx.get("LogitStats") or {}
         scalar_map["LogitStats.summary_text"] = logit_ctx.get("summary_text") or ""
 
+        # REGRESSION: Target Balance Table Replacement
+        # If we have the regression summary dict (Range/Mean/Std), inject a table instead of text
+        mb_data = (ctx.get("ModelMetaCheck", {}) or {}).get("target_balance")
+        
+        _log_debug(f"Target Balance Check: mb_data type={type(mb_data)}")
+        if isinstance(mb_data, dict):
+             _log_debug(f"mb_data keys: {list(mb_data.keys())}")
+        
+        # Relaxed check: just look for 'Mean' to be safe, or even just dict
+        if isinstance(mb_data, dict) and "Mean" in mb_data:
+            _log_debug("Entering table replacement logic...")
+            try:
+                # Attempt table replacement
+                replaced = _replace_placeholder_with_kv_table(doc, "{{ModelMetaCheck.target_balance}}", mb_data)
+                _log_debug(f"Replacement result: {replaced}")
+                if replaced:
+                    # Prevent text replacement from re-processing it (though it's gone)
+                    scalar_map["ModelMetaCheck.target_balance"] = ""
+                else:
+                    _log_debug("Replacement returned False. Fallback to text.")
+                    items = [f"{k}: {v}" for k, v in mb_data.items()]
+                    scalar_map["ModelMetaCheck.target_balance"] = "\n".join(items)
+            except Exception as e:
+                _log_debug(f"Error during replacement: {e}")
+        else:
+            _log_debug("Skipping table replacement: mb_data missing Mean/Std or not dict")
+        
         # REGRESSION rounded values / labels
         scalar_map.update({
             "summary.rmse2": _fmt2(ctx.get("summary", {}).get("rmse")),
@@ -781,19 +983,76 @@ class ReportBuilder:
         notes_text = "\n".join(map(str, notes_list)).strip() if notes_list else ""
         scalar_map["RegressionMetrics.notes_text"] = notes_text if notes_text else "None"
 
-        # CLASSIFICATION rounded values
+        # CLASSIFICATION rounded values (Simple vs CV Robust)
         cs = ctx.get("classification_summary", {}) or {}
+        cv_stats = ctx.get("summary", {}).get("cv_stats", {})
+        
+        def _get_metric(key, simple_key):
+            # Try to grab CV Mean ± Std first
+            if key in cv_stats:
+                m = cv_stats[key]
+                return f"{m['mean']:.2f} ± {m['std']:.2f}"
+            # Fallback to simple
+            return _fmt2(cs.get(simple_key))
+
         scalar_map.update({
-            "classification_summary.AUC2":       _fmt2(cs.get("AUC")),
-            "classification_summary.KS2":        _fmt2(cs.get("KS")),
-            "classification_summary.F12":        _fmt2(cs.get("F1")),
+            "classification_summary.AUC2":       _get_metric("roc_auc", "AUC"),
+            "classification_summary.KS2":        _fmt2(cs.get("KS")), # CV for KS not implemented in app loop yet
+            "classification_summary.F12":        _get_metric("f1", "F1"),
             "classification_summary.PR_AUC2":    _fmt2(cs.get("PR_AUC")),
             "classification_summary.GINI2":      _fmt2(cs.get("GINI")),
-            "classification_summary.Precision2": _fmt2(cs.get("Precision")),
-            "classification_summary.Recall2":    _fmt2(cs.get("Recall")),
-            "classification_summary.Accuracy2":  _fmt2(cs.get("Accuracy")),
+            "classification_summary.Precision2": _get_metric("precision", "Precision"),
+            "classification_summary.Recall2":    _get_metric("recall", "Recall"),
+            "classification_summary.Accuracy2":  _get_metric("accuracy", "Accuracy"),
             "classification_summary.Brier2":     _fmt2(cs.get("Brier")),
         })
+
+        # --- CV Detailed Stats (Repeated CV) ---
+        # Maps cv_stats["metric"]["stat"] -> {{cv.metric.stat}}
+        # e.g. {{cv.auc.mean}}, {{cv.rmse.p95}}
+        cv_stats_root = ctx.get("summary", {}).get("cv_stats", {})
+        
+        # known metrics to look for
+        cv_metric_keys = [
+            # Classification
+            ("auc", "auc"), ("roc_auc", "auc"), 
+            ("pr_auc", "pr_auc"), ("average_precision", "pr_auc"),
+            ("ks", "ks"),
+            ("log_loss", "logloss"), ("logloss", "logloss"),
+            ("brier", "brier"), ("brier_score", "brier"),
+            ("gini", "gini"),
+            ("f1", "f1"), ("f1_score", "f1"),
+            ("precision", "precision"),
+            ("recall", "recall"), ("sensitivity", "recall"),
+            ("accuracy", "accuracy"),
+            ("mcc", "mcc"), ("matthews_corrcoef", "mcc"),
+            ("balanced_accuracy", "bal_acc"), ("bal_acc", "bal_acc"),
+            
+            # Regression
+            ("rmse", "rmse"), 
+            ("mae", "mae"), 
+            ("median_ae", "median_ae"),
+            ("r2", "r2"),
+            ("smape", "smape"), ("mape", "smape"), # unify
+        ]
+        
+        # standard stats to extract
+        stats_to_map = ["mean", "std", "p05", "p50", "p95", "min", "max"]
+
+        for src_key, out_key in cv_metric_keys:
+            if src_key in cv_stats_root:
+                m_obj = cv_stats_root[src_key]
+                if isinstance(m_obj, dict):
+                    for stat in stats_to_map:
+                        val = m_obj.get(stat)
+                        # format logic: rounds to 4 decimals usually good for table
+                        placeholder = f"cv.{out_key}.{stat}"
+                        scalar_map[placeholder] = _fmt2(val, nd=4)
+
+        # Threshold info
+        thr_info = cv_stats_root.get("threshold_info") or {}
+        scalar_map["cv.threshold.rule"] = str(thr_info.get("rule") or "—")
+        scalar_map["cv.threshold.value"] = _fmt2(thr_info.get("value"), nd=4)
 
         # DataQualityCheck (train/test)
         dq = ctx.get("DataQualityCheck") or {}
@@ -969,7 +1228,7 @@ class ReportBuilder:
             "LogisticStatsFit.aic2":       _fmt2(lsf.get("aic")),
             "LogisticStatsFit.bic2":       _fmt2(lsf.get("bic")),
             "LogisticStatsFit.pseudo_r22": _fmt2(lsf.get("pseudo_r2")),
-            "LogisticStatsSummary_text": (
+            "LogitStats.summary_text": (
                 ctx.get("LogisticStatsSummary_text")
                 or ctx.get("LogisticStatsSummary")
                 or "Logistic diagnostics not available."
@@ -998,25 +1257,172 @@ class ReportBuilder:
         ctx["_eda_cols"] = eda_cols
 
         # text replacements
+        # --- CV Plot Generation (Spaghetti Plots) ---
+        cv_curve_data = ctx.get("summary", {}).get("cv_stats", {}).get("curves")
+        cv_plot_paths = {}
+
+        if cv_curve_data:
+            from pathlib import Path
+            if "roc" in cv_curve_data and cv_curve_data["roc"]:
+                out_p = TMP_DIR / "cv_roc_curve.png"
+                _plot_cv_spaghetti(
+                    cv_curve_data["roc"], 
+                    title="ROC Curve (Cross-Validation)", 
+                    xlabel="False Positive Rate", 
+                    ylabel="True Positive Rate", 
+                    output_path=str(out_p)
+                )
+                cv_plot_paths["cv_roc"] = str(out_p)
+
+            if "pr" in cv_curve_data and cv_curve_data["pr"]:
+                out_p = TMP_DIR / "cv_pr_curve.png"
+                _plot_cv_spaghetti(
+                    cv_curve_data["pr"], 
+                    title="Precision-Recall Curve (Cross-Validation)", 
+                    xlabel="Recall", 
+                    ylabel="Precision", 
+                    output_path=str(out_p)
+                )
+                cv_plot_paths["cv_pr"] = str(out_p)
+
+        # --- OOF Lift/Gain/Regression ---
+        oof_data = ctx.get("summary", {}).get("cv_stats", {}).get("oof")
+        if oof_data and "y_true" in oof_data:
+            # --- Classification CV Plots (requires y_prob) ---
+            if "y_prob" in oof_data:
+                # Lift
+                out_p = TMP_DIR / "cv_lift_curve.png"
+                _plot_oof_lift(
+                    oof_data["y_true"],
+                    oof_data["y_prob"],
+                    output_path=str(out_p)
+                )
+                cv_plot_paths["cv_lift"] = str(out_p)
+                
+                # Calibration
+                out_p2 = TMP_DIR / "cv_calib_curve.png"
+                _plot_oof_calibration(
+                    oof_data["y_true"],
+                    oof_data["y_prob"],
+                    output_path=str(out_p2)
+                )
+                cv_plot_paths["cv_calib"] = str(out_p2)
+
+                # Confusion Matrix
+                out_p_cm = TMP_DIR / "cv_confusion_matrix.png"
+                _plot_cv_confusion_matrix(
+                    oof_data["y_true"],
+                    oof_data["y_pred"],
+                    output_path=str(out_p_cm)
+                )
+                cv_plot_paths["cv_confusion"] = str(out_p_cm)
+
+                # KS Curve
+                out_p_ks = TMP_DIR / "cv_ks_curve.png"
+                _plot_oof_ks(
+                    oof_data["y_true"],
+                    oof_data["y_prob"],
+                    output_path=str(out_p_ks)
+                )
+                cv_plot_paths["cv_ks"] = str(out_p_ks)
+
+                # Recompute Decile Lift Table
+                try:
+                    from plot_helper_table import build_lift_table_from_oof
+                    cv_lift_rows = build_lift_table_from_oof(
+                        oof_data["y_true"],
+                        oof_data["y_prob"]
+                    )
+                    if "classification_tables" not in ctx: ctx["classification_tables"] = {}
+                    ctx["classification_tables"]["lift"] = cv_lift_rows
+                except Exception as e:
+                    print(f"Error calculating CV lift table: {e}")
+
+            # --- Regression CV Plots (y_pred only, no y_prob) ---
+            elif "y_pred" in oof_data:
+                # Import plotting helpers (lazy import inside method/if-block)
+                try:
+                    from plot_helper_reg import (
+                         plot_reg_residuals_vs_pred,
+                         plot_reg_residual_hist,
+                         plot_reg_qq,
+                         plot_reg_abs_error_box,
+                         plot_reg_abs_error_violin
+                    )
+                    
+                    # 1. Residuals vs Predicted
+                    out_p1 = TMP_DIR / "cv_reg_residuals_vs_pred.png"
+                    plot_reg_residuals_vs_pred(oof_data["y_true"], oof_data["y_pred"], str(out_p1))
+                    cv_plot_paths["cv_reg_residuals_vs_pred"] = str(out_p1)
+                    
+                    # 2. Residual Histogram
+                    out_p2 = TMP_DIR / "cv_reg_residual_hist.png"
+                    plot_reg_residual_hist(oof_data["y_true"], oof_data["y_pred"], str(out_p2))
+                    cv_plot_paths["cv_reg_residual_hist"] = str(out_p2)
+
+                    # 3. Q-Q Plot
+                    out_p3 = TMP_DIR / "cv_reg_qq.png"
+                    plot_reg_qq(oof_data["y_true"], oof_data["y_pred"], str(out_p3))
+                    cv_plot_paths["cv_reg_qq"] = str(out_p3)
+
+                    # 4. Box Plot
+                    out_p4 = TMP_DIR / "cv_reg_abs_error_box.png"
+                    plot_reg_abs_error_box(oof_data["y_true"], oof_data["y_pred"], str(out_p4))
+                    cv_plot_paths["cv_reg_abs_error_box"] = str(out_p4)
+
+                    # 5. Violin Plot
+                    out_p5 = TMP_DIR / "cv_reg_abs_error_violin.png"
+                    plot_reg_abs_error_violin(oof_data["y_true"], oof_data["y_pred"], str(out_p5))
+                    cv_plot_paths["cv_reg_abs_error_violin"] = str(out_p5)
+                    
+                    # 6. Pred vs Actual (Previously implemented)
+                    out_p_reg = TMP_DIR / "cv_pred_vs_actual.png"
+                    _plot_oof_pred_vs_actual(
+                        oof_data["y_true"],
+                        oof_data["y_pred"],
+                        output_path=str(out_p_reg)
+                    )
+                    cv_plot_paths["cv_pred_vs_actual"] = str(out_p_reg)
+
+                except Exception as e:
+                    print(f"Failed to plot CV Regression Diagnostics: {e}")
+
+        # Expose CV plot paths to Jinja2 context for conditional rendering
+        scalar_map.update(cv_plot_paths)
+
         _replace_text_placeholders(doc, scalar_map)
 
         # image markers
         images_map = {
             "roc": ctx["classification_plot_paths"].get("roc"),
+            "cv_roc": cv_plot_paths.get("cv_roc"),
             "pr": ctx["classification_plot_paths"].get("pr"),
+            "cv_pr": cv_plot_paths.get("cv_pr"),
             "lift": ctx["classification_plot_paths"].get("lift"),
+            "cv_lift": cv_plot_paths.get("cv_lift"),
             "calibration": ctx["classification_plot_paths"].get("calibration"),
+            "cv_calibration": cv_plot_paths.get("cv_calibration"),
             "confusion": ctx["classification_plot_paths"].get("confusion"),
+            "cv_confusion": cv_plot_paths.get("cv_confusion"),
             "ks": ctx.get("ks_curve_path"),
+            "cv_ks": cv_plot_paths.get("cv_ks"),
+            # Regression CV additions
+            "cv_reg_pred_vs_actual": cv_plot_paths.get("cv_pred_vs_actual"),
+            "cv_reg_residuals_vs_pred": cv_plot_paths.get("cv_reg_residuals_vs_pred"),
+            "cv_reg_residual_hist": cv_plot_paths.get("cv_reg_residual_hist"),
+            "cv_reg_qq": cv_plot_paths.get("cv_reg_qq"),
+            "cv_reg_abs_error_box": cv_plot_paths.get("cv_reg_abs_error_box"),
+            "cv_reg_abs_error_violin": cv_plot_paths.get("cv_reg_abs_error_violin"),
+            
             "correlation_heatmap": ctx.get("correlation_heatmap_path"),
             "shap_beeswarm": ctx.get("shap_beeswarm_path"),
             "shap_bar": ctx.get("shap_bar_path"),
-            "reg_pred_vs_actual": ctx["RegressionMetrics"]["artifacts"].get("pred_vs_actual"),
-            "reg_residuals_vs_pred": ctx["RegressionMetrics"]["artifacts"].get("residuals_vs_pred"),
-            "reg_residual_hist": ctx["RegressionMetrics"]["artifacts"].get("residual_hist"),
-            "reg_qq": ctx["RegressionMetrics"]["artifacts"].get("qq_plot"),
-            "reg_abs_error_box": ctx["RegressionMetrics"]["artifacts"].get("abs_error_box"),
-            "reg_abs_error_violin": ctx["RegressionMetrics"]["artifacts"].get("abs_error_violin"),
+            "reg_pred_vs_actual": ctx.get("RegressionMetrics", {}).get("artifacts", {}).get("pred_vs_actual"),
+            "reg_residuals_vs_pred": ctx.get("RegressionMetrics", {}).get("artifacts", {}).get("residuals_vs_pred"),
+            "reg_residual_hist": ctx.get("RegressionMetrics", {}).get("artifacts", {}).get("residual_hist"),
+            "reg_qq": ctx.get("RegressionMetrics", {}).get("artifacts", {}).get("qq_plot"),
+            "reg_abs_error_box": ctx.get("RegressionMetrics", {}).get("artifacts", {}).get("abs_error_box"),
+            "reg_abs_error_violin": ctx.get("RegressionMetrics", {}).get("artifacts", {}).get("abs_error_violin"),
             "cluster_plot": plot_path,
             "logit_summary": ctx.get("logit_summary_path"),
         }
@@ -1253,11 +1659,447 @@ class ReportBuilder:
         for spec in tbl_specs:
             if spec["rows"]:
                 if spec["anchor"] == "Decile Lift Table":
-                    tbl = build_decile_lift_table(docx, spec["headers"], spec["rows"])
+                    # --- Render as Image ---
+                    img_path = TMP_DIR / "lift_table_img.png"
+                    _render_table_as_image(spec["headers"], spec["rows"], str(img_path))
+                    insert_image_after(docx, spec["anchor"], str(img_path), width_in=6.5)
+                    print(f"✅ added table IMAGE after «{spec['anchor']}»")
                 else:
                     tbl = build_table(docx, spec["headers"], spec["rows"])
-                insert_after(docx, spec["anchor"], tbl)
-                print(f"✅ added table after «{spec['anchor']}»")
+                    insert_after(docx, spec["anchor"], tbl)
+                    print(f"✅ added table after «{spec['anchor']}»")
 
 
         docx.save(self.output_path)
+
+def _plot_cv_spaghetti(curve_data, title, xlabel, ylabel, output_path):
+    """
+    Generates a spaghetti plot for CV curves (ROC or PR).
+    curve_data: list of (x, y) tuples, one per fold.
+    output_path: where to save the image.
+    """
+    import matplotlib.pyplot as plt
+    import numpy as np
+    
+    plt.figure(figsize=(6, 5))
+    
+    # Interpolate to common x-axis for mean curve calculation
+    common_x = np.linspace(0, 1, 100)
+    interp_ys = []
+    
+    # Plot individual folds
+    for x, y in curve_data:
+        plt.plot(x, y, color='gray', alpha=0.3, lw=1)
+        # Interpolate
+        # Note: np.interp needs sorted x. ROC x (FPR) is sorted. PR x (Recall) is sorted descending.
+        # For PR curve (Recall on x), we need to handle sorting.
+        if x[0] > x[-1]: # Descending
+             interp_ys.append(np.interp(common_x, x[::-1], y[::-1]))
+        else:
+             interp_ys.append(np.interp(common_x, x, y))
+        
+    # Calculate and plot mean curve
+    mean_y = np.mean(interp_ys, axis=0)
+    std_y = np.std(interp_ys, axis=0)
+    
+    plt.plot(common_x, mean_y, color='C0', lw=2, label='Mean CV')
+    
+    # Add +/- 1 std deviation shading
+    plt.fill_between(common_x, 
+                     np.maximum(mean_y - std_y, 0), 
+                     np.minimum(mean_y + std_y, 1), 
+                     color='C0', alpha=0.2, label=r'$\pm$ 1 std. dev.')
+    
+    # Formatting
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    plt.title(title)
+    plt.legend(loc="lower right" if "Recall" not in xlabel else "lower left")
+    plt.grid(alpha=0.3)
+    plt.xlim([-0.01, 1.01])
+    plt.ylim([-0.01, 1.01])
+    
+    # Specific diagonal line for ROC
+    if "False Positive" in xlabel:
+         plt.plot([0, 1], [0, 1], linestyle='--', lw=1, color='r', alpha=0.8, label='Chance')
+    
+    plt.tight_layout()
+    plt.savefig(output_path, dpi=150)
+    plt.close()
+
+def _plot_oof_lift(y_true, y_prob, output_path):
+    """
+    Plots Cumulative Gain / Lift curve from OOF predictions.
+    Computes simple lift: (Precision at K) / (Global Pct of Positives)
+    """
+    import matplotlib.pyplot as plt
+    import numpy as np
+    import pandas as pd
+    
+    # Create DF and sort by probability descending
+    df = pd.DataFrame({"y": y_true, "p": y_prob})
+    df = df.sort_values("p", ascending=False).reset_index(drop=True)
+    
+    total_pos = df["y"].sum()
+    n = len(df)
+    if total_pos == 0: return # robust
+    
+    # Cumulative positives
+    df["cum_pos"] = df["y"].cumsum()
+    # Pct of positives captured
+    df["gain"] = df["cum_pos"] / total_pos
+    # Pct of population
+    df["pop_pct"] = (df.index + 1) / n
+    
+    # Lift = Gain / Pop_Pct
+    # But often "Lift Curve" plots Lift vs Pop_Pct. "Gain Curve" plots Gain vs Pop_Pct.
+    # The existing template usually shows "Cumulative Gain / Lift" which is often the Gain chart compared to random.
+    # Let's verify existing plot style. Usually it's Gain (Captured Response) vs Population.
+    # Random line is y=x.
+    
+    plt.figure(figsize=(6, 5))
+    plt.plot(df["pop_pct"], df["gain"], label="Model (OOF)", color="C0", lw=2)
+    plt.plot([0, 1], [0, 1], 'r--', label="Random Model")
+    
+    # Optional: "Wizard" / Perfect Model
+    # Sort perfect would be all 1s then all 0s
+    perfect_k = int(total_pos)
+    perfect_gain = np.concatenate([
+        np.linspace(0, 1, perfect_k),
+        np.ones(n - perfect_k)
+    ])
+    # This is rough approximation for plotting 'Perfect' if desired, but let's stick to standard Gain
+    
+    plt.xlabel("% of Population Contacted")
+    plt.ylabel("% of Targets Captured (Cumulative Gain)")
+    plt.title("Cumulative Gain (OOF Pooled)")
+    plt.legend()
+    plt.grid(alpha=0.3)
+    
+    plt.tight_layout()
+    plt.savefig(output_path, dpi=150)
+    plt.close()
+
+def _plot_oof_calibration(y_true, y_prob, output_path):
+    """
+    Plots Calibration (Reliability) curve from OOF predictions.
+    """
+    import matplotlib.pyplot as plt
+    from sklearn.calibration import calibration_curve
+    
+    # Calculate calibration
+    prob_true, prob_pred = calibration_curve(y_true, y_prob, n_bins=10, strategy='uniform')
+    
+    plt.figure(figsize=(6, 5))
+    
+    # Perfect calibration line
+    plt.plot([0, 1], [0, 1], linestyle='--', color='gray', label='Perfectly Calibrated')
+    
+    # Model calibration
+    plt.plot(prob_pred, prob_true, marker='o', linewidth=1, label='Model (OOF)', color='C0')
+    
+    plt.xlabel("Mean Predicted Probability")
+    plt.ylabel("Fraction of Positives")
+    plt.title("Calibration Curve (Reliability Diagram)")
+    plt.legend()
+    plt.grid(alpha=0.3)
+    plt.xlim([-0.05, 1.05])
+    plt.ylim([-0.05, 1.05])
+    
+    plt.tight_layout()
+    plt.savefig(output_path, dpi=150)
+    plt.close()
+
+def _plot_cv_confusion_matrix(y_true, y_pred, output_path):
+    """
+    Plots a Confusion Matrix from OOF predictions.
+    """
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    from sklearn.metrics import confusion_matrix
+    import numpy as np
+
+    cm = confusion_matrix(y_true, y_pred)
+    
+    # Normalize for color mapping, but annotate with raw counts
+    cm_norm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
+    
+    plt.figure(figsize=(6, 5))
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', cbar=False)
+    
+    plt.xlabel('Predicted Label')
+    plt.ylabel('True Label')
+    plt.title('Confusion Matrix (Pooled CV)')
+    
+    plt.tight_layout()
+    plt.savefig(output_path, dpi=150)
+    plt.close()
+
+def _calculate_oof_lift_table(y_true, y_prob):
+    """
+    Calculates Decile Lift Table rows from OOF predictions.
+    Returns a list of lists matching the headers:
+    ["decile", "total", "events", "avg_score", "event_rate", "lift",
+     "cum_events", "cum_total", "cum_capture_rate", "cum_population", "cum_gain"]
+    
+    cum_gain here is interpreted as Cumulative Lift.
+    """
+    import pandas as pd
+    import numpy as np
+
+    df = pd.DataFrame({"y_true": y_true, "y_prob": y_prob})
+    df = df.sort_values("y_prob", ascending=False).reset_index(drop=True)
+    
+    # Global stats
+    total_events = df["y_true"].sum()
+    total_pop = len(df)
+    global_rate = total_events / total_pop if total_pop > 0 else 0
+    
+    # Deciles (1 to 10)
+    # properly handle cases with fewer than 10 rows
+    n_bins = 10
+    df["decile"] = pd.qcut(df.index, q=n_bins, labels=False, duplicates='drop') + 1
+    # qcut does equal size buckets. But since we sorted desc, decile 1 is top.
+    # Actually qcut on index (0..N) with sorted DF:
+    # index 0 is top score. 
+    # pd.qcut on default creates bins based on values.
+    # We want equal SIZE buckets.
+    # simplest:
+    df["decile"] = np.ceil((df.index + 1) / len(df) * 10).astype(int)
+    
+    # Aggregation
+    g = df.groupby("decile")
+    agg = g.agg({
+        "y_true": ["count", "sum"],
+        "y_prob": "mean"
+    })
+    
+    # Flatten cols
+    # agg.columns is (y_true, count), (y_true, sum), (y_prob, mean)
+    counts = agg[("y_true", "count")]
+    events = agg[("y_true", "sum")]
+    avg_score = agg[("y_prob", "mean")]
+    
+    rows = []
+    
+    # Cumulative stats
+    cum_events = 0
+    cum_total = 0
+    
+    for d in range(1, 11):
+        if d not in counts.index:
+            continue
+            
+        n = counts.loc[d]
+        e = events.loc[d]
+        score = avg_score.loc[d]
+        
+        rate = e / n if n > 0 else 0
+        lift = rate / global_rate if global_rate > 0 else 0
+        
+        cum_events += e
+        cum_total += n
+        
+        cum_capture = cum_events / total_events if total_events > 0 else 0
+        cum_pop = cum_total / total_pop if total_pop > 0 else 0
+        
+        cum_rate = cum_events / cum_total if cum_total > 0 else 0
+        cum_lift_val = cum_rate / global_rate if global_rate > 0 else 0
+        
+        # Row format: 
+        # ["decile", "total", "events", "avg_score", "event_rate", "lift",
+        #  "cum_events", "cum_total", "cum_capture_rate", "cum_population", "cum_gain"]
+        
+        row = [
+            d,              # decile
+            int(n),         # total
+            int(e),         # events
+            score,          # avg_score
+            rate,           # event_rate
+            lift,           # lift
+            int(cum_events),# cum_events
+            int(cum_total), # cum_total
+            cum_capture,    # cum_capture_rate
+            cum_pop,        # cum_population
+            cum_lift_val    # cum_gain (Cum Lift)
+        ]
+        rows.append(row)
+        
+    return rows
+
+def _render_table_as_image(headers, rows, output_path):
+    """
+    Renders a table as an image using matplotlib.
+    Handles formatting (rounding) automatically.
+    """
+    import matplotlib.pyplot as plt
+    import pandas as pd
+    import numpy as np
+
+    # Create DF
+    df = pd.DataFrame(rows, columns=headers)
+    
+    # Format Mapping
+    # Identify int columns and float columns
+    # We know the headers for Lift Table:
+    # ["decile", "total", "events", "avg_score", "event_rate", "lift", 
+    #  "cum_events", "cum_total", "cum_capture_rate", "cum_population", "cum_gain"]
+    
+    format_dict = {}
+    
+    # Ints
+    for col in ["decile", "total", "events", "cum_events", "cum_total"]:
+        if col in df.columns:
+            # fillna(0) and convert to int for safety, then string with comma
+            df[col] = df[col].fillna(0).astype(int).apply(lambda x: f"{x:,}")
+            
+    # Floats (4 decimals)
+    for col in ["avg_score", "event_rate", "cum_capture_rate", "cum_population"]:
+        if col in df.columns:
+            df[col] = df[col].astype(float).apply(lambda x: f"{x:.4f}")
+            
+    # Floats (2 decimals for Lift)
+    for col in ["lift", "cum_gain"]:
+        if col in df.columns:
+            df[col] = df[col].astype(float).apply(lambda x: f"{x:.2f}")
+
+    # Clean Headers (User friendly)
+    clean_map = {
+        "decile": "Decile", "total": "Total", "events": "Events",
+        "avg_score": "Avg Score", "event_rate": "Event Rate", "lift": "Lift",
+        "cum_events": "Cum Events", "cum_total": "Cum Total",
+        "cum_capture_rate": "Cum Capture", "cum_population": "Cum Pop",
+        "cum_gain": "Cum Lift"
+    }
+    pretty_cols = [clean_map.get(c, c) for c in df.columns]
+
+    # Plot
+    # Aspect ratio: wide
+    h, w = df.shape
+    fig_height = h * 0.4 + 0.8
+    fig_width = w * 1.2
+    
+    fig, ax = plt.subplots(figsize=(fig_width, fig_height))
+    ax.axis('tight')
+    ax.axis('off')
+    
+    # Table
+    table = ax.table(cellText=df.values,
+                     colLabels=pretty_cols,
+                     cellLoc='center',
+                     loc='center')
+    
+    table.auto_set_font_size(False)
+    table.set_fontsize(10)
+    table.scale(1.2, 1.5) # x_scale, y_scale
+    
+    # Bold Headers
+    for (row, col), cell in table.get_celld().items():
+        if row == 0:
+            cell.set_text_props(weight='bold')
+            cell.set_facecolor('#f0f0f0')
+            
+    plt.tight_layout()
+    plt.savefig(output_path, dpi=200, bbox_inches='tight', pad_inches=0.1)
+    plt.close()
+
+def _plot_oof_ks(y_true, y_prob, output_path):
+    """
+    Plots the KS Curve (CDF of Events vs Non-Events) for Pooled OOF predictions.
+    Replicates the visual style of the standard KS plot.
+    """
+    import matplotlib.pyplot as plt
+    import pandas as pd
+    import numpy as np
+    
+    # 1. Prepare Dataframe
+    # We can infer pos_label=1 usually
+    pos_label = 1
+    df = pd.DataFrame({"y": (np.array(y_true) == pos_label).astype(int), "score": np.array(y_prob)})
+    
+    if df.empty:
+        return # Handle empty
+
+    df = df.sort_values("score", ascending=False).reset_index(drop=True)
+    n = len(df)
+
+    # counts
+    total_events = df["y"].sum()
+    total_non_events = n - total_events
+
+    # avoid divide-by-zero
+    if total_events == 0 or total_non_events == 0:
+        return
+
+    cum_events = np.cumsum(df["y"].values) / total_events
+    cum_non_events = np.cumsum(1 - df["y"].values) / total_non_events
+    population = (np.arange(1, n + 1)) / n
+    ks_gap = np.abs(cum_events - cum_non_events)
+    
+    ks_df = pd.DataFrame({
+        "population": population,
+        "cum_event": cum_events,
+        "cum_non_event": cum_non_events,
+        "ks_gap": ks_gap
+    })
+    
+    # 2. Plotting
+    ks_idx       = int(ks_df["ks_gap"].values.argmax())
+    ks_x         = float(ks_df["population"].iloc[ks_idx])
+    ks_y_event   = float(ks_df["cum_event"].iloc[ks_idx])
+    ks_y_nonevent= float(ks_df["cum_non_event"].iloc[ks_idx])
+    ks_val_annot = abs(ks_y_event - ks_y_nonevent)
+
+    plt.figure(figsize=(6, 4))
+    plt.plot(ks_df["population"], ks_df["cum_event"],     label="Cumulative Event")
+    plt.plot(ks_df["population"], ks_df["cum_non_event"], label="Cumulative Non-Event")
+
+    # vertical line & markers at max KS
+    plt.axvline(ks_x, linestyle="--", alpha=0.7, color='gray')
+    plt.scatter([ks_x], [ks_y_event],    s=25, color='C0')
+    plt.scatter([ks_x], [ks_y_nonevent], s=25, color='C1')
+
+    # readable annotation
+    plt.annotate(
+        f"KS = {ks_val_annot:.1%}\nPop = {ks_x:.1%}",
+        xy=(ks_x, (ks_y_event + ks_y_nonevent) / 2.0),
+        xytext=(ks_x + 0.05, min(0.9, (ks_y_event + ks_y_nonevent) / 2.0 + 0.1)),
+        arrowprops=dict(arrowstyle="->", color="black", lw=1),
+        ha="left", va="center", fontsize=10,
+        bbox=dict(boxstyle="round,pad=0.3", fc="white", ec="black", lw=0.8),
+    )
+
+    plt.xlabel("Population (fraction)")
+    plt.ylabel("Cumulative share")
+    plt.title("CV: KS Curve (Pooled OOF)")
+    plt.legend(loc="lower right")
+    plt.grid(True, alpha=0.3)
+    
+    plt.tight_layout()
+    plt.savefig(output_path, dpi=160)
+    plt.close()
+
+def _plot_oof_pred_vs_actual(y_true, y_pred, output_path):
+    """
+    Plots Predicted vs Actual for Pooled OOF regression predictions.
+    Replicates the visual style of the standard regression plot.
+    """
+    import matplotlib.pyplot as plt
+    import numpy as np
+
+    plt.figure()
+    plt.scatter(y_true, y_pred, s=12, alpha=0.5, label="OOF Predictions")
+    
+    # Check for empty or single-point data to avoid min/max errors
+    if len(y_true) > 0:
+        mn = float(min(np.min(y_true), np.min(y_pred)))
+        mx = float(max(np.max(y_true), np.max(y_pred)))
+        plt.plot([mn, mx], [mn, mx], 'k--', lw=1, label="Perfect Fit")
+    
+    plt.xlabel("Actual")
+    plt.ylabel("Predicted")
+    plt.title("CV: Predicted vs Actual (Pooled OOF)")
+    plt.legend(loc="upper left")
+    plt.tight_layout()
+    plt.savefig(output_path, dpi=160)
+    plt.close()

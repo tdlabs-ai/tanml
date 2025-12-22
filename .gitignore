@@ -19,7 +19,7 @@ __pycache__/
 .ui_runs/
 reports/
 data/
-models/
+# models/
 catboost_info/
 
 # OS junk
