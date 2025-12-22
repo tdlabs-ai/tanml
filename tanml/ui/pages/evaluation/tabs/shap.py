@@ -15,6 +15,18 @@ def render(context):
     
     st.markdown("### Model Explainability (SHAP)")
     st.caption("Understand feature importance and how features drive the model's predictions.")
+
+    with st.expander("ℹ️ Interpreting SHAP Plots"):
+        st.markdown("""
+        **Beeswarm Plot (Global Info)**
+        - Shows **feature impact** (x-axis) and **feature value** (color).
+        - **Red dots**: High feature values. **Blue dots**: Low feature values.
+        - If red dots are on the right, high values *increase* the prediction.
+        
+        **Bar Plot (Feature Importance)**
+        - Shows the average magnitude of impact for each feature.
+        - Longer bars mean the feature is more important overall.
+        """)
     
     
     col1, col2 = st.columns(2)

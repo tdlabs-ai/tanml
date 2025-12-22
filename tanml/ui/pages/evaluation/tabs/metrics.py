@@ -18,6 +18,21 @@ from tanml.ui.pages.evaluation.tabs import register_tab
 def render(context):
     """Render the metrics comparison tab."""
     
+    # Definitions helper
+    with st.expander("ℹ️ Metric Definitions (Click to expand)"):
+        st.markdown("""
+        | Metric | Definition |
+        | :--- | :--- |
+        | **Accuracy** | Fraction of correct predictions. (Higher is better) |
+        | **Precision** | Out of all predicted positives, how many were actually positive? (Focus: minimizing false positives) |
+        | **Recall** | Out of all actual positives, how many did we catch? (Focus: minimizing false negatives) |
+        | **F1** | Harmonic mean of Precision and Recall. Balances both concerns. |
+        | **AUC (ROC)** | Area Under Curve. Probability that the model ranks a random positive example higher than a negative one. (0.5 = random, 1.0 = perfect) |
+        | **RMSE** | Root Mean Squared Error. Standard deviation of prediction errors. (Lower is better) |
+        | **MAE** | Mean Absolute Error. Average absolute difference between prediction and actual. (Lower is better) |
+        | **R²** | Coefficient of Determination. 1.0 means perfect fit, 0.0 means model is as good as guessing the mean. |
+        """)
+
     # Calculate metrics based on task type
     if context.task_type == "classification":
         metrics_order = ["Accuracy", "Precision", "Recall", "F1", "AUC"]

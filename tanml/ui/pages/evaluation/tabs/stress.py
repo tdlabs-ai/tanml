@@ -17,9 +17,26 @@ def render(context):
 
     col1, col2 = st.columns(2)
     with col1:
-        epsilon = st.slider("Perturbation Magnitude", 0.001, 0.5, 0.01, step=0.001, format="%.3f", help="Magnitude of noise to add (e.g. 0.01 = 1%)")
+        epsilon = st.slider(
+            "Perturbation Magnitude", 
+            0.001, 0.5, 0.01, step=0.001, format="%.3f", 
+            help="How much noise to add to the data. E.g., 0.01 means values are perturbed by ±1% (multiplicative noise)."
+        )
     with col2:
-        fraction = st.slider("Affected Data Fraction", 0.1, 1.0, 0.2, step=0.1, help="Fraction of rows to perturb")
+        fraction = st.slider(
+            "Affected Data Fraction", 
+            0.1, 1.0, 0.2, step=0.1, 
+            help="Percentage of test data rows that will receive noise. Higher values simulate more widespread data quality issues."
+        )
+    
+    with st.expander("ℹ️ About Stress Testing"):
+        st.markdown("""
+        **Why run this?**
+        Real-world data is rarely perfect. Stress testing simulates checking how your model behaves when data quality drops.
+        
+        - **Perturbation**: Simulates sensor noise or slight data corruption.
+        - **Robustness**: A good model should degrade gracefully, not crash or give wild predictions with small changes.
+        """)
     
     if st.button("Run Stress Test", type="secondary"):
         with st.spinner("Running Stress Checks..."):
