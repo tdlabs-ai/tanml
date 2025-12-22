@@ -29,3 +29,5 @@ Thumbs.db
 # secrets
 .env
 .streamlit/secrets.toml
+
+exported_data/
