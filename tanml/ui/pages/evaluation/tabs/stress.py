@@ -14,6 +14,12 @@ def render(context):
     
     st.markdown("### Stress Testing (Robustness)")
     st.caption("Evaluates how model performance degrades when **Testing Data** is perturbed with noise (simulating poor data quality).")
+
+    col1, col2 = st.columns(2)
+    with col1:
+        epsilon = st.slider("Perturbation Magnitude", 0.001, 0.5, 0.01, step=0.001, format="%.3f", help="Magnitude of noise to add (e.g. 0.01 = 1%)")
+    with col2:
+        fraction = st.slider("Affected Data Fraction", 0.1, 1.0, 0.2, step=0.1, help="Fraction of rows to perturb")
     
     if st.button("Run Stress Test", type="secondary"):
         with st.spinner("Running Stress Checks..."):
@@ -25,12 +31,12 @@ def render(context):
                     context.model, 
                     context.X_test, 
                     context.y_test, 
-                    epsilon=0.01, 
-                    perturb_fraction=0.2
+                    epsilon=epsilon, 
+                    perturb_fraction=fraction
                 )
                 df_stress = stress_check.run()
                 
-                st.write("**Stress Test Results (Perturbation +/- 1%)**")
+                st.write(f"**Stress Test Results (Perturbation +/- {epsilon*100:.1f}%)**")
                 
                 # Highlight drops
                 if "delta_accuracy" in df_stress.columns:

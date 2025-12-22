@@ -143,10 +143,17 @@ class SHAPCheck(BaseCheck):
 
         # Prefer fast paths in auto
         if alg == "tree" or (alg == "auto" and self._looks_like_tree(m)):
-            mo = None if model_output_hint == "auto" else model_output_hint
-            expl = shap.TreeExplainer(
-                m, data=background, feature_perturbation="interventional", model_output=mo
-            )
+            mo = "raw" if model_output_hint == "auto" else model_output_hint
+            try:
+                expl = shap.TreeExplainer(
+                    m, data=background, feature_perturbation="interventional", model_output=mo
+                )
+            except Exception:
+                # Fallback for models with categorical splits (XGBoost/CatBoost)
+                # which fail with interventional perturbation + background data
+                expl = shap.TreeExplainer(
+                    m, feature_perturbation="tree_path_dependent", model_output=mo
+                )
             return expl, "tree"
 
         if alg == "linear" or (alg == "auto" and self._looks_like_linear(m)):

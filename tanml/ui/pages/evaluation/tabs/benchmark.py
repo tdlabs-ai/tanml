@@ -15,61 +15,101 @@ from tanml.ui.pages.evaluation.tabs import register_tab
 @register_tab(name="Benchmarking", order=50, key="tab_bench")
 def render(context):
     """Render the benchmarking tab."""
+    from tanml.models.registry import list_models, build_estimator, ui_schema_for, get_spec
     
     st.markdown("### Benchmarking: Compare Your Model vs Baseline Models")
     st.caption("Select one or more baseline models to compare against your trained model.")
     
-    # Model selection based on task type
-    if context.task_type == "classification":
-        available_models = {
-            "Logistic Regression (statsmodels)": "sm_logit",
-            "Logistic Regression (sklearn)": "sk_logistic",
-            "Random Forest": "sk_rf",
-            "Decision Tree": "sk_dt",
-            "Naive Bayes": "sk_nb",
-            "Dummy Classifier (Most Frequent)": "sk_dummy"
-        }
-    else:  # regression
-        available_models = {
-            "OLS Regression (statsmodels)": "sm_ols",
-            "Linear Regression (sklearn)": "sk_linear",
-            "Ridge Regression": "sk_ridge",
-            "Random Forest": "sk_rf",
-            "Decision Tree": "sk_dt",
-            "Dummy Regressor (Mean)": "sk_dummy"
-        }
+    # 1. Fetch Available Models
+    available_specs = list_models(context.task_type)
+    # Format options as "Library: Algorithm"
+    model_options = [f"{lib}: {algo}" for (lib, algo) in available_specs.keys()]
     
-    selected_models = st.multiselect(
+    selected_model_strs = st.multiselect(
         "Select Baseline Models to Compare",
-        options=list(available_models.keys()),
-        default=[list(available_models.keys())[0]],
+        options=model_options,
+        default=[model_options[0]] if model_options else None,
         help="Choose one or more models to benchmark against"
     )
     
+    # 2. Dynamic Hyperparameters
+    bench_configs = {} # Store (lib, algo, params) for each selected model
+    
+    if selected_model_strs:
+        with st.expander("Advanced Hyperparameters", expanded=False):
+            st.caption("Adjust hyperparameters for selected models.")
+            
+            for m_str in selected_model_strs:
+                lib, algo = m_str.split(": ")
+                st.markdown(f"**{algo}** ({lib})")
+                
+                # Fetch schema and defaults
+                spec = get_spec(lib, algo)
+                schema = spec.ui_schema
+                defaults = spec.defaults
+                
+                # Container for this model's params
+                params = {} 
+                
+                # Render Form (Simplified version of forms.py)
+                c1, c2 = st.columns(2)
+                seed_keys = [k for k in ("random_state", "seed", "random_seed") if k in defaults]
+                
+                # Filter out seed keys (we'll handle globally or ignore for simplicity in benchmark)
+                valid_items = {k: v for k, v in schema.items() if k not in seed_keys}
+                
+                for i, (name, (typ, choices, helptext)) in enumerate(valid_items.items()):
+                    with (c1 if i % 2 == 0 else c2):
+                        default_val = defaults.get(name)
+                        key_widget = f"bench_{lib}_{algo}_{name}"
+                        
+                        if typ == "choice":
+                            opts = list(choices) if choices else []
+                            show = ["None" if o is None else o for o in opts]
+                            idx = 0
+                            if default_val in show: idx = show.index(default_val)
+                            elif default_val is None and "None" in show: idx = show.index("None")
+                            
+                            sel = st.selectbox(name, show, index=idx, key=key_widget, help=helptext)
+                            params[name] = None if sel == "None" else sel
+                            
+                        elif typ == "bool":
+                            params[name] = st.checkbox(name, value=bool(default_val), key=key_widget, help=helptext)
+                            
+                        elif typ == "int":
+                            # Handle None default for int (rare but possible for 'max_depth')
+                            val = int(default_val) if default_val is not None else 0
+                            params[name] = int(st.number_input(name, value=val, step=1, key=key_widget, help=helptext))
+                            
+                        elif typ == "float":
+                            params[name] = float(st.number_input(name, value=float(default_val or 0.0), key=key_widget, help=helptext))
+                        
+                        else: # str
+                            params[name] = st.text_input(name, value=str(default_val or ""), key=key_widget, help=helptext)
+
+                # Store config
+                bench_configs[m_str] = {"lib": lib, "algo": algo, "params": params}
+                st.divider()
+
     if st.button("🔬 Run Benchmark Comparison", type="secondary", key="btn_benchmark"):
-        if not selected_models:
+        if not selected_model_strs:
             st.warning("Please select at least one baseline model.")
         else:
             with st.spinner("Training baseline models..."):
                 try:
-                    import statsmodels.api as sm
-                    from sklearn.linear_model import LogisticRegression, LinearRegression, Ridge
-                    from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
-                    from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
-                    from sklearn.naive_bayes import GaussianNB
-                    from sklearn.dummy import DummyClassifier, DummyRegressor
                     from sklearn.metrics import (
                         roc_auc_score, f1_score, accuracy_score, precision_score, recall_score,
                         mean_squared_error, mean_absolute_error, r2_score
                     )
                     
                     # Prepare data
-                    X_tr_num = context.X_train.select_dtypes(include=np.number).fillna(0)
-                    X_te_num = context.X_test.select_dtypes(include=np.number).fillna(0)
+                    # Registry models expect numeric inputs generally, but some handle cats.
+                    # For safety in this benchmark, we'll stick to numeric features similar to original
+                    # BUT ideally we should pass what the model allows. For now, keep simple numeric select.
+                    X_tr = context.X_train.select_dtypes(include=np.number).fillna(0)
+                    X_te = context.X_test.select_dtypes(include=np.number).fillna(0)
                     
                     benchmark_results = {"your_model": {}, "baselines": {}}
-                    
-                    # Your model's metrics (try to get from context, else use simplified dict)
                     metrics_test = context.results.get("metrics_test", {})
                     
                     if context.task_type == "classification":
@@ -90,93 +130,38 @@ def render(context):
                         higher_better = ["r2"]
                     
                     # Train each selected baseline
-                    for model_name in selected_models:
-                        model_key = available_models[model_name]
+                    for m_str in selected_model_strs:
+                        cfg = bench_configs[m_str]
                         try:
+                            # Build and Train
+                            mdl = build_estimator(cfg["lib"], cfg["algo"], cfg["params"])
+                            mdl.fit(X_tr, context.y_train)
+                            
+                            pred = mdl.predict(X_te)
+                            
+                            # Metrics
                             if context.task_type == "classification":
-                                # Initialize model
-                                if model_key == "sm_logit":
-                                    X_sm = sm.add_constant(X_tr_num)
-                                    X_sm_te = sm.add_constant(X_te_num)
-                                    # Use a simple try/except for singular matrix issues
-                                    try:
-                                        mdl = sm.Logit(context.y_train, X_sm).fit(disp=0, maxiter=100)
-                                        pred_prob = mdl.predict(X_sm_te)
-                                    except:
-                                        # Fallback if statsmodels fails
-                                        mdl = LogisticRegression()
-                                        mdl.fit(X_tr_num, context.y_train)
-                                        pred_prob = mdl.predict_proba(X_te_num)[:, 1]
-
-                                    pred = (pred_prob >= 0.5).astype(int)
-                                elif model_key == "sk_logistic":
-                                    mdl = LogisticRegression(max_iter=200, random_state=42)
-                                    mdl.fit(X_tr_num, context.y_train)
-                                    pred = mdl.predict(X_te_num)
-                                    pred_prob = mdl.predict_proba(X_te_num)[:, 1]
-                                elif model_key == "sk_rf":
-                                    mdl = RandomForestClassifier(n_estimators=50, random_state=42)
-                                    mdl.fit(X_tr_num, context.y_train)
-                                    pred = mdl.predict(X_te_num)
-                                    pred_prob = mdl.predict_proba(X_te_num)[:, 1]
-                                elif model_key == "sk_dt":
-                                    mdl = DecisionTreeClassifier(random_state=42)
-                                    mdl.fit(X_tr_num, context.y_train)
-                                    pred = mdl.predict(X_te_num)
-                                    pred_prob = mdl.predict_proba(X_te_num)[:, 1]
-                                elif model_key == "sk_nb":
-                                    mdl = GaussianNB()
-                                    mdl.fit(X_tr_num, context.y_train)
-                                    pred = mdl.predict(X_te_num)
-                                    pred_prob = mdl.predict_proba(X_te_num)[:, 1]
-                                elif model_key == "sk_dummy":
-                                    mdl = DummyClassifier(strategy="most_frequent")
-                                    mdl.fit(X_tr_num, context.y_train)
-                                    pred = mdl.predict(X_te_num)
-                                    pred_prob = np.full(len(context.y_test), context.y_train.mean())
+                                try:
+                                    pred_prob = mdl.predict_proba(X_te)[:, 1]
+                                except:
+                                    pred_prob = np.zeros(len(pred)) # Fallback
                                 
-                                # Calculate metrics
-                                benchmark_results["baselines"][model_name] = {
+                                benchmark_results["baselines"][m_str] = {
                                     "roc_auc": roc_auc_score(context.y_test, pred_prob) if len(np.unique(pred_prob)) > 1 else 0.5,
                                     "f1": f1_score(context.y_test, pred),
                                     "accuracy": accuracy_score(context.y_test, pred),
                                     "precision": precision_score(context.y_test, pred, zero_division=0),
                                     "recall": recall_score(context.y_test, pred, zero_division=0)
                                 }
-                            else:  # Regression
-                                if model_key == "sm_ols":
-                                    X_sm = sm.add_constant(X_tr_num)
-                                    X_sm_te = sm.add_constant(X_te_num)
-                                    mdl = sm.OLS(context.y_train, X_sm).fit()
-                                    pred = mdl.predict(X_sm_te)
-                                elif model_key == "sk_linear":
-                                    mdl = LinearRegression()
-                                    mdl.fit(X_tr_num, context.y_train)
-                                    pred = mdl.predict(X_te_num)
-                                elif model_key == "sk_ridge":
-                                    mdl = Ridge()
-                                    mdl.fit(X_tr_num, context.y_train)
-                                    pred = mdl.predict(X_te_num)
-                                elif model_key == "sk_rf":
-                                    mdl = RandomForestRegressor(n_estimators=50, random_state=42)
-                                    mdl.fit(X_tr_num, context.y_train)
-                                    pred = mdl.predict(X_te_num)
-                                elif model_key == "sk_dt":
-                                    mdl = DecisionTreeRegressor(random_state=42)
-                                    mdl.fit(X_tr_num, context.y_train)
-                                    pred = mdl.predict(X_te_num)
-                                elif model_key == "sk_dummy":
-                                    mdl = DummyRegressor(strategy="mean")
-                                    mdl.fit(X_tr_num, context.y_train)
-                                    pred = mdl.predict(X_te_num)
-                                
-                                benchmark_results["baselines"][model_name] = {
+                            else:
+                                benchmark_results["baselines"][m_str] = {
                                     "rmse": np.sqrt(mean_squared_error(context.y_test, pred)),
                                     "mae": mean_absolute_error(context.y_test, pred),
                                     "r2": r2_score(context.y_test, pred)
                                 }
+                        
                         except Exception as model_err:
-                            st.warning(f"Failed to train {model_name}: {model_err}")
+                            st.warning(f"Failed to train {m_str}: {model_err}")
                     
                     benchmark_results["higher_better"] = higher_better
                     benchmark_results["task_type"] = context.task_type

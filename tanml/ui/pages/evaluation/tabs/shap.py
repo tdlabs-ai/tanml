@@ -16,13 +16,23 @@ def render(context):
     st.markdown("### Model Explainability (SHAP)")
     st.caption("Understand feature importance and how features drive the model's predictions.")
     
-    if st.button("Run SHAP Analysis", type="secondary"):
+    
+    col1, col2 = st.columns(2)
+    with col1:
+        bg_size = st.slider("Background Samples (K-Means)", 10, 500, 50, step=10, help="Number of samples from training data to use as baseline reference.")
+    with col2:
+        test_size = st.slider("Test Samples to Explain", 10, 1000, 100, step=10, help="Number of samples from test data to calculate SHAP values for.")
+
+    if st.button("🚀 Start Analysis", type="primary"):
         with st.spinner("Running SHAP Check (this may take a minute)..."):
             try:
+                import importlib
+                import tanml.checks.explainability.shap_check
+                importlib.reload(tanml.checks.explainability.shap_check)
                 from tanml.checks.explainability.shap_check import SHAPCheck
                 
-                # We use 100 bg samples and 100 test samples by default for speed
-                scog = {"explainability": {"shap": {"background_sample_size": 50, "test_sample_size": 100}}}
+                # Config with user values
+                scog = {"explainability": {"shap": {"background_sample_size": bg_size, "test_sample_size": test_size}}}
                 
                 # Note: SHAPCheck expects X_train, X_test, y_train, y_test
                 shap_check = SHAPCheck(
