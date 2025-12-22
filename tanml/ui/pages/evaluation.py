@@ -595,7 +595,7 @@ def render_model_evaluation_page(run_dir):
                  _update_report_buffer("drift", drift_results)
                  st.toast("Drift Analysis saved to Report!", icon="🌊")
 
-        # 4. Input Cluster Coverage Check
+        # 4. Input Cluster Coverage Check - Using tanml.analysis module
         with tab_cluster:
             st.markdown("### Input Cluster Coverage Check")
             st.caption("Evaluates how well the **Testing Data** covers the input space defined by the **Training Data** clusters. Low coverage may indicate the model is being applied to out-of-distribution (OOD) samples.")
@@ -612,73 +612,34 @@ def render_model_evaluation_page(run_dir):
             if run_cluster:
                 with st.spinner("Running K-Means Clustering..."):
                     try:
-                        from sklearn.cluster import KMeans
-                        from sklearn.preprocessing import StandardScaler
+                        # Use the analysis module for clustering
+                        from tanml.analysis.clustering import analyze_cluster_coverage
                         
-                        # Use user-specified cluster count
-                        n_clusters = n_clusters_input
+                        cluster_results_raw = analyze_cluster_coverage(
+                            X_train=X_train,
+                            X_test=X_test,
+                            n_clusters=n_clusters_input,
+                        )
                         
-                        # Scale data for clustering
-                        scaler = StandardScaler()
-                        X_train_sc = scaler.fit_transform(X_train.select_dtypes(include=np.number).fillna(0))
-                        X_test_sc = scaler.transform(X_test.select_dtypes(include=np.number).fillna(0))
+                        # Build UI-friendly results from analysis module output
+                        n_clusters = cluster_results_raw["n_clusters"]
+                        coverage_pct = cluster_results_raw["coverage_pct"]
+                        uncovered_count = cluster_results_raw["uncovered_count"]
+                        cluster_dist = cluster_results_raw["cluster_distribution"]
                         
-                        # Fit K-Means on Training Data
-                        kmeans = KMeans(n_clusters=n_clusters, random_state=42, n_init=10)
-                        kmeans.fit(X_train_sc)
-                        
-                        # Assign Training samples to clusters
-                        train_labels = kmeans.predict(X_train_sc)
-                        train_cluster_counts = pd.Series(train_labels).value_counts().sort_index()
-                        
-                        # Assign Testing samples to nearest cluster
-                        test_labels = kmeans.predict(X_test_sc)
-                        test_cluster_counts = pd.Series(test_labels).value_counts().sort_index()
-                        
-                        # Calculate coverage
-                        all_clusters = set(range(n_clusters))
-                        covered_clusters = set(test_cluster_counts.index)
-                        uncovered_clusters = all_clusters - covered_clusters
-                        coverage_pct = len(covered_clusters) / n_clusters * 100
-                        
-                        # Calculate distance to nearest cluster center for Test data (OOD detection)
-                        test_distances = kmeans.transform(X_test_sc).min(axis=1)
-                        train_distances = kmeans.transform(X_train_sc).min(axis=1)
-                        
-                        train_95_dist = np.percentile(train_distances, 95)
-                        ood_mask = test_distances > train_95_dist
-                        ood_count = ood_mask.sum()
-                        ood_pct = ood_count / len(X_test) * 100
-                        
-                        # Get OOD sample indices
-                        ood_indices = np.where(ood_mask)[0].tolist()
-                        
-                        # Build results
-                        cluster_results = {
-                            "n_clusters": n_clusters,
-                            "coverage_pct": coverage_pct,
-                            "covered_clusters": len(covered_clusters),
-                            "uncovered_clusters": len(uncovered_clusters),
-                            "uncovered_list": list(uncovered_clusters),
-                            "ood_pct": ood_pct,
-                            "ood_count": int(ood_count),
-                            "train_95_dist": float(train_95_dist),
-                            "ood_indices": ood_indices,
-                            "cluster_summary": []
-                        }
-                        
-                        # Store OOD samples data for download
-                        if ood_count > 0:
-                            ood_df = X_test.iloc[ood_indices].copy()
-                            ood_df['_ood_distance'] = test_distances[ood_mask]
-                            ood_df['_assigned_cluster'] = test_labels[ood_mask]
-                            st.session_state["eval_ood_samples"] = ood_df
+                        # Calculate OOD metrics (additional UI-specific logic)
+                        ood_pct = 100 - coverage_pct
+                        ood_indices = cluster_results_raw["uncovered_indices"]
                         
                         # Build cluster summary table
+                        cluster_summary = []
                         for c in range(n_clusters):
-                            train_c = train_cluster_counts.get(c, 0)
-                            test_c = test_cluster_counts.get(c, 0)
-                            cluster_results["cluster_summary"].append({
+                            if c in cluster_dist:
+                                train_c = cluster_dist[c]["train_count"]
+                                test_c = cluster_dist[c]["test_count"]
+                            else:
+                                train_c, test_c = 0, 0
+                            cluster_summary.append({
                                 "Cluster": c,
                                 "Train Count": int(train_c),
                                 "Train %": f"{train_c / len(X_train) * 100:.1f}%",
@@ -687,24 +648,34 @@ def render_model_evaluation_page(run_dir):
                                 "Status": "✓ Covered" if test_c > 0 else "✗ Uncovered"
                             })
                         
-                        # Compute PCA for visualization (reduce to 2D)
-                        from sklearn.decomposition import PCA
-                        pca = PCA(n_components=2, random_state=42)
-                        train_pca = pca.fit_transform(X_train_sc)
-                        test_pca = pca.transform(X_test_sc)
-                        centers_pca = pca.transform(kmeans.cluster_centers_)
+                        cluster_results = {
+                            "n_clusters": n_clusters,
+                            "coverage_pct": coverage_pct,
+                            "covered_clusters": n_clusters - len([c for c in cluster_dist.values() if c["test_count"] == 0]),
+                            "uncovered_clusters": len([c for c in cluster_dist.values() if c["test_count"] == 0]),
+                            "ood_pct": ood_pct,
+                            "ood_count": uncovered_count,
+                            "ood_indices": ood_indices,
+                            "cluster_summary": cluster_summary
+                        }
                         
-                        # Store PCA data for visualization
+                        # Store OOD samples data for download
+                        if uncovered_count > 0 and ood_indices:
+                            ood_df = X_test.iloc[ood_indices].copy()
+                            st.session_state["eval_ood_samples"] = ood_df
+                        
+                        # Store PCA data for visualization (from analysis module)
+                        train_pca = np.array(cluster_results_raw.get("train_pca", []))
+                        test_pca = np.array(cluster_results_raw.get("test_pca", []))
+                        centers_pca = np.array(cluster_results_raw.get("cluster_centers_pca", []))
+                        
                         st.session_state["eval_cluster_pca"] = {
                             "train_pca": train_pca,
                             "test_pca": test_pca,
                             "centers_pca": centers_pca,
-                            "train_labels": train_labels,
-                            "test_labels": test_labels,
+                            "train_labels": cluster_results_raw.get("train_labels", []),
+                            "test_labels": cluster_results_raw.get("test_labels", []),
                             "n_clusters": n_clusters,
-                            "explained_variance": pca.explained_variance_ratio_,
-                            "train_cluster_counts": train_cluster_counts.to_dict(),
-                            "test_cluster_counts": test_cluster_counts.to_dict(),
                             "total_train": len(X_train),
                             "total_test": len(X_test)
                         }
