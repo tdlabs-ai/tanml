@@ -31,3 +31,4 @@ Thumbs.db
 .streamlit/secrets.toml
 
 exported_data/
+tanml/tmp_report_assets/
