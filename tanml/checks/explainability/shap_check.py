@@ -44,7 +44,7 @@ class SHAPCheck(BaseCheck):
     """
 
     def __init__(self, model, X_train, X_test, y_train, y_test, rule_config=None, cleaned_df=None):
-        super().__init__(model, X_train, X_test, y_train, y_test, rule_config, cleaned_data=cleaned_df)
+        super().__init__(model, X_train, X_test, y_train, y_test, rule_config)
         self.cleaned_df = cleaned_df
 
     # -------------------------- helpers --------------------------
@@ -173,7 +173,7 @@ class SHAPCheck(BaseCheck):
             warnings.filterwarnings("ignore", category=UserWarning)
 
             # -------- read config (note: under explainability.shap) ----------
-            exp_cfg = (self.rule_config or {}).get("explainability", {}) or {}
+            exp_cfg = (self.config or {}).get("explainability", {}) or {}
             cfg = exp_cfg.get("shap", {}) if isinstance(exp_cfg, dict) else {}
             seed = int(cfg.get("seed", 42))
             bg_n = int(cfg.get("background_sample_size", 100))
@@ -186,7 +186,7 @@ class SHAPCheck(BaseCheck):
 
             # -------- resolve output directory + timestamp ----------
             out_dir_opt = cfg.get("out_dir")
-            options_dir = ((self.rule_config or {}).get("options") or {}).get("save_artifacts_dir")
+            options_dir = ((self.config or {}).get("options") or {}).get("save_artifacts_dir")
             # prefer explicit shap.out_dir, then global artifacts dir, then local fallback
             outdir = Path(out_dir_opt or options_dir or (Path(__file__).resolve().parents[2] / "tmp_report_assets"))
             outdir.mkdir(parents=True, exist_ok=True)
