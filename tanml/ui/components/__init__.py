@@ -19,7 +19,6 @@ from tanml.ui.components.metrics import (
 )
 from tanml.ui.components.forms import (
     render_model_form,
-    file_uploader_multi,
 )
 
 __all__ = [
@@ -29,5 +28,4 @@ __all__ = [
     "metric_no_trunc",
     # Forms
     "render_model_form",
-    "file_uploader_multi",
 ]
