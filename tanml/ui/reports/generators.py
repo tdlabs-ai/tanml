@@ -86,29 +86,31 @@ def _fmt2(v, *, decimals=2, dash="—"):
         return dash
 
 
+def _add_md_paragraph(doc, text: str, style=None):
+    """
+    Add a paragraph to doc, parsing bold markdown (**text**).
+    
+    Args:
+        doc: docx Document object
+        text: String with **bold** markers
+        style: Optional style name
+    """
+    p = doc.add_paragraph(style=style)
+    # Split by double asterisks
+    parts = text.split("**")
+    
+    for i, part in enumerate(parts):
+        run = p.add_run(part)
+        # Even indices (0, 2, 4...) are normal text
+        # Odd indices (1, 3, 5...) are wrapped in ** and should be bold
+        if i % 2 == 1:
+            run.bold = True
+    return p
+
 def _generate_dev_report_docx(dev_data):
     doc = Document()
     doc.add_heading('Model Development Report', 0)
     doc.add_paragraph(f"Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M')}")
-    
-    # Glossary / Guide
-    doc.add_heading('Guide to Metrics', level=2)
-    doc.add_paragraph("Key terms used in this report:")
-    
-    # 1. General Concepts
-    if dev_data.get("cv_metrics"): 
-        doc.add_paragraph(f"**Cross-Validation**: {GLOSSARY['Cross-Validation']}")
-    
-    # 2. Metrics relevant to task
-    metrics_to_show = []
-    if dev_data.get("task_type") == "classification":
-        metrics_to_show = ["ROC AUC", "PR AUC", "F1 Score", "Accuracy", "Precision", "Recall", "Log Loss", "Brier Score", "MCC", "KS Statistic", "Confusion Matrix"]
-    else:
-        metrics_to_show = ["RMSE", "MAE", "R2 Score", "Median AE"]
-        
-    for m in metrics_to_show:
-        if m in GLOSSARY:
-             doc.add_paragraph(f"**{m}**: {GLOSSARY[m]}", style='List Bullet')
     
     # 1. Executive Summary
     doc.add_heading('1. Executive Summary', level=1)
@@ -116,11 +118,38 @@ def _generate_dev_report_docx(dev_data):
     if dev_data:
         task = dev_data.get("task_type", "Unknown")
         algo = dev_data.get("model_config", {}).get("algorithm", "Unknown")
-        p.add_run(f"Summarizes development of a ").bold = False
+        p.add_run(f"This report summarizes the development of a ").bold = False
         p.add_run(f"{task.title()}").bold = True
         p.add_run(f" model using ").bold = False
         p.add_run(f"{algo}").bold = True
         p.add_run(".")
+        
+        # Smart Summary
+        mets = dev_data.get("metrics", {})
+        if task == "classification":
+            score = mets.get("accuracy", 0)
+            p2 = doc.add_paragraph(f"The model achieved an Accuracy of {score:.4f}.")
+            if score > 0.98: p2.add_run(" (Note: Extremely high accuracy may indicate overfitting or data leakage.)").bold = True
+        else:
+            score = mets.get("r2", 0)
+            p2 = doc.add_paragraph(f"The model achieved an R² Score of {score:.4f}.")
+
+        # Check CV Consistency
+        cv_met = dev_data.get("cv_metrics", {})
+        if cv_met:
+            # Try multiple keys for robustness (simple keys first)
+            cv_s = cv_met.get("accuracy", 
+                   cv_met.get("r2", 
+                   cv_met.get("R2",
+                   cv_met.get("test_accuracy", 
+                   cv_met.get("test_r2", 
+                   cv_met.get("mean_test_score", 0))))))
+                   
+            diff = abs(score - cv_s)
+            if diff > 0.05:
+                _add_md_paragraph(doc, f"⚠️ **Note**: Validation score ({score:.2f}) differs from Cross-Validation mean ({cv_s:.2f}) by >5%.", style='List Bullet')
+            else:
+                 _add_md_paragraph(doc, "✅ **Stability**: Validation score aligns with Cross-Validation results.", style='List Bullet')
     else:
         p.add_run("No development data available.")
         
@@ -173,6 +202,24 @@ def _generate_dev_report_docx(dev_data):
                     doc.add_paragraph(name.replace("_", " ").title())
                     doc.add_picture(io.BytesIO(img_bytes), width=Inches(4))
 
+    # Appendix: Glossary
+    doc.add_page_break()
+    doc.add_heading('Appendix: Guide to Metrics', level=1)
+    doc.add_paragraph("Key terms used in this report:")
+    
+    if dev_data.get("cv_metrics"): 
+        doc.add_paragraph(f"**Cross-Validation**: {GLOSSARY['Cross-Validation']}")
+    
+    metrics_to_show = []
+    if dev_data.get("task_type") == "classification":
+        metrics_to_show = ["ROC AUC", "PR AUC", "F1 Score", "Accuracy", "Precision", "Recall", "Log Loss", "Brier Score", "MCC", "KS Statistic", "Confusion Matrix"]
+    else:
+        metrics_to_show = ["RMSE", "MAE", "R2 Score", "Median AE"]
+        
+    for m in metrics_to_show:
+        if m in GLOSSARY:
+             doc.add_paragraph(f"**{m}**: {GLOSSARY[m]}", style='List Bullet')
+
     # Save
     buffer = io.BytesIO()
     doc.save(buffer)
@@ -193,36 +240,113 @@ def _generate_eval_report_docx(buf):
     doc.add_paragraph(f"Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M')}")
 
     
-    # Glossary
-    doc.add_heading('Guide to Metrics', level=2)
-    doc.add_paragraph("Key terms used in this report:")
-    
     # Determine task type from evaluation data
     ev = buf.get("evaluation", {})
     task_type = ev.get("task_type", "classification")
+
+    # 1. Executive Summary (NEW)
+    doc.add_heading('1. Executive Summary', level=1)
     
-    # Performance Metrics
+    warnings = []
+    passing = []
+    
+    # Check Drift
+    drift = buf.get("drift", [])
+    if isinstance(drift, dict): drift = [drift]
+    if drift:
+        n_crit = sum(1 for d in drift if "Critical" in str(d.get("PSI Status","")) or "Critical" in str(d.get("KS Status","")))
+        if n_crit > 0:
+             _add_md_paragraph(doc, f"⚠️ **Summary**: {n_crit} features show Critical Drift.", style='List Bullet')
+        else:
+             _add_md_paragraph(doc, "✅ **Summary**: No critical data drift detected.", style='List Bullet')
+    
+    # Check Stress
+    stress = buf.get("stress", [])
+    if isinstance(stress, dict): stress = [stress]
+    if stress and stress[0]:
+        # Simple heuristic: if delta > 0.1
+        s0 = stress[0]
+        drop = s0.get("delta_accuracy", s0.get("delta_rmse", 0))
+        if abs(drop) > 0.1:
+             _add_md_paragraph(doc, f"⚠️ **Summary**: Performance drops significantly ({abs(drop):.2%}) under noise.", style='List Bullet')
+        else:
+             _add_md_paragraph(doc, "✅ **Summary**: Model is robust to noise (Stress Test passed).", style='List Bullet')
+            
+    # Check Overfitting
+    m_tr = ev.get("metrics_train", {})
+    m_te = ev.get("metrics_test", {})
     if task_type == "classification":
-        cls_metrics = ["ROC AUC", "PR AUC", "F1 Score", "Accuracy", "Precision", "Recall", "Log Loss", "Brier Score", "MCC", "KS Statistic"]
-        for m in cls_metrics:
-            if m in GLOSSARY:
-                doc.add_paragraph(f"**{m}**: {GLOSSARY[m]}", style='List Bullet')
+        tr_s = m_tr.get("Accuracy", 0)
+        te_s = m_te.get("Accuracy", 0)
     else:
-        reg_metrics = ["RMSE", "MAE", "R2 Score", "Median AE"]
-        for m in reg_metrics:
-            if m in GLOSSARY:
-                doc.add_paragraph(f"**{m}**: {GLOSSARY[m]}", style='List Bullet')
+        tr_s = m_tr.get("R2", 0)
+        te_s = m_te.get("R2", 0)
+        
+    if (tr_s - te_s) > 0.15:
+        warnings.append(f"Potential Overfitting: Train score ({tr_s:.2f}) is much higher than Test score ({te_s:.2f}).")
     
-    # Validation Concepts (always included)
-    doc.add_paragraph(f"**PSI**: {GLOSSARY['PSI']}", style='List Bullet')
-    doc.add_paragraph(f"**Stress Test**: {GLOSSARY['Stress Test']}", style='List Bullet')
-    doc.add_paragraph(f"**SHAP**: {GLOSSARY['SHAP']}", style='List Bullet')
-    doc.add_paragraph(f"**Cluster Coverage**: {GLOSSARY['Cluster Coverage']}", style='List Bullet')
+    # Check Cluster Coverage (Heuristic)
+    cluster_data = buf.get("cluster_coverage")
+    if isinstance(cluster_data, list): cluster_data = cluster_data[0] if cluster_data else {}
+    if not isinstance(cluster_data, dict): cluster_data = {}
     
-    # 1. Comparison
-    ev = buf.get("evaluation", {})
+    if cluster_data:
+        ood_pct = cluster_data.get("ood_pct", 0)
+        cov_pct = cluster_data.get("coverage_pct", 0)
+        if ood_pct > 10:
+            warnings.append(f"Significant Out-of-Distribution data detected ({ood_pct:.1f}% samples).")
+        if cov_pct < 80:
+             warnings.append(f"Poor Input Space Coverage: only {cov_pct:.1f}% of clusters covered.")
+             
+    if warnings:
+        p = doc.add_paragraph()
+        run = p.add_run("⚠️ Attention Required:")
+        run.bold = True
+        run.font.color.rgb = RGBColor(255, 0, 0)
+        for w in warnings:
+            _add_md_paragraph(doc, w, style='List Bullet')
+    else:
+        p = doc.add_paragraph()
+        run = p.add_run("✅ Executive Assessment: Model looks healthy.")
+        run.bold = True
+        run.font.color.rgb = RGBColor(0, 150, 0)
+        for p_msg in passing:
+            _add_md_paragraph(doc, p_msg, style='List Bullet')
+
+    doc.add_paragraph(f"This report covers {task_type.title()} performance, stability, and explainability checks.")
+
+    # 1.1 Key Narrative Insights (Promoted from detailed sections)
+    doc.add_heading('Key Insights', level=2)
+    
+    # Stability Story
+    m_tr = ev.get("metrics_train", {})
+    m_te = ev.get("metrics_test", {})
+    narrative_stability = _story_overfitting(m_tr, m_te)
+    if narrative_stability:
+        _add_md_paragraph(doc, f"**Stability**: {narrative_stability}", style='List Bullet')
+
+    # Drift Story
+    drift_data = buf.get("drift")
+    narrative_drift = _story_drift(drift_data)
+    if narrative_drift:
+        _add_md_paragraph(doc, f"**Drift**: {narrative_drift}", style='List Bullet')
+
+    # Stress Story
+    stress_data = buf.get("stress")
+    narrative_stress = _story_stress(stress_data)
+    if narrative_stress:
+        _add_md_paragraph(doc, f"**Robustness**: {narrative_stress}", style='List Bullet')
+        
+    # SHAP Story
+    expl = buf.get("explainability", {})
+    if expl and expl.get("status") == "ok":
+         narrative_shap = _story_shap(expl)
+         if narrative_shap:
+             _add_md_paragraph(doc, f"**Drivers**: {narrative_shap}", style='List Bullet')
+
+    # 2. Results Comparison
     if ev:
-        doc.add_heading('1. Results Comparison (Train vs Test)', level=1)
+        doc.add_heading('2. Results Comparison (Train vs Test)', level=1)
         
         # Narrative
         m_tr = ev.get("metrics_train", {})
@@ -230,7 +354,10 @@ def _generate_eval_report_docx(buf):
         narrative = _story_overfitting(m_tr, m_te)
         if narrative:
             doc.add_heading('Stability Check', level=2)
-            doc.add_paragraph(narrative)
+            # Duplicate Overfitting Warning if present
+            if (tr_s - te_s) > 0.15:
+                doc.add_paragraph(f"⚠️ **Attention**: Specific check indicates potential overfitting (Train {tr_s:.2f} vs Test {te_s:.2f}).", style='List Bullet')
+            _add_md_paragraph(doc, narrative)
         
         # Metrics Table
         doc.add_heading('Metrics', level=2)
@@ -306,10 +433,18 @@ def _generate_eval_report_docx(buf):
     drift_imgs = buf.get("drift_images", {})
     doc.add_heading('2.1 Drift Analysis', level=2)
     
+    # Duplicate Drift Heuristic
+    if drift:
+        n_crit = sum(1 for d in drift if "Critical" in str(d.get("PSI Status","")) or "Critical" in str(d.get("KS Status","")))
+        if n_crit > 0:
+             _add_md_paragraph(doc, f"⚠️ **Summary**: {n_crit} features show Critical Drift.", style='List Bullet')
+        else:
+             _add_md_paragraph(doc, "✅ **Summary**: No critical drift detected.", style='List Bullet')
+
     # Narrative
     nar = _story_drift(drift_data)
     if nar:
-        doc.add_paragraph(nar)
+        _add_md_paragraph(doc, nar)
     
     if drift_data:
         # Ensure drift_data is a list of dicts
@@ -341,10 +476,19 @@ def _generate_eval_report_docx(buf):
     stress_data = buf.get("stress")
     doc.add_heading('2.2 Stress Testing', level=2)
     
+    # Duplicate Stress Heuristic
+    if stress and stress[0]:
+        s0 = stress[0]
+        drop = s0.get("delta_accuracy", s0.get("delta_rmse", 0))
+        if abs(drop) > 0.1:
+             _add_md_paragraph(doc, f"⚠️ **Summary**: Performance drops significantly ({abs(drop):.2%}) under stress.", style='List Bullet')
+        else:
+             _add_md_paragraph(doc, "✅ **Summary**: Model performance remains stable under stress.", style='List Bullet')
+
     # Narrative
     nar_stress = _story_stress(stress_data)
     if nar_stress:
-        doc.add_paragraph(nar_stress)
+        _add_md_paragraph(doc, nar_stress)
         
     if stress_data:
             # Ensure stress_data is a list of dicts
@@ -388,14 +532,14 @@ def _generate_eval_report_docx(buf):
         uncovered = cluster_data.get("uncovered_clusters", 0)
         
         if coverage_pct >= 95:
-            doc.add_paragraph(f"✅ **Excellent Coverage**: Test data covers {coverage_pct:.1f}% of the {n_clusters} training input space clusters.")
+            _add_md_paragraph(doc, f"✅ **Excellent Coverage**: Test data covers {coverage_pct:.1f}% of the {n_clusters} training input space clusters.")
         elif coverage_pct >= 80:
-            doc.add_paragraph(f"⚠️ **Good Coverage**: Test data covers {coverage_pct:.1f}% of clusters ({uncovered} uncovered).")
+            _add_md_paragraph(doc, f"⚠️ **Good Coverage**: Test data covers {coverage_pct:.1f}% of clusters ({uncovered} uncovered).")
         else:
-            doc.add_paragraph(f"🚨 **Poor Coverage**: Only {coverage_pct:.1f}% of training clusters are covered by test data.")
+            _add_md_paragraph(doc, f"🚨 **Poor Coverage**: Only {coverage_pct:.1f}% of training clusters are covered by test data.")
         
         if ood_pct > 10:
-            doc.add_paragraph(f"⚠️ **OOD Alert**: {ood_pct:.1f}% of test samples appear to be out-of-distribution.")
+            _add_md_paragraph(doc, f"⚠️ **OOD Alert**: {ood_pct:.1f}% of test samples appear to be out-of-distribution.")
         
         # Summary table
         doc.add_paragraph("")
@@ -502,7 +646,7 @@ def _generate_eval_report_docx(buf):
         nar_shap = _story_shap(expl)
         if nar_shap:
             doc.add_heading('Executive Insight', level=2)
-            doc.add_paragraph(nar_shap)
+            _add_md_paragraph(doc, nar_shap)
             
         plots = expl.get("plots", {})
         
@@ -537,6 +681,28 @@ def _generate_eval_report_docx(buf):
     else:
         doc.add_paragraph("Explainability not run.")
 
+    # Appendix: Glossary
+    doc.add_page_break()
+    doc.add_heading('Appendix: Guide to Metrics', level=1)
+    
+    # Performance Metrics
+    if task_type == "classification":
+        cls_metrics = ["ROC AUC", "PR AUC", "F1 Score", "Accuracy", "Precision", "Recall", "Log Loss", "Brier Score", "MCC", "KS Statistic"]
+        for m in cls_metrics:
+            if m in GLOSSARY:
+                doc.add_paragraph(f"**{m}**: {GLOSSARY[m]}", style='List Bullet')
+    else:
+        reg_metrics = ["RMSE", "MAE", "R2 Score", "Median AE"]
+        for m in reg_metrics:
+            if m in GLOSSARY:
+                doc.add_paragraph(f"**{m}**: {GLOSSARY[m]}", style='List Bullet')
+    
+    # Validation Concepts
+    doc.add_paragraph(f"**PSI**: {GLOSSARY['PSI']}", style='List Bullet')
+    doc.add_paragraph(f"**Stress Test**: {GLOSSARY['Stress Test']}", style='List Bullet')
+    doc.add_paragraph(f"**SHAP**: {GLOSSARY['SHAP']}", style='List Bullet')
+    doc.add_paragraph(f"**Cluster Coverage**: {GLOSSARY['Cluster Coverage']}", style='List Bullet')
+
     # Save
     buffer = io.BytesIO()
     doc.save(buffer)
@@ -555,14 +721,13 @@ def _generate_ranking_report_docx(metrics_df, corr_df, method, target, task_type
     doc.add_paragraph(f"Ranking Method: {method}")
     doc.add_paragraph(f"Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     
-    doc.add_heading('Metric Definition', level=2)
-    doc.add_paragraph(f"**Power Score**: {GLOSSARY.get('Power Score', 'Relative importance of a feature.')}", style='List Bullet')
     
-    # Automated Narrative
-    narrative = _story_features(metrics_df)
-    if narrative:
-        doc.add_heading('Key Insights', level=2)
-        doc.add_paragraph(narrative)
+    
+    # Automated Narrative (Removed as per user request)
+    # narrative = _story_features(metrics_df)
+    # if narrative:
+    #     doc.add_heading('Key Insights', level=2)
+    #     doc.add_paragraph(narrative)
     
     doc.add_heading('Top Influential Features:', level=2)
     top_5 = metrics_df.head(5)
@@ -688,8 +853,14 @@ def _generate_ranking_report_docx(metrics_df, corr_df, method, target, task_type
                 else:
                     row_cells[i].text = str(val)
 
+    # Appendix
+    doc.add_page_break()
+    doc.add_heading('Appendix: Guide to Metrics', level=1)
+    _add_md_paragraph(doc, f"**Power Score**: {GLOSSARY.get('Power Score', 'Relative importance of a feature.')}", style='List Bullet')
+
     # Save
     buffer = io.BytesIO()
     doc.save(buffer)
     buffer.seek(0)
     return buffer
+

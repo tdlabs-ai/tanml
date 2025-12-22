@@ -13,6 +13,13 @@ from typing import Any, Dict, List, Optional
 import pandas as pd
 
 
+def _get_metric(m: Dict[str, Any], key: str) -> float:
+    """Case-insensitive dictionary get."""
+    for k, v in m.items():
+        if k.lower() == key.lower():
+            return v
+    return 0.0
+
 def story_performance(metrics: Dict[str, Any], task_type: str) -> str:
     """
     Generate a dynamic sentence about model performance.
@@ -26,7 +33,7 @@ def story_performance(metrics: Dict[str, Any], task_type: str) -> str:
     """
     s = []
     if task_type == "classification":
-        auc = metrics.get("roc_auc", 0)
+        auc = _get_metric(metrics, "roc_auc")
         if auc:
             s.append(f"The model achieved an ROC AUC of **{auc:.3f}**.")
             if auc > 0.9:
@@ -38,14 +45,14 @@ def story_performance(metrics: Dict[str, Any], task_type: str) -> str:
             else:
                 s.append("The performance is relatively weak, suggesting more features or data may be needed.")
         
-        f1 = metrics.get("f1", 0)
-        acc = metrics.get("accuracy", 0)
+        f1 = _get_metric(metrics, "f1")
+        acc = _get_metric(metrics, "accuracy")
         if acc and f1 and abs(acc - f1) > 0.15:
             s.append(f"Note the gap between Accuracy ({acc:.2f}) and F1 ({f1:.2f}), suggesting class imbalance issues.")
             
     else:  # Regression
-        r2 = metrics.get("r2", 0)
-        rmse = metrics.get("rmse", 0)
+        r2 = _get_metric(metrics, "r2")
+        rmse = _get_metric(metrics, "rmse")
         s.append(f"The model captured **{r2:.1%}** of the variance in the target (R2 Score).")
         s.append(f"On average, predictions are off by **{rmse:.3f}** units (RMSE).")
         if r2 > 0.8:
@@ -72,7 +79,7 @@ def story_features(metrics_df: pd.DataFrame, top_n: int = 3) -> str:
     
     # Identify the numeric score column
     score_col = None
-    for c in ["Composite Score", "importance", "coef", "shap_mean"]:
+    for c in ["Power Score", "Composite Score", "importance", "coef", "shap_mean"]:
         if c in metrics_df.columns:
             score_col = c
             break
@@ -107,13 +114,17 @@ def story_overfitting(train_m: Dict[str, Any], test_m: Dict[str, Any]) -> str:
         Overfitting analysis text
     """
     s = []
+    # Normalize keys for matching
+    tr_norm = {k.lower(): v for k, v in train_m.items()}
+    te_norm = {k.lower(): v for k, v in test_m.items()}
+    
     # Pick a key metric
     keys = ["roc_auc", "r2", "accuracy", "f1", "rmse", "mae"]
-    metric = next((k for k in keys if k in train_m and k in test_m), None)
+    metric = next((k for k in keys if k in tr_norm and k in te_norm), None)
     
     if metric:
-        tr = train_m[metric]
-        te = test_m[metric]
+        tr = tr_norm[metric]
+        te = te_norm[metric]
         delta = tr - te
         
         s.append(f"Comparing {metric.upper()}: Train **{tr:.3f}** vs Test **{te:.3f}**.")
@@ -236,7 +247,20 @@ def story_shap(shap_res: Dict[str, Any]) -> str:
     if not shap_res:
         return "SHAP analysis not available."
     
-    top_features = shap_res.get("top_features", [])
+    raw_tf = shap_res.get("top_features", [])
+    
+    # Clean feature names if they are dicts
+    top_features = []
+    for item in raw_tf:
+        if isinstance(item, dict):
+            # Try 'feature' key, else first key
+            f_name = item.get("feature")
+            if not f_name:
+                # Fallback to first key
+                f_name = list(item.keys())[0]
+            top_features.append(str(f_name))
+        else:
+            top_features.append(str(item))
     
     if not top_features:
         return "SHAP computed but no top features identified."
