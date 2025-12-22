@@ -1,338 +1,695 @@
 # tanml/ui/reports.py
 """
-Report generation functions for TanML UI.
+Report generation logic for TanML UI.
 
-These functions generate Word document reports from validation results.
+Extracts the Word document generation functions from app.py.
 """
 
 from __future__ import annotations
 
 import io
 import os
+import time
+from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
+from importlib.resources import files
 
-import pandas as pd
-
+import matplotlib.pyplot as plt
+import matplotlib.colors as mcolors
+import seaborn as sns
 from docx import Document
 from docx.shared import Inches, RGBColor
 from docx.oxml.ns import nsdecls
 from docx.oxml import parse_xml
-import matplotlib.colors as mcolors
 
+# TanML UI Helpers
 from tanml.ui.glossary import GLOSSARY
 from tanml.ui.narratives import (
-    story_performance,
-    story_features,
-    story_overfitting,
-    story_drift,
-    story_stress,
-    story_shap,
+    story_performance as _story_performance,
+    story_features as _story_features,
+    story_overfitting as _story_overfitting,
+    story_drift as _story_drift,
+    story_stress as _story_stress,
+    story_shap as _story_shap,
 )
 
 
-def generate_dev_report_docx(dev_data: Dict[str, Any]) -> io.BytesIO:
-    """
-    Generate a Model Development Report (Word document).
-    
-    Args:
-        dev_data: Dictionary containing development metrics and plots
-        
-    Returns:
-        BytesIO buffer containing the Word document
-    """
+def _choose_report_template(task_type: str) -> Path:
+    """Return the correct .docx template for 'regression' or 'classification'."""
+    # packaged location (recommended): tanml/report/templates/*.docx
+    try:
+        templates_pkg = files("tanml.report.templates")
+        name = "report_template_reg.docx" if task_type == "regression" else "report_template_cls.docx"
+        p = templates_pkg / name
+        if p.is_file():
+            return Path(str(p))
+    except Exception:
+        pass
+
+    # repo fallback
+    repo_guess = Path(__file__).resolve().parents[1] / "report" / "templates"
+    p2 = repo_guess / ("report_template_reg.docx" if task_type == "regression" else "report_template_cls.docx")
+    if p2.exists():
+        return p2
+
+    # cwd fallback
+    return Path.cwd() / ("report_template_reg.docx" if task_type == "regression" else "report_template_cls.docx")
+
+
+def _filter_metrics_for_task(summary: Dict[str, Any]) -> Dict[str, Any]:
+    """Keep only metrics relevant to the task_type inside summary."""
+    if not isinstance(summary, dict):
+        return summary or {}
+
+    task = summary.get("task_type")
+    cls_keys = {"auc", "ks", "f1", "pr_auc", "rules_failed", "task_type"}
+    reg_keys = {"rmse", "mae", "r2", "rules_failed", "task_type"}  
+
+    if task == "classification":
+        return {k: v for k, v in summary.items() if k in cls_keys}
+    if task == "regression":
+        return {k: v for k, v in summary.items() if k in reg_keys}
+    return summary
+
+
+def _fmt2(v, *, decimals=2, dash="—"):
+    if v is None:
+        return dash
+    try:
+        if isinstance(v, float):
+            return f"{v:.{decimals}f}"
+        if isinstance(v, int):
+            return str(v)
+        return str(v)
+    except Exception:
+        return dash
+
+
+def _generate_dev_report_docx(dev_data):
     doc = Document()
-    doc.add_heading("Model Development Report", 0)
+    doc.add_heading('Model Development Report', 0)
+    doc.add_paragraph(f"Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M')}")
     
-    # Model Info Section
-    model_info = dev_data.get("model_info", {})
-    doc.add_heading("1. Model Information", level=1)
+    # Glossary / Guide
+    doc.add_heading('Guide to Metrics', level=2)
+    doc.add_paragraph("Key terms used in this report:")
     
-    table = doc.add_table(rows=1, cols=2)
-    table.style = "Table Grid"
-    hdr_cells = table.rows[0].cells
-    hdr_cells[0].text = "Property"
-    hdr_cells[1].text = "Value"
+    # 1. General Concepts
+    if dev_data.get("cv_metrics"): 
+        doc.add_paragraph(f"**Cross-Validation**: {GLOSSARY['Cross-Validation']}")
     
-    for key, value in model_info.items():
-        row_cells = table.add_row().cells
-        row_cells[0].text = str(key)
-        row_cells[1].text = str(value)
-    
-    # Cross-Validation Results
-    cv_results = dev_data.get("cv_results", {})
-    if cv_results:
-        doc.add_heading("2. Cross-Validation Results", level=1)
+    # 2. Metrics relevant to task
+    metrics_to_show = []
+    if dev_data.get("task_type") == "classification":
+        metrics_to_show = ["ROC AUC", "PR AUC", "F1 Score", "Accuracy", "Precision", "Recall", "Log Loss", "Brier Score", "MCC", "KS Statistic", "Confusion Matrix"]
+    else:
+        metrics_to_show = ["RMSE", "MAE", "R2 Score", "Median AE"]
         
-        cv_summary = cv_results.get("summary", {})
-        if cv_summary:
-            table = doc.add_table(rows=1, cols=4)
-            table.style = "Table Grid"
-            hdr_cells = table.rows[0].cells
-            hdr_cells[0].text = "Metric"
-            hdr_cells[1].text = "Mean"
-            hdr_cells[2].text = "Std"
-            hdr_cells[3].text = "Range (P05-P95)"
-            
-            for metric, stats in cv_summary.items():
-                if isinstance(stats, dict):
-                    row_cells = table.add_row().cells
-                    row_cells[0].text = metric.upper()
-                    row_cells[1].text = f"{stats.get('mean', 0):.4f}"
-                    row_cells[2].text = f"{stats.get('std', 0):.4f}"
-                    p05 = stats.get('p05', 0)
-                    p95 = stats.get('p95', 0)
-                    row_cells[3].text = f"{p05:.4f} - {p95:.4f}"
+    for m in metrics_to_show:
+        if m in GLOSSARY:
+             doc.add_paragraph(f"**{m}**: {GLOSSARY[m]}", style='List Bullet')
     
-    # Feature Importance
-    feature_importance = dev_data.get("feature_importance", [])
-    if feature_importance:
-        doc.add_heading("3. Feature Importance", level=1)
+    # 1. Executive Summary
+    doc.add_heading('1. Executive Summary', level=1)
+    p = doc.add_paragraph()
+    if dev_data:
+        task = dev_data.get("task_type", "Unknown")
+        algo = dev_data.get("model_config", {}).get("algorithm", "Unknown")
+        p.add_run(f"Summarizes development of a ").bold = False
+        p.add_run(f"{task.title()}").bold = True
+        p.add_run(f" model using ").bold = False
+        p.add_run(f"{algo}").bold = True
+        p.add_run(".")
+    else:
+        p.add_run("No development data available.")
         
-        table = doc.add_table(rows=1, cols=2)
-        table.style = "Table Grid"
-        hdr_cells = table.rows[0].cells
-        hdr_cells[0].text = "Feature"
-        hdr_cells[1].text = "Importance"
-        
-        for feat in feature_importance[:20]:  # Top 20
-            row_cells = table.add_row().cells
-            row_cells[0].text = str(feat.get("feature", ""))
-            row_cells[1].text = f"{feat.get('importance', 0):.4f}"
-    
-    # Add plots
-    plots = dev_data.get("plots", {})
-    if plots:
-        doc.add_heading("4. Diagnostic Plots", level=1)
-        
-        for plot_name, plot_path in plots.items():
-            if plot_path and os.path.exists(plot_path):
-                doc.add_paragraph(plot_name.replace("_", " ").title())
-                doc.add_picture(plot_path, width=Inches(6))
-    
-    # Save to buffer
-    buffer = io.BytesIO()
-    doc.save(buffer)
-    buffer.seek(0)
-    return buffer
-
-
-def generate_eval_report_docx(buf: Dict[str, Any]) -> io.BytesIO:
-    """
-    Generate a Model Evaluation Report (Word document).
-    
-    Args:
-        buf: Dictionary containing evaluation metrics and plots
-        
-    Returns:
-        BytesIO buffer containing the Word document
-    """
-    doc = Document()
-    doc.add_heading("Model Evaluation Report", 0)
-    
-    # Glossary Section
-    doc.add_heading("Glossary", level=1)
-    for term, definition in list(GLOSSARY.items())[:10]:  # First 10 terms
-        p = doc.add_paragraph()
-        p.add_run(f"{term}: ").bold = True
-        p.add_run(definition)
-    
-    # Performance Comparison
-    doc.add_heading("1. Performance Comparison", level=1)
-    
-    train_metrics = buf.get("train_metrics", {})
-    test_metrics = buf.get("test_metrics", {})
-    task_type = buf.get("task_type", "classification")
-    
-    # Narrative summary
-    if test_metrics:
-        narrative = story_performance(test_metrics, task_type)
-        doc.add_paragraph(narrative)
-    
-    # Metrics table
-    if train_metrics or test_metrics:
-        table = doc.add_table(rows=1, cols=3)
-        table.style = "Table Grid"
-        hdr_cells = table.rows[0].cells
-        hdr_cells[0].text = "Metric"
-        hdr_cells[1].text = "Train"
-        hdr_cells[2].text = "Test"
-        
-        all_metrics = set(train_metrics.keys()) | set(test_metrics.keys())
-        for metric in sorted(all_metrics):
-            row_cells = table.add_row().cells
-            row_cells[0].text = metric.upper()
-            train_val = train_metrics.get(metric)
-            test_val = test_metrics.get(metric)
-            row_cells[1].text = f"{train_val:.4f}" if train_val is not None else "—"
-            row_cells[2].text = f"{test_val:.4f}" if test_val is not None else "—"
-        
-        # Overfitting analysis
-        if train_metrics and test_metrics:
-            narrative = story_overfitting(train_metrics, test_metrics)
-            doc.add_paragraph(narrative)
-    
-    # Diagnostic Plots
-    plots = buf.get("plots", {})
-    if plots:
-        doc.add_heading("2. Diagnostic Plots", level=1)
-        
-        plot_pairs = [
-            ("roc_train", "roc_test"),
-            ("pr_train", "pr_test"),
-            ("confusion_train", "confusion_test"),
-        ]
-        
-        for train_key, test_key in plot_pairs:
-            train_path = plots.get(train_key)
-            test_path = plots.get(test_key)
-            
-            # Add side by side if both exist
-            if train_path and os.path.exists(train_path):
-                doc.add_paragraph(f"{train_key.replace('_', ' ').title()}")
-                doc.add_picture(train_path, width=Inches(3))
-            
-            if test_path and os.path.exists(test_path):
-                doc.add_picture(test_path, width=Inches(3))
-    
-    # Risk Assessment
-    doc.add_heading("3. Risk Assessment", level=1)
-    
-    # Drift analysis
-    drift_data = buf.get("drift_analysis", {})
-    drift_narrative = story_drift(drift_data)
-    doc.add_paragraph(drift_narrative)
-    
-    # Stress test
-    stress_data = buf.get("stress_test", [])
-    stress_narrative = story_stress(stress_data)
-    doc.add_paragraph(stress_narrative)
-    
-    # Explainability
-    doc.add_heading("4. Model Explainability", level=1)
-    
-    shap_results = buf.get("shap_results", {})
-    shap_narrative = story_shap(shap_results)
-    doc.add_paragraph(shap_narrative)
-    
-    # SHAP plot
-    shap_plot = plots.get("shap_beeswarm")
-    if shap_plot and os.path.exists(shap_plot):
-        doc.add_picture(shap_plot, width=Inches(6))
-    
-    # Save to buffer
-    buffer = io.BytesIO()
-    doc.save(buffer)
-    buffer.seek(0)
-    return buffer
-
-
-def generate_ranking_report_docx(
-    metrics_df: pd.DataFrame,
-    corr_df: pd.DataFrame,
-    method: str,
-    target: str,
-    task_type: str,
-    X: Optional[pd.DataFrame] = None,
-    y: Optional[pd.Series] = None,
-) -> io.BytesIO:
-    """
-    Generate a Feature Ranking Report (Word document).
-    
-    Args:
-        metrics_df: DataFrame with feature ranking scores
-        corr_df: Correlation matrix DataFrame
-        method: Ranking method used
-        target: Target column name
-        task_type: "classification" or "regression"
-        X: Optional features DataFrame
-        y: Optional target Series
-        
-    Returns:
-        BytesIO buffer containing the Word document
-    """
-    doc = Document()
-    doc.add_heading("Feature Ranking Report", 0)
-    
-    # Summary
-    doc.add_heading("1. Summary", level=1)
-    doc.add_paragraph(f"**Method**: {method}")
-    doc.add_paragraph(f"**Target**: {target}")
-    doc.add_paragraph(f"**Task Type**: {task_type.title()}")
-    if X is not None:
-        doc.add_paragraph(f"**Features**: {len(X.columns)}")
-        doc.add_paragraph(f"**Samples**: {len(X)}")
-    
-    # Feature Rankings
-    if metrics_df is not None and not metrics_df.empty:
-        doc.add_heading("2. Feature Rankings", level=1)
+    # 2. Results
+    if dev_data:
+        doc.add_heading('2. Model Performance', level=1)
         
         # Narrative
-        narrative = story_features(metrics_df, top_n=5)
-        doc.add_paragraph(narrative)
-        
-        # Table (top 30)
-        display_df = metrics_df.head(30)
-        
-        table = doc.add_table(rows=1, cols=len(display_df.columns))
-        table.style = "Table Grid"
-        
-        # Headers
-        hdr_cells = table.rows[0].cells
-        for i, col in enumerate(display_df.columns):
-            hdr_cells[i].text = str(col)
-        
-        # Data rows
-        for _, row in display_df.iterrows():
-            row_cells = table.add_row().cells
-            for i, val in enumerate(row):
-                if isinstance(val, float):
-                    row_cells[i].text = f"{val:.4f}"
-                else:
-                    row_cells[i].text = str(val)
-    
-    # Correlation Analysis
-    if corr_df is not None and not corr_df.empty:
-        doc.add_heading("3. Feature Correlations", level=1)
-        
-        # Find high correlations
-        high_corr_pairs = []
-        for i in range(len(corr_df.columns)):
-            for j in range(i + 1, len(corr_df.columns)):
-                corr = corr_df.iloc[i, j]
-                if abs(corr) > 0.7:
-                    high_corr_pairs.append((
-                        corr_df.columns[i],
-                        corr_df.columns[j],
-                        corr
-                    ))
-        
-        if high_corr_pairs:
-            doc.add_paragraph(f"Found {len(high_corr_pairs)} highly correlated pairs (|r| > 0.7):")
+        narrative = _story_performance(dev_data.get("metrics", {}), dev_data.get("task_type"))
+        if narrative:
+            doc.add_heading('Executive Insight', level=2)
+            doc.add_paragraph(narrative)
             
-            table = doc.add_table(rows=1, cols=3)
-            table.style = "Table Grid"
-            hdr_cells = table.rows[0].cells
-            hdr_cells[0].text = "Feature 1"
-            hdr_cells[1].text = "Feature 2"
-            hdr_cells[2].text = "Correlation"
+        doc.add_heading('Final Model Metrics (Full Dataset)', level=2)
+        table = doc.add_table(rows=1, cols=2)
+        table.style = 'Table Grid'
+        hdr = table.rows[0].cells
+        hdr[0].text = 'Metric'; hdr[1].text = 'Score'
+        for k, v in dev_data.get("metrics", {}).items():
+            r = table.add_row().cells
+            r[0].text = k.replace("_", " ").title()
+            r[1].text = f"{v:.4f}" if isinstance(v, (float, int)) else str(v)
             
-            for f1, f2, corr in sorted(high_corr_pairs, key=lambda x: -abs(x[2]))[:20]:
-                row_cells = table.add_row().cells
-                row_cells[0].text = str(f1)
-                row_cells[1].text = str(f2)
-                row_cells[2].text = f"{corr:.4f}"
-        else:
-            doc.add_paragraph("No highly correlated feature pairs found (|r| > 0.7).")
-    
-    # Save to buffer
+        # CV Metrics
+        cv_met = dev_data.get("cv_metrics", {})
+        if cv_met:
+            doc.add_heading('Cross-Validation Metrics (Mean)', level=2)
+            table2 = doc.add_table(rows=1, cols=2)
+            table2.style = 'Table Grid'
+            hdr2 = table2.rows[0].cells
+            hdr2[0].text = 'Metric'; hdr2[1].text = 'Mean Score'
+            for k, v in cv_met.items():
+                r = table2.add_row().cells
+                r[0].text = k.replace("_", " ").title()
+                r[1].text = f"{v:.4f}" if isinstance(v, (float, int)) else str(v)
+
+        # Images
+        imgs = dev_data.get("images", {})
+        cv_imgs = dev_data.get("cv_images", {})
+        
+        if cv_imgs:
+            doc.add_heading('2.1 Cross-Validation Plots', level=2)
+            for name, img_bytes in cv_imgs.items():
+                    doc.add_paragraph(name.replace("_", " ").title())
+                    doc.add_picture(io.BytesIO(img_bytes), width=Inches(4))
+                    
+        if imgs:
+            doc.add_heading('2.2 Final Model Diagnostics', level=2)
+            for name, img_bytes in imgs.items():
+                    doc.add_paragraph(name.replace("_", " ").title())
+                    doc.add_picture(io.BytesIO(img_bytes), width=Inches(4))
+
+    # Save
     buffer = io.BytesIO()
     doc.save(buffer)
     buffer.seek(0)
     return buffer
 
 
-# Legacy aliases
-_generate_dev_report_docx = generate_dev_report_docx
-_generate_eval_report_docx = generate_eval_report_docx
-_generate_ranking_report_docx = generate_ranking_report_docx
+def _generate_eval_report_docx(buf):
+    
+    # Defensive type check - ensure buf is a dict
+    if isinstance(buf, list):
+        buf = buf[0] if buf else {}
+    if not isinstance(buf, dict):
+        buf = {}
+    
+    doc = Document()
+    doc.add_heading('Model Evaluation Report', 0)
+    doc.add_paragraph(f"Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M')}")
+
+    
+    # Glossary
+    doc.add_heading('Guide to Metrics', level=2)
+    doc.add_paragraph("Key terms used in this report:")
+    
+    # Determine task type from evaluation data
+    ev = buf.get("evaluation", {})
+    task_type = ev.get("task_type", "classification")
+    
+    # Performance Metrics
+    if task_type == "classification":
+        cls_metrics = ["ROC AUC", "PR AUC", "F1 Score", "Accuracy", "Precision", "Recall", "Log Loss", "Brier Score", "MCC", "KS Statistic"]
+        for m in cls_metrics:
+            if m in GLOSSARY:
+                doc.add_paragraph(f"**{m}**: {GLOSSARY[m]}", style='List Bullet')
+    else:
+        reg_metrics = ["RMSE", "MAE", "R2 Score", "Median AE"]
+        for m in reg_metrics:
+            if m in GLOSSARY:
+                doc.add_paragraph(f"**{m}**: {GLOSSARY[m]}", style='List Bullet')
+    
+    # Validation Concepts (always included)
+    doc.add_paragraph(f"**PSI**: {GLOSSARY['PSI']}", style='List Bullet')
+    doc.add_paragraph(f"**Stress Test**: {GLOSSARY['Stress Test']}", style='List Bullet')
+    doc.add_paragraph(f"**SHAP**: {GLOSSARY['SHAP']}", style='List Bullet')
+    doc.add_paragraph(f"**Cluster Coverage**: {GLOSSARY['Cluster Coverage']}", style='List Bullet')
+    
+    # 1. Comparison
+    ev = buf.get("evaluation", {})
+    if ev:
+        doc.add_heading('1. Results Comparison (Train vs Test)', level=1)
+        
+        # Narrative
+        m_tr = ev.get("metrics_train", {})
+        m_te = ev.get("metrics_test", {})
+        narrative = _story_overfitting(m_tr, m_te)
+        if narrative:
+            doc.add_heading('Stability Check', level=2)
+            doc.add_paragraph(narrative)
+        
+        # Metrics Table
+        doc.add_heading('Metrics', level=2)
+        table = doc.add_table(rows=1, cols=3)
+        table.style = 'Table Grid'
+        h = table.rows[0].cells
+        h[0].text = 'Metric'; h[1].text = 'Train'; h[2].text = 'Test'
+        
+        m_tr = ev.get("metrics_train", {})
+        m_te = ev.get("metrics_test", {})
+        all_keys = set(m_tr.keys()) | set(m_te.keys())
+        for k in sorted(all_keys):
+            if k in ["confusion_matrix", "curves", "threshold_info"]: continue
+            r = table.add_row().cells
+            r[0].text = k
+            r[1].text = f"{m_tr.get(k, 0):.4f}"
+            r[2].text = f"{m_te.get(k, 0):.4f}"
+        
+        # Diagnostic Plots
+        ev_imgs = ev.get("images", {})
+        if ev_imgs:
+                doc.add_heading('Diagnostic Plots', level=2)
+                
+                # Identify unique plot basenames
+                unique_bases = set()
+                for name in ev_imgs.keys():
+                    if name.startswith("train_"): unique_bases.add(name.replace("train_", ""))
+                    elif name.startswith("test_"): unique_bases.add(name.replace("test_", ""))
+                    else: unique_bases.add(name)
+                
+                sorted_bases = sorted(list(unique_bases))
+                
+                for base in sorted_bases:
+                    # Check for pair
+                    train_key = f"train_{base}"
+                    test_key = f"test_{base}"
+                    
+                    if train_key in ev_imgs and test_key in ev_imgs:
+                        doc.add_heading(base.replace("_", " ").title(), level=3)
+                        table = doc.add_table(rows=1, cols=2)
+                        table.autofit = True
+                        r = table.rows[0].cells
+                        
+                        # Train Left
+                        p1 = r[0].add_paragraph("Train")
+                        p1.alignment = 1 # Center
+                        r[0].add_paragraph().add_run().add_picture(io.BytesIO(ev_imgs[train_key]), width=Inches(3.0))
+                        
+                        # Test Right
+                        p2 = r[1].add_paragraph("Test")
+                        p2.alignment = 1 # Center
+                        r[1].add_paragraph().add_run().add_picture(io.BytesIO(ev_imgs[test_key]), width=Inches(3.0))
+                    
+                    elif base in ev_imgs: # Standalone (no prefix)
+                        doc.add_paragraph(base.replace("_", " ").title())
+                        doc.add_picture(io.BytesIO(ev_imgs[base]), width=Inches(4))
+                    
+                    else: # One of the prefixed exists but not the other?
+                         if train_key in ev_imgs:
+                             doc.add_paragraph(f"Train {base}".replace("_", " ").title())
+                             doc.add_picture(io.BytesIO(ev_imgs[train_key]), width=Inches(4))
+                         if test_key in ev_imgs:
+                             doc.add_paragraph(f"Test {base}".replace("_", " ").title())
+                             doc.add_picture(io.BytesIO(ev_imgs[test_key]), width=Inches(4))
+    else:
+        doc.add_paragraph("No evaluation data found.")
+
+    # 2. Risk (Drift/Stress)
+    doc.add_heading('2. Risk Assessment', level=1)
+    
+    # Drift
+    drift_data = buf.get("drift")
+    drift_imgs = buf.get("drift_images", {})
+    doc.add_heading('2.1 Drift Analysis', level=2)
+    
+    # Narrative
+    nar = _story_drift(drift_data)
+    if nar:
+        doc.add_paragraph(nar)
+    
+    if drift_data:
+        # Ensure drift_data is a list of dicts
+        if isinstance(drift_data, dict):
+            drift_data = [drift_data]
+        if not isinstance(drift_data, list) or not drift_data:
+            doc.add_paragraph("Drift analysis not run.")
+        else:
+            table = doc.add_table(rows=1, cols=5)
+
+        table.style = 'Table Grid'
+        h = table.rows[0].cells
+        h[0].text = 'Feature'; h[1].text = 'PSI'; h[2].text = 'PSI Status'; h[3].text = 'KS Stat'; h[4].text = 'KS Status'
+        for d in drift_data:
+            r = table.add_row().cells
+            r[0].text = str(d['Feature'])
+            r[1].text = f"{d['PSI']:.4f}"
+            r[2].text = str(d.get('PSI Status', d.get('Status', ''))).replace("🟢 ", "").replace("🟠 ", "").replace("🔴 ", "").replace("🟡 ", "").replace("● ", "")
+            r[3].text = f"{d.get('KS Stat', 0):.4f}"
+            r[4].text = str(d.get('KS Status', '')).replace("🟢 ", "").replace("🟠 ", "").replace("🔴 ", "").replace("🟡 ", "")
+        
+        if "top_distribution" in drift_imgs:
+            doc.add_paragraph("Top Drifting Feature Distribution")
+            doc.add_picture(io.BytesIO(drift_imgs["top_distribution"]), width=Inches(5))
+    else:
+        doc.add_paragraph("Drift analysis not run.")
+    
+    # Stress
+    stress_data = buf.get("stress")
+    doc.add_heading('2.2 Stress Testing', level=2)
+    
+    # Narrative
+    nar_stress = _story_stress(stress_data)
+    if nar_stress:
+        doc.add_paragraph(nar_stress)
+        
+    if stress_data:
+            # Ensure stress_data is a list of dicts
+            if isinstance(stress_data, dict):
+                stress_data = [stress_data]
+            if not isinstance(stress_data, list) or not stress_data:
+                doc.add_paragraph("Stress test not run.")
+            elif not isinstance(stress_data[0], dict):
+                doc.add_paragraph("Invalid stress test data format.")
+            else:
+                doc.add_paragraph("Stress Test Results (Perturbed Data)")
+                table = doc.add_table(rows=1, cols=len(stress_data[0]))
+
+            table.style = 'Table Grid'
+            # simplistic table dump
+            hdr = table.rows[0].cells
+            for i, k in enumerate(stress_data[0].keys()): hdr[i].text = str(k)
+            for row_dat in stress_data:
+                r = table.add_row().cells
+                for i, v in enumerate(row_dat.values()): r[i].text = f"{v:.4f}" if isinstance(v, float) else str(v)
+    else:
+            doc.add_paragraph("Stress test not run.")
+
+    # Cluster Coverage Check
+    cluster_data = buf.get("cluster_coverage")
+    cluster_imgs = buf.get("cluster_images", {})
+    doc.add_heading('2.3 Input Cluster Coverage Check', level=2)
+    
+    if cluster_data:
+        # Ensure cluster_data is a dict (not a list)
+        if isinstance(cluster_data, list):
+            cluster_data = cluster_data[0] if cluster_data else {}
+        if not isinstance(cluster_data, dict):
+            cluster_data = {}
+        
+        # Summary narrative
+        coverage_pct = cluster_data.get("coverage_pct", 0)
+
+        ood_pct = cluster_data.get("ood_pct", 0)
+        n_clusters = cluster_data.get("n_clusters", 0)
+        uncovered = cluster_data.get("uncovered_clusters", 0)
+        
+        if coverage_pct >= 95:
+            doc.add_paragraph(f"✅ **Excellent Coverage**: Test data covers {coverage_pct:.1f}% of the {n_clusters} training input space clusters.")
+        elif coverage_pct >= 80:
+            doc.add_paragraph(f"⚠️ **Good Coverage**: Test data covers {coverage_pct:.1f}% of clusters ({uncovered} uncovered).")
+        else:
+            doc.add_paragraph(f"🚨 **Poor Coverage**: Only {coverage_pct:.1f}% of training clusters are covered by test data.")
+        
+        if ood_pct > 10:
+            doc.add_paragraph(f"⚠️ **OOD Alert**: {ood_pct:.1f}% of test samples appear to be out-of-distribution.")
+        
+        # Summary table
+        doc.add_paragraph("")
+        summary_table = doc.add_table(rows=5, cols=2)
+        summary_table.style = 'Table Grid'
+        summary_data = [
+            ("Total Clusters", str(n_clusters)),
+            ("Coverage", f"{coverage_pct:.1f}%"),
+            ("Covered Clusters", str(cluster_data.get("covered_clusters", 0))),
+            ("Uncovered Clusters", str(uncovered)),
+            ("OOD Samples", f"{ood_pct:.1f}% ({cluster_data.get('ood_count', 0)} samples)")
+        ]
+        for i, (label, value) in enumerate(summary_data):
+            summary_table.rows[i].cells[0].text = label
+            summary_table.rows[i].cells[1].text = value
+        
+        # Cluster detail table
+        cluster_summary = cluster_data.get("cluster_summary", [])
+        if cluster_summary:
+            doc.add_paragraph("")
+            doc.add_paragraph("Cluster Distribution:")
+            table = doc.add_table(rows=1, cols=6)
+            table.style = 'Table Grid'
+            hdr = table.rows[0].cells
+            hdr[0].text = "Cluster"
+            hdr[1].text = "Train Count"
+            hdr[2].text = "Train %"
+            hdr[3].text = "Test Count"
+            hdr[4].text = "Test %"
+            hdr[5].text = "Status"
+            
+            for row_d in cluster_summary:
+                r = table.add_row().cells
+                r[0].text = str(row_d.get("Cluster", ""))
+                r[1].text = str(row_d.get("Train Count", ""))
+                r[2].text = str(row_d.get("Train %", ""))
+                r[3].text = str(row_d.get("Test Count", ""))
+                r[4].text = str(row_d.get("Test %", ""))
+                r[5].text = str(row_d.get("Status", "")).replace("✓", "(ok)").replace("✗", "(x)")
+        
+        # Cluster distribution chart
+        if "distribution" in cluster_imgs:
+            doc.add_paragraph("")
+            doc.add_paragraph("Cluster Distribution Chart:")
+            doc.add_picture(io.BytesIO(cluster_imgs["distribution"]), width=Inches(5))
+        
+        # PCA scatter plot
+        if "pca_scatter" in cluster_imgs:
+            doc.add_paragraph("")
+            doc.add_paragraph("Cluster Space Visualization (PCA):")
+            doc.add_picture(io.BytesIO(cluster_imgs["pca_scatter"]), width=Inches(5))
+    else:
+        doc.add_paragraph("Cluster coverage check not run.")
+
+    # Benchmarking
+    bench_data = buf.get("benchmark")
+    bench_imgs = buf.get("benchmark_images", {})
+    doc.add_heading('2.4 Benchmarking', level=2)
+    
+    if bench_data:
+        your_model = bench_data.get("your_model", {})
+        baselines = bench_data.get("baselines", {})
+        task = bench_data.get("task_type", "classification")
+        
+        if baselines:
+            doc.add_paragraph(f"Comparison of your model against {len(baselines)} baseline model(s) on test data.")
+            
+            # Build table with all models
+            metrics = list(your_model.keys())
+            n_cols = 2 + len(baselines)  # Metric + Your Model + baselines
+            table = doc.add_table(rows=1, cols=n_cols)
+            table.style = 'Table Grid'
+            
+            # Header
+            hdr = table.rows[0].cells
+            hdr[0].text = "Metric"
+            hdr[1].text = "Your Model"
+            for i, baseline_name in enumerate(baselines.keys()):
+                hdr[2 + i].text = baseline_name[:20]  # Truncate long names
+            
+            # Data rows
+            for metric in metrics:
+                r = table.add_row().cells
+                r[0].text = metric.upper()
+                r[1].text = f"{your_model.get(metric, 0):.4f}"
+                for i, baseline_name in enumerate(baselines.keys()):
+                    r[2 + i].text = f"{baselines[baseline_name].get(metric, 0):.4f}"
+            
+            # Add chart if available
+            if "comparison" in bench_imgs:
+                doc.add_paragraph("")
+                doc.add_paragraph("Performance Comparison Chart:")
+                doc.add_picture(io.BytesIO(bench_imgs["comparison"]), width=Inches(6))
+        else:
+            doc.add_paragraph("No baseline models were compared.")
+    else:
+        doc.add_paragraph("Benchmarking not run.")
+
+    # 3. Explainability
+    doc.add_heading('3. Explainability', level=1)
+    expl = buf.get("explainability", {})
+    if expl and expl.get("status") == "ok":
+        # Narrative
+        nar_shap = _story_shap(expl)
+        if nar_shap:
+            doc.add_heading('Executive Insight', level=2)
+            doc.add_paragraph(nar_shap)
+            
+        plots = expl.get("plots", {})
+        
+        if "beeswarm" in plots:
+            doc.add_heading('SHAP Beeswarm', level=2)
+            import os
+            p = plots["beeswarm"]
+            if isinstance(p, str) and os.path.exists(p): doc.add_picture(p, width=Inches(5))
+            elif isinstance(p, bytes): doc.add_picture(io.BytesIO(p), width=Inches(5))
+                
+        if "bar" in plots:
+            doc.add_heading('SHAP Importance', level=2)
+            p = plots["bar"]
+            if isinstance(p, str) and os.path.exists(p): doc.add_picture(p, width=Inches(5))
+            elif isinstance(p, bytes): doc.add_picture(io.BytesIO(p), width=Inches(5))
+            
+        # Top Features Table
+        if "top_features" in expl:
+             doc.add_heading('Top Drivers Table', level=2)
+             tf = expl["top_features"]
+             table = doc.add_table(rows=1, cols=2)
+             table.style = 'Table Grid'
+             table.rows[0].cells[0].text = "Feature"
+             table.rows[0].cells[1].text = "Impact"
+             for row in tf[:5]:
+                 r = table.add_row().cells
+                 k_feat = "feature" if "feature" in row else list(row.keys())[0]
+                 k_imp = "importance" if "importance" in row else list(row.keys())[1]
+                 r[0].text = str(row.get(k_feat, ""))
+                 val = row.get(k_imp, 0)
+                 r[1].text = f"{val:.4f}" if isinstance(val, float) else str(val)
+    else:
+        doc.add_paragraph("Explainability not run.")
+
+    # Save
+    buffer = io.BytesIO()
+    doc.save(buffer)
+    buffer.seek(0)
+    return buffer
+
+
+def _generate_ranking_report_docx(metrics_df, corr_df, method, target, task_type, X=None, y=None):
+    doc = Document()
+    doc.add_heading('Feature Power Ranking Report', 0)
+    
+    # 1. Executive Summary
+    doc.add_heading('1. Executive Summary', level=1)
+    doc.add_paragraph(f"Target Variable: {target}")
+    doc.add_paragraph(f"Task Type: {task_type}")
+    doc.add_paragraph(f"Ranking Method: {method}")
+    doc.add_paragraph(f"Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    
+    doc.add_heading('Metric Definition', level=2)
+    doc.add_paragraph(f"**Power Score**: {GLOSSARY['Power Score']}", style='List Bullet')
+    
+    # Automated Narrative
+    narrative = _story_features(metrics_df)
+    if narrative:
+        doc.add_heading('Key Insights', level=2)
+        doc.add_paragraph(narrative)
+    
+    doc.add_heading('Top Influential Features:', level=2)
+    top_5 = metrics_df.head(5)
+    for _, row in top_5.iterrows():
+        doc.add_paragraph(f"{row['Feature']}: Power Score {row['Power']:.1f}", style='List Bullet')
+
+    # 2. Detailed Metrics
+    doc.add_heading('2. Feature Importance Metrics', level=1)
+    
+    # Convert DataFrame to Table
+    t = doc.add_table(rows=1, cols=len(metrics_df.columns))
+    t.style = 'Table Grid'
+    
+    # Header
+    hdr_cells = t.rows[0].cells
+    for i, col_name in enumerate(metrics_df.columns):
+        hdr_cells[i].text = str(col_name)
+        
+    # Body
+    for _, row in metrics_df.iterrows():
+        row_cells = t.add_row().cells
+        for i, val in enumerate(row):
+            if isinstance(val, float):
+                row_cells[i].text = f"{val:.3f}"
+            else:
+                row_cells[i].text = str(val)
+
+    # 3. Visuals (Distribution Overlay)
+    if X is not None and y is not None:
+        doc.add_heading('3. Key Feature Distributions', level=1)
+        doc.add_paragraph(f"Distribution overlay for top {len(top_5)} features relative to target '{target}'.")
+        
+        # Prepare plot style
+        sns.set_theme(style="whitegrid")
+        
+        for idx, row in top_5.iterrows():
+            feat = row['Feature']
+            if feat not in X.columns: continue
+            
+            try:
+                fig, ax = plt.subplots(figsize=(6, 4))
+                
+                if task_type == 'classification':
+                    # KDE Plot with Hue
+                    sns.kdeplot(data=X, x=feat, hue=y, fill=True, common_norm=False, palette="tab10", ax=ax)
+                    ax.set_title(f"{feat} distribution by {target}")
+                else:
+                    # Scatter Plot for Regression
+                    sns.scatterplot(x=X[feat], y=y, alpha=0.6, ax=ax)
+                    ax.set_title(f"{feat} vs {target}")
+                    ax.set_ylabel(target)
+                
+                plt.tight_layout()
+                
+                # Save to buffer
+                img_buf = io.BytesIO()
+                fig.savefig(img_buf, format='png', dpi=100)
+                plt.close(fig)
+                img_buf.seek(0)
+                
+                doc.add_heading(f"Feature: {feat}", level=3)
+                doc.add_picture(img_buf, width=Inches(5.0))
+                
+            except Exception as e:
+                doc.add_paragraph(f"Could not plot {feat}: {e}")
+
+    # 4. Correlation Matrix
+    if corr_df is not None and not corr_df.empty:
+        doc.add_heading('4. Correlation Matrix', level=1)
+        doc.add_paragraph("Pairwise correlation of numeric features (Pearson).")
+        
+        # Reset index to include feature names in table
+        c_disp = corr_df.reset_index().rename(columns={"index": "Feature"})
+        
+        # Colormap setup (Use Data Min/Max to match Pandas 'background_gradient' defaults)
+        cmap = plt.get_cmap("coolwarm")
+        # Pandas default: vmin/vmax from data, unless specified
+        d_min = corr_df.min().min()
+        d_max = corr_df.max().max()
+        norm = mcolors.Normalize(vmin=d_min, vmax=d_max)
+        
+        t2 = doc.add_table(rows=1, cols=len(c_disp.columns))
+        t2.style = 'Table Grid'
+        
+        # Header
+        hdr2 = t2.rows[0].cells
+        for i, col_name in enumerate(c_disp.columns):
+            hdr2[i].text = str(col_name)
+            
+        # Body
+        for _, row in c_disp.iterrows():
+            row_cells = t2.add_row().cells
+            for i, val in enumerate(row):
+                # Feature Name (Col 0)
+                if i == 0:
+                    row_cells[i].text = str(val)
+                    continue
+
+                # Correlation Value
+                if isinstance(val, (int, float)):
+                    row_cells[i].text = f"{val:.2f}"
+                    
+                    # Apply background gradient
+                    try:
+                        # Get RGBA from colormap
+                        rgba = cmap(norm(val))
+                        # Convert to Hex (ignore alpha)
+                        hex_color = mcolors.to_hex(rgba, keep_alpha=False).lstrip('#')
+                        
+                        # XML Magic for shading
+                        shading_elm = parse_xml(r'<w:shd {} w:fill="{}"/>'.format(nsdecls('w'), hex_color))
+                        row_cells[i]._tc.get_or_add_tcPr().append(shading_elm)
+
+                        # Text Contrast (White text on dark background)
+                        r, g, b, _ = rgba
+                        lum = 0.299*r + 0.587*g + 0.114*b
+                        if lum < 0.5:
+                           run = row_cells[i].paragraphs[0].runs[0]
+                           run.font.color.rgb = RGBColor(255, 255, 255)
+                           
+                    except Exception:
+                        pass
+                else:
+                    row_cells[i].text = str(val)
+
+    # Save
+    buffer = io.BytesIO()
+    doc.save(buffer)
+    buffer.seek(0)
+    return buffer
