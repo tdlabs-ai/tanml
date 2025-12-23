@@ -5,7 +5,7 @@ Stress Testing Tab - Robustness checks.
 
 import streamlit as st
 
-from tanml.ui.pages.evaluation.tabs import register_tab
+from tanml.ui.views.evaluation.tabs import register_tab
 
 
 @register_tab(name="Stress Testing", order=60, key="tab_stress")

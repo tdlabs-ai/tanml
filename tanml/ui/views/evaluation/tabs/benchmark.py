@@ -9,7 +9,7 @@ import pandas as pd
 import streamlit as st
 import matplotlib.pyplot as plt
 
-from tanml.ui.pages.evaluation.tabs import register_tab
+from tanml.ui.views.evaluation.tabs import register_tab
 
 
 @register_tab(name="Benchmarking", order=50, key="tab_bench")

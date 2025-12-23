@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tanml"
-version = "0.1.8.dev1"
+version = "0.1.8"
 description = "Automated validation toolkit for tabular ML models—MRM, credit risk, insurance, and other regulated use cases."
 readme = { file = "README.md", content-type = "text/markdown" }
 requires-python = ">=3.8"
@@ -48,6 +48,7 @@ classifiers = [
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
   "Topic :: Scientific/Engineering :: Artificial Intelligence",
   "Topic :: Scientific/Engineering :: Information Analysis",
   "Topic :: Scientific/Engineering :: Visualization"

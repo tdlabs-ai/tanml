@@ -32,7 +32,7 @@ from tanml.models.registry import (
 )
 
 # Import tab system
-from tanml.ui.pages.evaluation.tabs import (
+from tanml.ui.views.evaluation.tabs import (
     TabContext, 
     discover_tabs, 
     get_registered_tabs,

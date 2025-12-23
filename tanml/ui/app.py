@@ -5,10 +5,10 @@ import os
 import streamlit as st
 
 # TanML Pages
-from tanml.ui.pages.profiling import render_data_profiling_hub
-from tanml.ui.pages.preprocessing import render_preprocessing_hub
-from tanml.ui.pages.ranking import render_feature_ranking_page
-from tanml.ui.pages.model_dev import render_model_development_page
+from tanml.ui.views.profiling import render_data_profiling_hub
+from tanml.ui.views.preprocessing import render_preprocessing_hub
+from tanml.ui.views.ranking import render_feature_ranking_page
+from tanml.ui.views.model_dev import render_model_development_page
 
 
 
@@ -30,8 +30,8 @@ from pathlib import Path
 
 from tanml.ui.config import load_css
 from tanml.ui.services.session import _session_dir
-from tanml.ui.pages.setup import render_setup_page
-from tanml.ui.pages.evaluation import render_model_evaluation_page
+from tanml.ui.views.setup import render_setup_page
+from tanml.ui.views.evaluation import render_model_evaluation_page
 
 # Logo path
 _LOGO_PATH = Path(__file__).parent / "assets" / "logo.png"

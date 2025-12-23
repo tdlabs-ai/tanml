@@ -6,7 +6,7 @@ Explainability Tab - SHAP analysis.
 import pandas as pd
 import streamlit as st
 
-from tanml.ui.pages.evaluation.tabs import register_tab
+from tanml.ui.views.evaluation.tabs import register_tab
 
 
 @register_tab(name="Explainability (SHAP)", order=70, key="tab_exp")

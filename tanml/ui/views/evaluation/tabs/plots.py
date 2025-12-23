@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import scipy.stats as scipy_stats
 from sklearn.metrics import confusion_matrix, roc_curve, precision_recall_curve, roc_auc_score
 
-from tanml.ui.pages.evaluation.tabs import register_tab
+from tanml.ui.views.evaluation.tabs import register_tab
 
 
 @register_tab(name="Diagnostic Plots Comparison", order=20, key="tab_plots")

@@ -11,7 +11,7 @@ from sklearn.metrics import (
 )
 import numpy as np
 
-from tanml.ui.pages.evaluation.tabs import register_tab
+from tanml.ui.views.evaluation.tabs import register_tab
 
 
 @register_tab(name="Metrics Comparison", order=10, key="tab_metrics")

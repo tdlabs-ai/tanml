@@ -8,7 +8,7 @@ and using the @register_tab decorator.
 
 Example:
     # tanml/ui/pages/evaluation/tabs/my_tab.py
-    from tanml.ui.pages.evaluation.tabs import register_tab
+    from tanml.ui.views.evaluation.tabs import register_tab
     
     @register_tab(name="My Analysis", order=80)
     def render(context):
@@ -112,11 +112,11 @@ def discover_tabs():
     This imports all Python files in the tabs/ folder,
     which causes their @register_tab decorators to run.
     """
-    import tanml.ui.pages.evaluation.tabs as tabs_package
+    import tanml.ui.views.evaluation.tabs as tabs_package
     
     for importer, modname, ispkg in pkgutil.iter_modules(tabs_package.__path__):
         if not modname.startswith('_'):  # Skip __init__, etc.
-            importlib.import_module(f'tanml.ui.pages.evaluation.tabs.{modname}')
+            importlib.import_module(f'tanml.ui.views.evaluation.tabs.{modname}')
 
 
 def clear_registry():
