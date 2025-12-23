@@ -164,16 +164,16 @@ def render_setup_page(run_dir):
     col1, col2, col3, col4 = st.columns(4)
     
     with col1:
-        st.link_button("⭐ GitHub", GITHUB_URL, use_container_width=True)
+        st.link_button("⭐ GitHub", GITHUB_URL, width="stretch")
     
     with col2:
-        st.link_button("💼 Tanmay", LINKEDIN_URL_TANMAY, use_container_width=True)
+        st.link_button("💼 Tanmay", LINKEDIN_URL_TANMAY, width="stretch")
     
     with col3:
-        st.link_button("💼 Dolly", LINKEDIN_URL_DOLLY, use_container_width=True)
+        st.link_button("💼 Dolly", LINKEDIN_URL_DOLLY, width="stretch")
     
     with col4:
-        st.link_button("📝 Feedback", FEEDBACK_URL, use_container_width=True)
+        st.link_button("📝 Feedback", FEEDBACK_URL, width="stretch")
 
     st.divider()
 

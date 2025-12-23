@@ -44,7 +44,7 @@ def main():
     
     with st.sidebar:
         if _LOGO_PATH.exists():
-            st.image(str(_LOGO_PATH), use_container_width=True)
+            st.image(str(_LOGO_PATH), width="stretch")
         st.title("TanML")
         
         # Sidebar global config

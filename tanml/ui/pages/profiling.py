@@ -62,7 +62,7 @@ def _render_rich_profile(df):
     with t0:
         st.markdown("#### Data Preview (Top 10 Rows)")
         st.caption("A quick look at the first 10 rows of your dataset.")
-        st.dataframe(df.head(10), use_container_width=True)
+        st.dataframe(df.head(10), width="stretch")
 
     with t1:
         st.markdown("#### Missing Values")
@@ -77,7 +77,7 @@ def _render_rich_profile(df):
                 st.caption("Missing Count Table")
                 nulls = df.isnull().sum()
                 miss_df = pd.DataFrame({"Missing Count": nulls, "Missing %": (nulls/len(df)).map(lambda x:f"{x:.1%}")})
-                st.dataframe(miss_df[miss_df["Missing Count"] > 0], use_container_width=True)
+                st.dataframe(miss_df[miss_df["Missing Count"] > 0], width="stretch")
 
     with t2:
         st.markdown("#### Duplicates & Integrity")
@@ -150,7 +150,7 @@ def _render_rich_profile(df):
                 
                 if outlier_cols:
                     st.write("**Potential Outliers (IQR Method):**")
-                    st.dataframe(pd.DataFrame(outlier_cols, columns=["Feature", "Outlier Count"]), use_container_width=True)
+                    st.dataframe(pd.DataFrame(outlier_cols, columns=["Feature", "Outlier Count"]), width="stretch")
                     
                     # Feature selector to view outlier details
                     st.divider()
@@ -186,7 +186,7 @@ def _render_rich_profile(df):
                         
                         # Show outlier rows
                         with st.expander(f"📊 Outlier Rows ({len(df_outliers)} rows)", expanded=True):
-                            st.dataframe(df_outliers.head(100), use_container_width=True)
+                            st.dataframe(df_outliers.head(100), width="stretch")
                             if len(df_outliers) > 100:
                                 st.caption(f"Showing first 100 of {len(df_outliers)} outlier rows")
                         
@@ -205,7 +205,7 @@ def _render_rich_profile(df):
         n_df = df.select_dtypes(include="number")
         if n_df.shape[1] > 1:
             corr = n_df.corr()
-            st.dataframe(corr.style.background_gradient(cmap="coolwarm", axis=None), use_container_width=True)
+            st.dataframe(corr.style.background_gradient(cmap="coolwarm", axis=None), width="stretch")
         else:
             st.info("Not enough numeric features for correlation.")
 

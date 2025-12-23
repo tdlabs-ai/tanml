@@ -147,7 +147,7 @@ def render(context):
                     display_df = ood_df.sort_values('_ood_distance', ascending=False).reset_index(drop=True)
                 else:
                     display_df = ood_df.reset_index(drop=True)
-                st.dataframe(display_df, use_container_width=True, height=300)
+                st.dataframe(display_df, width="stretch", height=300)
                 
                 # Download button
                 csv_data = display_df.to_csv(index=False)

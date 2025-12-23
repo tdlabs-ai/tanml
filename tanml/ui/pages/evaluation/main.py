@@ -147,7 +147,7 @@ def render_model_evaluation_page(run_dir):
     st.divider()
 
     # === 3. TRAIN MODEL ===
-    if st.button("🚀 Evaluate Model", type="primary", use_container_width=True):
+    if st.button("🚀 Evaluate Model", type="primary", width="stretch"):
         with st.spinner("Training model..."):
             X_train = df_train[features]
             y_train = df_train[target]

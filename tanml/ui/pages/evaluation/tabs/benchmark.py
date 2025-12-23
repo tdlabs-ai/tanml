@@ -193,7 +193,7 @@ def render(context):
             # Formatting
             if not df_compare.empty:
                 format_dict = {col: "{:.4f}" for col in df_compare.columns if col != "Metric"}
-                st.dataframe(df_compare.style.format(format_dict), use_container_width=True, hide_index=True)
+                st.dataframe(df_compare.style.format(format_dict), width="stretch", hide_index=True)
             
             # Bar Chart Comparison
             st.write("#### Performance Comparison Chart")

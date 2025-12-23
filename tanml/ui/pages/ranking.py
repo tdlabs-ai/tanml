@@ -268,7 +268,7 @@ def render_feature_ranking_page(run_dir):
                 ),
                 tooltip=['Feature', 'Power', 'Missing %']
             ).properties(height=max(400, len(m_df)*30))
-            st.altair_chart(chart, use_container_width=True)
+            st.altair_chart(chart, width="stretch")
             
             # B. The Table
             st.markdown("### Metrics Metrics Board")
@@ -286,7 +286,7 @@ def render_feature_ranking_page(run_dir):
             st.dataframe(
                 m_df.style.background_gradient(subset=subset, cmap="Blues")
                           .format(fmt),
-                use_container_width=True
+                width="stretch"
             )
             
             st.divider()
@@ -343,7 +343,7 @@ def render_feature_ranking_page(run_dir):
                     tooltip=[feat_to_plot, target]
                 ).interactive()
                 
-            st.altair_chart(chart_d, use_container_width=True)
+            st.altair_chart(chart_d, width="stretch")
 
     # --- TAB 3: HEATMAP ---
     with tab_corr:
@@ -354,6 +354,6 @@ def render_feature_ranking_page(run_dir):
         if not corr_x.empty:
             corr = corr_x.corr()
             
-            st.dataframe(corr.style.background_gradient(cmap="coolwarm", axis=None), use_container_width=True)
+            st.dataframe(corr.style.background_gradient(cmap="coolwarm", axis=None), width="stretch")
         else:
             st.info("No numeric features to correlate.")
