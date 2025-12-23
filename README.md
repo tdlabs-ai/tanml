@@ -10,10 +10,6 @@
 [![Give Feedback](https://img.shields.io/badge/Feedback-Give%20Now-blue?style=for-the-badge)](https://forms.gle/oG2JHvt7tLXE5Atu7)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17317165.svg)](https://doi.org/10.5281/zenodo.17317165)
 
-[![Watch the TanML Demo](https://img.youtube.com/vi/KlqJrVgj670/maxresdefault.jpg)](https://youtu.be/KlqJrVgj670)  
-🎥 **[Watch the 5-Minute TanML Walkthrough on YouTube →](https://youtu.be/KlqJrVgj670)**  
-*(End-to-end demo of UI, validation checks, and automated report generation)*
-
 
 > **TanML bridges the gap between data science tools (for building models) and governance requirements (for validating them). It's not just an ML library—it's a validation workflow with built-in documentation.**
 
