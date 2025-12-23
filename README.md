@@ -65,15 +65,6 @@ tanml ui
 * **Upload limit ~2 GB** (preconfigured)
 * **Telemetry disabled by default**
 
-### Workflow
-
-1. **📊 Data Profiling** — Upload any dataset to analyze quality, distributions, and statistics.
-2. **🔧 Preprocessing** — Clean, impute, and encode data for modeling.
-3. **📈 Feature Ranking** — Identify the most predictive features using Power Scores.
-4. **🤖 Model Development** — Train models with cross-validation and diagnostics.
-5. **🎯 Model Evaluation** — Compare Train vs Test performance, drift, stress tests.
-6. **📝 Generate Reports** — Download audit-ready Word reports (.docx).
-
 ---
 
 ## Optional CLI Flags
