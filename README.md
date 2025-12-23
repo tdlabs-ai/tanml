@@ -15,7 +15,7 @@
 *(End-to-end demo of UI, validation checks, and automated report generation)*
 
 
-**TanML** validates tabular ML models with a zero-config **Streamlit UI** and exports an audit-ready, **editable Word report (.docx)**. It covers data quality, correlation/VIF, performance, explainability (SHAP), and robustness/stress tests—built for regulated settings (MRM, credit risk, insurance, etc.).
+> **TanML bridges the gap between data science tools (for building models) and governance requirements (for validating them). It's not just an ML library—it's a validation workflow with built-in documentation.**
 
 * **Status:** Beta (`0.x`)
 * **License:** MIT
@@ -29,11 +29,10 @@
 - Why TanML?
 - Install
 - Quick Start (UI)
-- What TanML Checks
 - Optional CLI Flags
-- Templates
-- Troubleshooting
+- Reports
 - Data Privacy
+- Troubleshooting
 - Contributing
 - License & Citation
 
@@ -41,10 +40,12 @@
 
 ## Why TanML?
 
-* **Zero-config UI:** launch Streamlit, upload data, click **Run**—no YAML needed.
-* **Audit-ready outputs:** tables/plots + a polished DOCX your stakeholders can edit.
-* **Regulatory alignment:** supports common Model Risk Management themes (e.g., SR 11-7 style).
-* **Works with your stack:** scikit-learn, XGBoost/LightGBM/CatBoost, etc.
+* **End-to-end workflow:** Data Profiling → Preprocessing → Feature Ranking → Model Development → Evaluation → Reports—all in one UI.
+* **Audit-ready Word reports:** Generate editable .docx documents for stakeholders and compliance reviews.
+* **Built for regulated industries:** Designed for MRM, credit risk, insurance, and SR 11-7 contexts.
+* **No code required:** Fully UI-driven—no Python knowledge needed.
+* **Robust evaluation:** Drift detection, stress testing, SHAP explainability, cluster coverage.
+* **Works with your stack:** scikit-learn, XGBoost, LightGBM, CatBoost.
 
 ---
 
@@ -61,36 +62,17 @@ tanml ui
 ```
 
 * Opens at **[http://127.0.0.1:8501](http://127.0.0.1:8501)**
-* **Upload limit ~1 GB** (preconfigured)
+* **Upload limit ~2 GB** (preconfigured)
 * **Telemetry disabled by default**
 
-### In the app
+### Workflow
 
-1. **Load data** — upload a cleaned CSV/XLSX/Parquet (optional: raw or separate Train/Test).
-2. **Select target & features** — target auto-suggested; features default to all non-target columns.
-3. **Pick a model** — choose library/algorithm (scikit-learn, XGBoost, LightGBM, CatBoost) and tweak params.
-4. **Run validation** — click **▶️ Refit & validate**.
-5. **Export** — click **⬇️ Download report** to get a **DOCX** (auto-selects classification/regression template).
-
-**Outputs**
-
-* Report: `./.ui_runs/<session>/tanml_report_*.docx`
-* Artifacts (CSV/PNGs): `./.ui_runs/<session>/artifacts/*`
-
----
-
-## What TanML Checks
-
-* **Raw Data (optional):** rows/cols, missingness, duplicates, constant columns
-* **Data Quality & EDA:** summaries, distributions
-* **Correlation & Multicollinearity:** heatmap, top-pairs CSV, **VIF** table
-* **Performance**
-
-  * **Classification:** AUC, PR-AUC, KS, decile lift, confusion
-  * **Regression:** R², MAE, MSE/RMSE, error stats
-* **Explainability:** SHAP (auto explainer; configurable background size)
-* **Robustness/Stress Tests:** feature perturbations → delta-metrics
-* **Model Metadata:** model class, hyperparameters, features, training info
+1. **📊 Data Profiling** — Upload any dataset to analyze quality, distributions, and statistics.
+2. **🔧 Preprocessing** — Clean, impute, and encode data for modeling.
+3. **📈 Feature Ranking** — Identify the most predictive features using Power Scores.
+4. **🤖 Model Development** — Train models with cross-validation and diagnostics.
+5. **🎯 Model Evaluation** — Compare Train vs Test performance, drift, stress tests.
+6. **📝 Generate Reports** — Download audit-ready Word reports (.docx).
 
 ---
 
@@ -124,7 +106,7 @@ Windows PowerShell:
 $env:TANML_SERVER_ADDRESS="0.0.0.0"; $env:TANML_PORT="9000"; $env:TANML_MAX_MB="2048"; tanml ui
 ```
 
-**Defaults:** address `127.0.0.1`, port `8501`, limit `1024 MB`, telemetry **OFF**.
+**Defaults:** address `127.0.0.1`, port `8501`, limit `2048 MB`, telemetry **OFF**.
 
 ---
 

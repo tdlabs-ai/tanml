@@ -7,7 +7,7 @@ def _parse_args(argv):
     p.add_argument("--public", action="store_true", help="Bind on 0.0.0.0 for LAN access")
     p.add_argument("--headless", action="store_true", help="Run without opening a browser")
     p.add_argument("--port", type=int, help="Port to serve on (default 8501)")
-    p.add_argument("--max-mb", type=int, help="Max upload/message size in MB (default 1024)")
+    p.add_argument("--max-mb", type=int, help="Max upload/message size in MB (default 2048)")
     p.add_argument("--no-telemetry", action="store_true", help="Disable Streamlit usage stats")
     p.add_argument("--address", type=str, help="Explicit bind address (overrides --public)")
     p.add_argument("-h", "--help", action="store_true", help="Show help")
@@ -48,7 +48,7 @@ def _launch_ui(argv):
     default_port = int(os.environ.get("TANML_PORT", "8501"))
     port = args.port if args.port is not None else default_port
 
-    default_max_mb = int(os.environ.get("TANML_MAX_MB", "1024"))
+    default_max_mb = int(os.environ.get("TANML_MAX_MB", "2048"))
     max_mb = args.max_mb if args.max_mb is not None else default_max_mb
 
     default_no_telemetry = _env_bool("TANML_NO_TELEMETRY", True)  # default OFF
@@ -96,7 +96,7 @@ def main():
             "  --public                     Bind on 0.0.0.0 for LAN access\n"
             "  --headless                   Run without opening a browser\n"
             "  --port N                     Port to serve on (default 8501)\n"
-            "  --max-mb N                   Max upload size in MB (default 1024)\n"
+            "  --max-mb N                   Max upload size in MB (default 2048)\n"
             "  --no-telemetry               Disable Streamlit usage stats\n\n"
             "Env vars:\n"
             "  TANML_SERVER_ADDRESS, TANML_HEADLESS, TANML_PORT, TANML_MAX_MB, TANML_NO_TELEMETRY\n"
