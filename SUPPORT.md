@@ -1,7 +1,7 @@
 # Support
 
 - 📦 Install: `pip install tanml`
-- ▶️ UI: `python -m tanml.ui.app` (see README for options)
+- ▶️ UI: `tanml ui` (see README for options)
 - 📘 Usage & examples: see README and `examples/`
 - 🐛 Bugs: open a Bug Report issue
 - 💡 Features: open a Feature Request issue

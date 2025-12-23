@@ -128,12 +128,15 @@ $env:TANML_SERVER_ADDRESS="0.0.0.0"; $env:TANML_PORT="9000"; $env:TANML_MAX_MB="
 
 ---
 
-## Templates
+## Reports
 
-TanML ships DOCX templates (packaged in wheel & sdist):
+TanML generates audit-ready Word reports (.docx) programmatically:
 
-* `tanml/report/templates/report_template_cls.docx`
-* `tanml/report/templates/report_template_reg.docx`
+* **Model Development Report** — Cross-validation metrics, diagnostics, and performance summary
+* **Model Evaluation Report** — Train/Test comparison, drift analysis, stress testing, SHAP explainability
+* **Feature Power Ranking Report** — Feature importance scores, correlation analysis
+
+Reports are generated via `tanml/ui/reports/generators.py` and exported directly from the UI.
 
 ---
 
@@ -180,8 +183,6 @@ SPDX-License-Identifier: MIT
 If TanML helps your work or publications, please cite:
 
 > Sah, T., & Sah, D. (2025). *TanML: Automated Model Validation Toolkit for Tabular Machine Learning* [Software]. Zenodo. [https://doi.org/10.5281/zenodo.17317165](https://doi.org/10.5281/zenodo.17317165)
-
-Or in BibTeX (version-agnostic):. Available at https://github.com/tdlabs-ai/tanml
 
 Or in BibTeX (version-agnostic):
 

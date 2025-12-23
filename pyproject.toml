@@ -109,4 +109,4 @@ where = ["."]
 include = ["tanml*"]
 
 [tool.setuptools.package-data]
-"tanml.report.templates" = ["*.docx"] 
+"tanml.ui.assets" = ["*.png", "*.jpg", "*.svg"] 
