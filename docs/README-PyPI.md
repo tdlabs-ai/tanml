@@ -1,19 +1,8 @@
 # TanML: Automated Model Validation Toolkit for Tabular Machine Learning
 
-
-
-
-
-[![PyPI](https://img.shields.io/pypi/v/tanml.svg)](https://pypi.org/project/tanml/)
-[![Downloads](https://pepy.tech/badge/tanml)](https://pepy.tech/project/tanml)
+[![Cite this repo](https://img.shields.io/badge/Cite-this_repo-blue)](https://github.com/tdlabs-ai/tanml#license--citation)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
-[![Give Feedback](https://img.shields.io/badge/Feedback-Give%20Now-blue?style=for-the-badge)](https://forms.gle/oG2JHvt7tLXE5Atu7)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17317165.svg)](https://doi.org/10.5281/zenodo.17317165)
-
-[![Watch the TanML Demo](https://img.youtube.com/vi/KlqJrVgj670/maxresdefault.jpg)](https://youtu.be/KlqJrVgj670)  
-🎥 **[Watch the 5-Minute TanML Walkthrough on YouTube →](https://youtu.be/KlqJrVgj670)**  
-*(End-to-end demo of UI, validation checks, and automated report generation)*
-
+[![Downloads](https://pepy.tech/badge/tanml)](https://pepy.tech/project/tanml)
 
 **TanML** validates tabular ML models with a zero-config **Streamlit UI** and exports an audit-ready, **editable Word report (.docx)**. It covers data quality, correlation/VIF, performance, explainability (SHAP), and robustness/stress tests—built for regulated settings (MRM, credit risk, insurance, etc.).
 
@@ -21,21 +10,6 @@
 * **License:** MIT
 * **Python:** 3.8–3.12
 * **OS:** Linux / macOS / Windows (incl. WSL)
-
----
-
-## Table of Contents
-
-- Why TanML?
-- Install
-- Quick Start (UI)
-- What TanML Checks
-- Optional CLI Flags
-- Templates
-- Troubleshooting
-- Data Privacy
-- Contributing
-- License & Citation
 
 ---
 
@@ -94,39 +68,6 @@ tanml ui
 
 ---
 
-## Optional CLI Flags
-
-Most users just run `tanml ui`. These help on teams/servers:
-
-```bash
-# Share on LAN
-tanml ui --public
-
-# Different port
-tanml ui --port 9000
-
-# Headless (server/CI; no auto-open browser)
-tanml ui --headless
-
-# Larger limit (e.g., 2 GB)
-tanml ui --max-mb 2048
-```
-
-Env var equivalents (Linux/macOS bash):
-
-```bash
-TANML_SERVER_ADDRESS=0.0.0.0 TANML_PORT=9000 TANML_MAX_MB=2048 tanml ui
-```
-
-Windows PowerShell:
-
-```powershell
-$env:TANML_SERVER_ADDRESS="0.0.0.0"; $env:TANML_PORT="9000"; $env:TANML_MAX_MB="2048"; tanml ui
-```
-
-**Defaults:** address `127.0.0.1`, port `8501`, limit `1024 MB`, telemetry **OFF**.
-
----
 
 ## Reports
 
@@ -136,40 +77,8 @@ TanML generates audit-ready Word reports (.docx) programmatically:
 * **Model Evaluation Report** — Train/Test comparison, drift analysis, stress testing, SHAP explainability
 * **Feature Power Ranking Report** — Feature importance scores, correlation analysis
 
-Reports are generated via `tanml/ui/reports/generators.py` and exported directly from the UI.
-
 ---
 
-## Data Privacy
-
-- TanML runs locally; no data is sent to external services.
-- Telemetry is disabled by default (and can be forced off via `--no-telemetry`).
-- UI artifacts and reports are written under `./.ui_runs/<session>/` in your working directory.
-
----
-
-## Troubleshooting
-
-* **Page didn’t open?** Visit `http://127.0.0.1:8501` or run `tanml ui --port 9000`.
-* **Large CSVs are slow/heavy?** Prefer **Parquet**; CSV → DataFrame can use several GB RAM.
-* **Artifacts missing?** Check `./.ui_runs/<session>/artifacts/`.
-* **Corporate networks:** use `tanml ui --public` to share on LAN.
-
----
-
-## Contributing
-
-We welcome issues and PRs!
-
-- Create a virtual environment and install dev extras:
-  - `python -m venv .venv && source .venv/bin/activate` (or `\.venv\Scripts\activate` on Windows)
-  - `pip install -e .[dev]`
-- Format/lint: `black . && isort .`
-- Run tests: `pytest`
-
-Before opening a PR, please describe the change and include a brief test or reproduction steps where applicable.
-
----
 
 ## License & Citation
 
@@ -182,26 +91,18 @@ SPDX-License-Identifier: MIT
 
 If TanML helps your work or publications, please cite:
 
-> Sah, T., & Sah, D. (2025). *TanML: Automated Model Validation Toolkit for Tabular Machine Learning* [Software]. Zenodo. [https://doi.org/10.5281/zenodo.17317165](https://doi.org/10.5281/zenodo.17317165)
+> Sah, T., & Sah, D. (2025). *TanML: Automated Model Validation Toolkit for Tabular Machine Learning* [Software]. Available at https://github.com/tdlabs-ai/tanml
 
 Or in BibTeX (version-agnostic):
 
 ```bibtex
-@software{tanml_2025,
-  author       = {Sah, Tanmay and Sah, Dolly},
-  title        = {TanML: Automated Model Validation Toolkit for Tabular Machine Learning},
-  year         = {2025},
-  publisher    = {Zenodo},
-  doi          = {10.5281/zenodo.17317165},
-  url          = {https://doi.org/10.5281/zenodo.17317165},
-  license      = {MIT}
+@misc{tanml,
+  author = {Sah, Tanmay and Sah, Dolly},
+  title  = {TanML: Automated Model Validation Toolkit for Tabular Machine Learning},
+  year   = {2025},
+  note   = {Software; MIT License},
+  url    = {https://github.com/tdlabs-ai/tanml}
 }
 ```
 
 A machine-readable citation file (`CITATION.cff`) is included for citation tools and GitHub’s “Cite this repository” button.
-
-
-
-
-
-

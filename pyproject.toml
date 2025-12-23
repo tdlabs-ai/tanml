@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "tanml"
 version = "0.1.7"
 description = "Automated validation toolkit for tabular ML models—MRM, credit risk, insurance, and other regulated use cases."
-readme = { file = "docs/README-Full.md", content-type = "text/markdown" }
+readme = { file = "docs/README-PyPI.md", content-type = "text/markdown" }
 requires-python = ">=3.8"
 license = "MIT"
 license-files = ["LICENSE"]
