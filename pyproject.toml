@@ -83,8 +83,7 @@ dependencies = [
   "pyarrow>=14.0",
   "openpyxl>=3.1",
   "pyreadstat>=1.2",
-  "streamlit>=1.36",
-  "altair>=4.0"
+  "streamlit>=1.36"
 ]
 
 
