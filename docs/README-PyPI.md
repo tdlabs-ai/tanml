@@ -69,12 +69,13 @@ tanml ui
 ---
 
 
-## Templates
+## Reports
 
-TanML ships DOCX templates (packaged in wheel & sdist):
+TanML generates audit-ready Word reports (.docx) programmatically:
 
-* `tanml/report/templates/report_template_cls.docx`
-* `tanml/report/templates/report_template_reg.docx`
+* **Model Development Report** — Cross-validation metrics, diagnostics, and performance summary
+* **Model Evaluation Report** — Train/Test comparison, drift analysis, stress testing, SHAP explainability
+* **Feature Power Ranking Report** — Feature importance scores, correlation analysis
 
 ---
 
