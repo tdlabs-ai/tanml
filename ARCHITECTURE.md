@@ -169,7 +169,8 @@ flowchart LR
 
 | Entry Point | Command | Description |
 |-------------|---------|-------------|
-| CLI | `tanml` | Launches the Streamlit app |
+| CLI | `tanml` | Launches the TanML UI directly |
+| CLI with options | `tanml --port 8080` | Launch with custom options |
 | Direct | `streamlit run tanml/ui/app.py` | Alternative launch method |
 | Import | `import tanml` | Use as Python library |
 

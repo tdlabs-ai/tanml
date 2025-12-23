@@ -84,16 +84,37 @@ def _launch_ui(argv):
 
 def main():
     argv = sys.argv[1:]
-    if not argv or argv[0] in {"-h", "--help"}:
+    
+    # Show help
+    if argv and argv[0] in {"-h", "--help"}:
         print(
+            "TanML - Industrial-Grade Model Validation Framework\n\n"
             "Usage:\n"
-            "  tanml ui [--public] [--headless] [--port N] [--max-mb N] [--no-telemetry]\n"
+            "  tanml                        Launch the TanML UI\n"
+            "  tanml ui [options]           Launch the TanML UI (explicit)\n\n"
+            "Options:\n"
+            "  --public                     Bind on 0.0.0.0 for LAN access\n"
+            "  --headless                   Run without opening a browser\n"
+            "  --port N                     Port to serve on (default 8501)\n"
+            "  --max-mb N                   Max upload size in MB (default 1024)\n"
+            "  --no-telemetry               Disable Streamlit usage stats\n\n"
             "Env vars:\n"
             "  TANML_SERVER_ADDRESS, TANML_HEADLESS, TANML_PORT, TANML_MAX_MB, TANML_NO_TELEMETRY\n"
         )
         sys.exit(0)
-    if argv[0] == "ui":
-        sys.exit(_launch_ui(argv[1:]))
-    else:
-        print(f"Unknown command: {argv[0]}\nTry: tanml ui --help")
-        sys.exit(2)
+    
+    # If no args or first arg is "ui", launch the UI
+    if not argv or argv[0] == "ui":
+        # Strip "ui" if present
+        ui_args = argv[1:] if argv and argv[0] == "ui" else argv
+        sys.exit(_launch_ui(ui_args))
+    
+    # Check if first arg looks like an option (starts with -)
+    if argv[0].startswith("-"):
+        # Pass all args to UI launcher
+        sys.exit(_launch_ui(argv))
+    
+    # Unknown command
+    print(f"Unknown command: {argv[0]}\nTry: tanml --help")
+    sys.exit(2)
+
