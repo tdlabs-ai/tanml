@@ -43,8 +43,19 @@ def render(context):
                 importlib.reload(tanml.checks.explainability.shap_check)
                 from tanml.checks.explainability.shap_check import SHAPCheck
                 
-                # Config with user values
-                scog = {"explainability": {"shap": {"background_sample_size": bg_size, "test_sample_size": test_size}}}
+                # Config with user values - Enforce run output directory
+                artifacts_dir = context.run_dir / "artifacts"
+                artifacts_dir.mkdir(parents=True, exist_ok=True)
+                
+                scog = {
+                     "explainability": {
+                          "shap": {
+                               "background_sample_size": bg_size, 
+                               "test_sample_size": test_size,
+                               "out_dir": str(artifacts_dir)
+                          }
+                     }
+                }
                 
                 # Note: SHAPCheck expects X_train, X_test, y_train, y_test
                 shap_check = SHAPCheck(

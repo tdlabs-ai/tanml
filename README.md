@@ -113,7 +113,7 @@ Reports are generated via `tanml/ui/reports/generators.py` and exported directly
 
 - TanML runs locally; no data is sent to external services.
 - Telemetry is disabled by default (and can be forced off via `--no-telemetry`).
-- UI artifacts and reports are written under `./.ui_runs/<session>/` in your working directory.
+- UI artifacts and reports are written under `./tanml_runs/<session>/` in your working directory.
 
 ---
 
@@ -121,7 +121,7 @@ Reports are generated via `tanml/ui/reports/generators.py` and exported directly
 
 * **Page didn’t open?** Visit `http://127.0.0.1:8501` or run `tanml ui --port 9000`.
 * **Large CSVs are slow/heavy?** Prefer **Parquet**; CSV → DataFrame can use several GB RAM.
-* **Artifacts missing?** Check `./.ui_runs/<session>/artifacts/`.
+* **Artifacts missing?** Check `./tanml_runs/<session>/artifacts/`.
 * **Corporate networks:** use `tanml ui --public` to share on LAN.
 
 ---

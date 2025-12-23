@@ -214,6 +214,7 @@ def render_model_evaluation_page(run_dir):
         results=st.session_state.get("eval_context_results", {}), # Pass session dict by reference
         images=st.session_state.get("eval_context_images", {}),
         target=d["target"],
+        run_dir=run_dir,
     )
     
     # Ensure they are in session state (in case of page reload)

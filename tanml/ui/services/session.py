@@ -16,7 +16,7 @@ def _session_dir() -> Path:
     if not sid:
         sid = str(uuid.uuid4())[:8]
         st.session_state["_session_id"] = sid
-    d = Path(".ui_runs") / sid
+    d = Path("tanml_runs") / sid
     d.mkdir(parents=True, exist_ok=True)
     (d / "artifacts").mkdir(parents=True, exist_ok=True)
     return d

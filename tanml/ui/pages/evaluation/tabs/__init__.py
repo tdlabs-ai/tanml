@@ -23,6 +23,7 @@ from dataclasses import dataclass
 from typing import Any, Callable, Dict, List, Optional
 import importlib
 import pkgutil
+from pathlib import Path
 
 
 @dataclass
@@ -42,6 +43,7 @@ class TabContext:
     task_type: str
     features: List[str]
     target: str
+    run_dir: Path
     
     # Optional
     y_prob_train: Optional[Any] = None
