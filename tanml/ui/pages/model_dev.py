@@ -28,7 +28,16 @@ from tanml.models.registry import build_estimator, infer_task_from_target
 from tanml.ui.services.cv import _run_repeated_cv
 
 def render_model_development_page(run_dir):
-    st.header("Model Development")
+    st.markdown("""
+    <div style="
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 1rem 1.5rem;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+    ">
+        <h2 style="color: white; margin: 0;">🤖 Model Development</h2>
+    </div>
+    """, unsafe_allow_html=True)
     st.write("Upload a dedicated Development Dataset to experiment with models.")
     
     # 1. Dedicated Upload

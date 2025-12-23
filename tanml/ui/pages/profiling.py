@@ -211,7 +211,16 @@ def _render_rich_profile(df):
 
 
 def render_data_profiling_hub(run_dir):
-    st.header("Data Profiling")
+    st.markdown("""
+    <div style="
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 1rem 1.5rem;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+    ">
+        <h2 style="color: white; margin: 0;">📊 Data Profiling</h2>
+    </div>
+    """, unsafe_allow_html=True)
     st.caption("Upload any dataset to generate a comprehensive data quality profile.")
 
     # 1. State Management for Profiling Data

@@ -14,7 +14,16 @@ from tanml.models.registry import infer_task_from_target
 from tanml.ui.reports import _generate_ranking_report_docx
 
 def render_feature_ranking_page(run_dir):
-    st.header("Feature Power Ranking")
+    st.markdown("""
+    <div style="
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 1rem 1.5rem;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+    ">
+        <h2 style="color: white; margin: 0;">📈 Feature Power Ranking</h2>
+    </div>
+    """, unsafe_allow_html=True)
     
     # --- 1. GET OR REQUEST DATA ---
     # Detect available datasets

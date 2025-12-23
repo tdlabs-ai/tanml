@@ -46,7 +46,16 @@ def render_model_evaluation_page(run_dir):
     This function handles data upload, model training, and orchestrates
     the tab rendering using the registry system.
     """
-    st.header("Model Evaluation")
+    st.markdown("""
+    <div style="
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 1rem 1.5rem;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+    ">
+        <h2 style="color: white; margin: 0;">🎯 Model Evaluation</h2>
+    </div>
+    """, unsafe_allow_html=True)
     st.caption("Upload independent Training and Testing datasets to strictly evaluate model performance.")
 
     # === 1. DATA UPLOAD ===
