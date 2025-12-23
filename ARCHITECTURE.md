@@ -171,7 +171,6 @@ flowchart LR
 |-------------|---------|-------------|
 | CLI | `tanml ui` | Launches the TanML UI |
 | CLI with options | `tanml ui --port 8080` | Launch with custom options |
-| Direct | `streamlit run tanml/ui/app.py` | Alternative launch method |
 | Import | `import tanml` | Use as Python library |
 
 ## Contributing
