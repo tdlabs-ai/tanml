@@ -124,7 +124,7 @@ vif_results = calculate_vif(df, features=["col1", "col2"])
 pip install -e .
 
 # Run the UI
-streamlit run tanml/ui/app.py
+tanml ui
 ```
 
 ## Questions?
