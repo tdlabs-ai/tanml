@@ -34,7 +34,7 @@ from tanml.ui.pages.setup import render_setup_page
 from tanml.ui.pages.evaluation import render_model_evaluation_page
 
 # Logo path
-_LOGO_PATH = Path(__file__).parent / "assets" / "tanml_logo_4.png"
+_LOGO_PATH = Path(__file__).parent / "assets" / "logo.png"
 
 def main():
     st.set_page_config(page_title="TanML", layout="wide")
