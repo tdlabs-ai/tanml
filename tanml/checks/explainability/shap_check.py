@@ -251,6 +251,19 @@ class SHAPCheck(BaseCheck):
                     sv.base_values = sv.base_values[:, pos_idx]
             else:
                 pos_idx = None if task == "regression" else self._pos_cls_idx(self.model, Xs.iloc[:1].values)
+            
+            # -------- Python 3.13 fix: ensure SHAP values are proper numpy arrays ----------
+            # SHAP beeswarm plot fails in Python 3.13 if values are Python floats instead of numpy floats
+            if not isinstance(sv.values, np.ndarray):
+                sv.values = np.asarray(sv.values, dtype=np.float64)
+            elif sv.values.dtype == object:
+                sv.values = sv.values.astype(np.float64)
+            
+            if hasattr(sv, 'base_values') and sv.base_values is not None:
+                if not isinstance(sv.base_values, np.ndarray):
+                    sv.base_values = np.asarray(sv.base_values, dtype=np.float64)
+                elif hasattr(sv.base_values, 'dtype') and sv.base_values.dtype == object:
+                    sv.base_values = sv.base_values.astype(np.float64)
 
             # -------- save plots ----------
             segment = "global"

@@ -18,12 +18,13 @@ def load_dataframe(filepath: str | Path,
     # --- Memory Optimization ---
     # Convert object columns to category if cardinality is low (<50%)
     # This significantly reduces RAM usage for large datasets with repeated strings
-    for col in df.select_dtypes(include=['object']).columns:
-        try:
-            if df[col].nunique() / len(df) < 0.5:
-                df[col] = df[col].astype('category')
-        except Exception:
-            pass # Keep as object if conversion fails
+    # NOTE: Temporarily disabled to debug display issues
+    # for col in df.select_dtypes(include=['object']).columns:
+    #     try:
+    #         if df[col].nunique() / len(df) < 0.5:
+    #             df[col] = df[col].astype('category')
+    #     except Exception:
+    #         pass # Keep as object if conversion fails
             
     return df
 
@@ -32,6 +33,7 @@ def _load_raw(filepath: str | Path,
                    sheet_name: Optional[str | int] = None,
                    sep: Optional[str] = None,
                    encoding: Optional[str] = None,
+                   header: Optional[int | str] = 'infer',
                    **_: Any) -> pd.DataFrame:
     """
     Internal raw loader (original logic).
@@ -51,16 +53,27 @@ def _load_raw(filepath: str | Path,
     ext = p.suffix.lower()
 
     # --- Delimited text ---
-    if ext in {".csv", ".txt"}:
+    # .data and .test are common UCI ML Repository extensions
+    if ext in {".csv", ".txt", ".data", ".test"}:
+        # Common missing value indicators (UCI uses " ?" and "?")
+        # Note: Removed single space " " as it incorrectly treats values with leading spaces as missing
+        na_vals = ["?", " ?", "NA", "N/A", "n/a", "na", "NaN", "nan", "", "null", "NULL", "None"]
+        
         # If sep is unspecified:
-        # - CSV: assume comma (keeps fast C engine, no warning)
-        # - TXT: keep sep=None (we'll use Python engine to infer)
-        eff_sep = sep if sep is not None else ("," if ext == ".csv" else None)
+        # - CSV/.data: assume comma (keeps fast C engine, no warning)
+        # - TXT/.test: keep sep=None (Python engine infers separator)
+        eff_sep = sep if sep is not None else ("," if ext in {".csv", ".data"} else None)
         engine = "c" if eff_sep is not None else "python"
+        # Handle header parameter: 'infer' means use default (0), None means no header
+        hdr = None if header == 'none' else (0 if header == 'infer' else header)
+        
         try:
-            return pd.read_csv(p, sep=eff_sep, encoding=encoding, engine=engine)
+            # skipinitialspace=True strips leading spaces from values (common in UCI data)
+            return pd.read_csv(p, sep=eff_sep, encoding=encoding, engine=engine, 
+                               na_values=na_vals, header=hdr, skipinitialspace=True)
         except UnicodeDecodeError:
-            return pd.read_csv(p, sep=eff_sep, encoding=encoding or "latin-1", engine=engine)
+            return pd.read_csv(p, sep=eff_sep, encoding=encoding or "latin-1", engine=engine, 
+                               na_values=na_vals, header=hdr, skipinitialspace=True)
 
     if ext == ".tsv":
         try:
@@ -127,4 +140,21 @@ def _load_raw(filepath: str | Path,
     if ext == ".dta":  # Stata
         return pd.read_stata(p)
 
-    raise ValueError(f"Unsupported file format: {ext} (path={p})")
+    # --- Unknown extension: try to parse as delimited text (like UCI files) ---
+    # This handles .names, .info, and other non-standard extensions
+    try:
+        # Try comma first (most common)
+        return pd.read_csv(p, sep=",", encoding="utf-8", engine="c")
+    except Exception:
+        try:
+            # Try with Python engine (auto-infers separator)
+            return pd.read_csv(p, sep=None, encoding="utf-8", engine="python")
+        except Exception:
+            try:
+                # Try latin-1 encoding as fallback
+                return pd.read_csv(p, sep=None, encoding="latin-1", engine="python")
+            except Exception as e:
+                raise ValueError(
+                    f"Could not parse file: {ext} (path={p}). "
+                    f"Tried as delimited text but failed. Error: {e}"
+                )

@@ -36,13 +36,13 @@ def _render_rich_profile(df):
         constant = [c for c in df.columns if df[c].nunique() <= 1]
         
         if high_miss:
-            msg = ", ".join(high_miss[:3]) + ("..." if len(high_miss) > 3 else "")
+            msg = ", ".join(str(c) for c in high_miss[:3]) + ("..." if len(high_miss) > 3 else "")
             st.warning(f"⚠️ {len(high_miss)} Columns >5% Missing\n({msg})")
         if high_card:
-            msg = ", ".join(high_card[:3]) + ("..." if len(high_card) > 3 else "")
+            msg = ", ".join(str(c) for c in high_card[:3]) + ("..." if len(high_card) > 3 else "")
             st.warning(f"⚠️ {len(high_card)} High-Cardinality Categoricals\n({msg})")
         if constant:
-            msg = ", ".join(constant[:3]) + ("..." if len(constant) > 3 else "")
+            msg = ", ".join(str(c) for c in constant[:3]) + ("..." if len(constant) > 3 else "")
             st.error(f"⚠️ {len(constant)} Near-Constant Features\n({msg})")
         
         if not (high_miss or high_card or constant):
@@ -82,12 +82,52 @@ def _render_rich_profile(df):
 
     with t2:
         st.markdown("#### Duplicates & Integrity")
-        dups = df.duplicated().sum()
-        st.metric("Duplicate Rows", dups, delta_color="inverse", help="Rows where every single value is identical to another row (exact duplicates).")
-        if dups > 0:
-            st.warning(f"Found {dups} duplicate rows. Consider dropping them if they are data errors.")
+        
+        # Column selection for duplicate detection
+        all_cols = list(df.columns)
+        dup_cols = st.multiselect(
+            "Check duplicates based on columns:",
+            all_cols,
+            default=all_cols,
+            help="Select which columns to use for identifying duplicates. Default: all columns.",
+            key="dup_col_select"
+        )
+        
+        if not dup_cols:
+            st.info("Select at least one column to check for duplicates.")
         else:
-            st.success("No duplicate rows found.")
+            # Find duplicates based on selected columns
+            dup_mask = df.duplicated(subset=dup_cols, keep=False)
+            dups = dup_mask.sum()
+            
+            st.metric(
+                "Duplicate Rows", 
+                dups, 
+                delta_color="inverse", 
+                help=f"Rows that have identical values in: {', '.join(str(c) for c in dup_cols[:3])}{'...' if len(dup_cols) > 3 else ''}"
+            )
+            
+            if dups > 0:
+                st.warning(f"Found {dups} duplicate rows based on selected columns.")
+                
+                # Show duplicate rows
+                with st.expander(f"📋 View Duplicate Rows ({dups} rows)", expanded=False):
+                    df_dups = df[dup_mask].copy()
+                    st.dataframe(df_dups.head(100), width="stretch")
+                    if dups > 100:
+                        st.caption(f"Showing first 100 of {dups} duplicate rows")
+                
+                # Download duplicates as CSV
+                csv_dups = df[dup_mask].to_csv(index=False).encode('utf-8')
+                st.download_button(
+                    label="📥 Download Duplicates as CSV",
+                    data=csv_dups,
+                    file_name="duplicates.csv",
+                    mime="text/csv",
+                    key="dl_dups"
+                )
+            else:
+                st.success("No duplicate rows found.")
     
     with t3:
         st.markdown("#### Feature Distributions")
@@ -174,45 +214,88 @@ def _render_rich_profile(df):
                     selected_feature = st.selectbox("Select feature to view outliers:", outlier_features, key="outlier_feature_select")
                     
                     if selected_feature:
-                        mask = outlier_masks[selected_feature]
-                        df_outliers = df[mask].copy()
-                        
                         # Show stats
                         q1 = df[selected_feature].quantile(0.25)
                         q3 = df[selected_feature].quantile(0.75)
                         iqr = q3 - q1
-                        lower_bound = q1 - 1.5*iqr
-                        upper_bound = q3 + 1.5*iqr
+                        lower_bound_iqr = q1 - 1.5*iqr
+                        upper_bound_iqr = q3 + 1.5*iqr
                         
+                        # === DOMAIN CONSTRAINTS ===
+                        st.divider()
+                        st.markdown("**🔧 Domain Constraints (Optional)**")
+                        st.caption("Set logical bounds that make sense for your data (e.g., Age can't be negative)")
+                        
+                        c_min, c_max = st.columns(2)
+                        with c_min:
+                            use_custom_min = st.checkbox("Set minimum bound", key=f"use_min_{selected_feature}")
+                            custom_min = None
+                            if use_custom_min:
+                                custom_min = st.number_input(
+                                    f"Min value for {selected_feature}",
+                                    value=0.0,
+                                    key=f"min_{selected_feature}"
+                                )
+                        with c_max:
+                            use_custom_max = st.checkbox("Set maximum bound", key=f"use_max_{selected_feature}")
+                            custom_max = None
+                            if use_custom_max:
+                                custom_max = st.number_input(
+                                    f"Max value for {selected_feature}",
+                                    value=100.0,
+                                    key=f"max_{selected_feature}"
+                                )
+                        
+                        # Calculate effective bounds (domain overrides IQR)
+                        lower_bound = custom_min if custom_min is not None else lower_bound_iqr
+                        upper_bound = custom_max if custom_max is not None else upper_bound_iqr
+                        
+                        # Recalculate mask with effective bounds
+                        mask = (df[selected_feature] < lower_bound) | (df[selected_feature] > upper_bound)
+                        df_outliers = df[mask].copy()
+                        
+                        st.divider()
+                        
+                        # Show metrics
                         col1, col2, col3, col4 = st.columns(4)
                         col1.metric("Total Outliers", len(df_outliers))
-                        col2.metric("Lower Bound", f"{lower_bound:.2f}", help="Values below this are outliers")
-                        col3.metric("Upper Bound", f"{upper_bound:.2f}", help="Values above this are outliers")
+                        
+                        # Show which bound is being used
+                        lower_label = f"{lower_bound:.2f}" + (" (Custom)" if custom_min is not None else " (IQR)")
+                        upper_label = f"{upper_bound:.2f}" + (" (Custom)" if custom_max is not None else " (IQR)")
+                        col2.metric("Lower Bound", lower_label, help="Values below this are outliers")
+                        col3.metric("Upper Bound", upper_label, help="Values above this are outliers")
                         col4.metric("% of Data", f"{100*len(df_outliers)/len(df):.1f}%")
                         
-                        # Explanation of IQR method
-                        st.caption(f"""
-                        📌 **How outliers are detected (IQR Method):**
-                        - Q1 (25th percentile) = {q1:.2f}, Q3 (75th percentile) = {q3:.2f}
-                        - IQR = Q3 - Q1 = {iqr:.2f}
-                        - **Lower Bound** = Q1 - 1.5×IQR = {lower_bound:.2f} → Values **below** this are outliers
-                        - **Upper Bound** = Q3 + 1.5×IQR = {upper_bound:.2f} → Values **above** this are outliers
-                        """)
+                        # Explanation
+                        if custom_min is not None or custom_max is not None:
+                            st.info(f"📌 Using **domain constraints**: Min = {lower_bound:.2f}, Max = {upper_bound:.2f}")
+                        else:
+                            st.caption(f"""
+                            📌 **How outliers are detected (IQR Method):**
+                            - Q1 (25th percentile) = {q1:.2f}, Q3 (75th percentile) = {q3:.2f}
+                            - IQR = Q3 - Q1 = {iqr:.2f}
+                            - **Lower Bound** = Q1 - 1.5×IQR = {lower_bound_iqr:.2f} → Values **below** this are outliers
+                            - **Upper Bound** = Q3 + 1.5×IQR = {upper_bound_iqr:.2f} → Values **above** this are outliers
+                            """)
                         
                         # Show outlier rows
-                        with st.expander(f"📊 Outlier Rows ({len(df_outliers)} rows)", expanded=True):
-                            st.dataframe(df_outliers.head(100), width="stretch")
-                            if len(df_outliers) > 100:
-                                st.caption(f"Showing first 100 of {len(df_outliers)} outlier rows")
-                        
-                        # Download button
-                        csv_outliers = df_outliers.to_csv(index=False).encode('utf-8')
-                        st.download_button(
-                            label=f"📥 Download {selected_feature} Outliers as CSV",
-                            data=csv_outliers,
-                            file_name=f"outliers_{selected_feature}.csv",
-                            mime="text/csv"
-                        )
+                        if len(df_outliers) > 0:
+                            with st.expander(f"📊 Outlier Rows ({len(df_outliers)} rows)", expanded=True):
+                                st.dataframe(df_outliers.head(100), width="stretch")
+                                if len(df_outliers) > 100:
+                                    st.caption(f"Showing first 100 of {len(df_outliers)} outlier rows")
+                            
+                            # Download button
+                            csv_outliers = df_outliers.to_csv(index=False).encode('utf-8')
+                            st.download_button(
+                                label=f"📥 Download {selected_feature} Outliers as CSV",
+                                data=csv_outliers,
+                                file_name=f"outliers_{selected_feature}.csv",
+                                mime="text/csv"
+                            )
+                        else:
+                            st.success("No outliers found with current bounds!")
                 else:
                     st.success("No significant outliers detected via IQR method.")
     
@@ -243,7 +326,20 @@ def render_data_profiling_hub(run_dir):
         st.session_state["df_profiling"] = None
 
     # 2. Upload Logic
-    upl = st.file_uploader("Upload Dataset", type=["csv", "xlsx", "xls", "parquet", "dta", "sav", "sas7bdat"], key="upl_prof_unified")
+    # Standard extensions for data files
+    STANDARD_TYPES = ["csv", "xlsx", "xls", "parquet", "dta", "sav", "sas7bdat", "data", "test", "txt", "tsv"]
+    
+    allow_any = st.checkbox(
+        "Allow any file type", 
+        help="Enable this to upload files with non-standard extensions (e.g., .names, .info from UCI). TanML will attempt to parse them as tabular data.",
+        key="chk_prof_any_ext"
+    )
+    
+    upl = st.file_uploader(
+        "Upload Dataset", 
+        type=None if allow_any else STANDARD_TYPES,
+        key="upl_prof_unified"
+    )
     if upl:
         path = _save_upload(upl, run_dir)
         if path:

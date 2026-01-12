@@ -39,9 +39,21 @@ def render(context):
     
     # 2. Dynamic Hyperparameters
     bench_configs = {} # Store (lib, algo, params) for each selected model
+    global_seed = 42  # Default
     
     if selected_model_strs:
         with st.expander("Advanced Hyperparameters", expanded=False):
+            # Global seed for reproducibility
+            st.markdown("**🎲 Global Settings**")
+            global_seed = st.number_input(
+                "Random Seed", 
+                value=42, 
+                step=1,
+                help="Set a random seed for reproducible results. All models will use this seed.",
+                key="bench_global_seed"
+            )
+            st.divider()
+            
             st.caption("Adjust hyperparameters for selected models.")
             
             for m_str in selected_model_strs:
@@ -107,30 +119,38 @@ def render(context):
                         mean_squared_error, mean_absolute_error, r2_score
                     )
                     
-                    # Prepare data
-                    # Registry models expect numeric inputs generally, but some handle cats.
-                    # For safety in this benchmark, we'll stick to numeric features similar to original
-                    # BUT ideally we should pass what the model allows. For now, keep simple numeric select.
-                    X_tr = context.X_train.select_dtypes(include=np.number).fillna(0)
-                    X_te = context.X_test.select_dtypes(include=np.number).fillna(0)
+                    # Use the SAME data that your model was trained on (fair comparison)
+                    # Only fallback to numeric-only if the full data fails
+                    X_tr = context.X_train.copy()
+                    X_te = context.X_test.copy()
+                    
+                    # Handle any remaining NaNs (shouldn't be many after preprocessing)
+                    if X_tr.isnull().any().any():
+                        X_tr = X_tr.fillna(X_tr.median(numeric_only=True))
+                        X_te = X_te.fillna(X_te.median(numeric_only=True))
                     
                     benchmark_results = {"your_model": {}, "baselines": {}}
-                    metrics_test = context.results.get("metrics_test", {})
                     
+                    # Calculate YOUR MODEL metrics directly from predictions (same method as baselines)
                     if context.task_type == "classification":
+                        try:
+                            your_auc = roc_auc_score(context.y_test, context.y_prob_test) if context.y_prob_test is not None else 0.5
+                        except:
+                            your_auc = 0.5
+                        
                         benchmark_results["your_model"] = {
-                            "roc_auc": metrics_test.get("AUC", 0),
-                            "f1": metrics_test.get("F1", 0),
-                            "accuracy": metrics_test.get("Accuracy", 0),
-                            "precision": metrics_test.get("Precision", 0),
-                            "recall": metrics_test.get("Recall", 0)
+                            "roc_auc": your_auc,
+                            "f1": f1_score(context.y_test, context.y_pred_test, zero_division=0),
+                            "accuracy": accuracy_score(context.y_test, context.y_pred_test),
+                            "precision": precision_score(context.y_test, context.y_pred_test, zero_division=0),
+                            "recall": recall_score(context.y_test, context.y_pred_test, zero_division=0)
                         }
                         higher_better = ["roc_auc", "f1", "accuracy", "precision", "recall"]
                     else:
                         benchmark_results["your_model"] = {
-                            "rmse": metrics_test.get("RMSE", 0),
-                            "mae": metrics_test.get("MAE", 0),
-                            "r2": metrics_test.get("R2", 0)
+                            "rmse": np.sqrt(mean_squared_error(context.y_test, context.y_pred_test)),
+                            "mae": mean_absolute_error(context.y_test, context.y_pred_test),
+                            "r2": r2_score(context.y_test, context.y_pred_test)
                         }
                         higher_better = ["r2"]
                     
@@ -138,8 +158,21 @@ def render(context):
                     for m_str in selected_model_strs:
                         cfg = bench_configs[m_str]
                         try:
+                            # Add global seed to params - only if model supports it
+                            params_with_seed = cfg["params"].copy()
+                            
+                            # Get the model's defaults to check which seed param it supports
+                            spec = get_spec(cfg["lib"], cfg["algo"])
+                            model_defaults = spec.defaults if spec else {}
+                            
+                            # Only add seed if the model's defaults include a seed parameter
+                            for seed_key in ["random_state", "seed", "random_seed"]:
+                                if seed_key in model_defaults and seed_key not in params_with_seed:
+                                    params_with_seed[seed_key] = int(global_seed)
+                                    break  # Only set one seed param
+                            
                             # Build and Train
-                            mdl = build_estimator(cfg["lib"], cfg["algo"], cfg["params"])
+                            mdl = build_estimator(cfg["lib"], cfg["algo"], params_with_seed)
                             mdl.fit(X_tr, context.y_train)
                             
                             pred = mdl.predict(X_te)

@@ -8,7 +8,7 @@ def _parse_args(argv):
     p.add_argument("--headless", action="store_true", help="Run without opening a browser")
     p.add_argument("--port", type=int, help="Port to serve on (default 8501)")
     p.add_argument("--max-mb", type=int, help="Max upload/message size in MB (default 2048)")
-    p.add_argument("--no-telemetry", action="store_true", help="Disable Streamlit usage stats")
+
     p.add_argument("--address", type=str, help="Explicit bind address (overrides --public)")
     p.add_argument("-h", "--help", action="store_true", help="Show help")
     args, _ = p.parse_known_args(argv)
@@ -51,15 +51,18 @@ def _launch_ui(argv):
     default_max_mb = int(os.environ.get("TANML_MAX_MB", "2048"))
     max_mb = args.max_mb if args.max_mb is not None else default_max_mb
 
-    default_no_telemetry = _env_bool("TANML_NO_TELEMETRY", True)  # default OFF
-    no_telemetry = args.no_telemetry or default_no_telemetry
+
 
     # ---- Environment for the child process (the Streamlit runner)
     env = os.environ.copy()
+    # Marker to indicate app was launched via CLI (for validation in app.py)
+    env["TANML_CLI_LAUNCH"] = "1"
     env.setdefault("STREAMLIT_SERVER_MAX_UPLOAD_SIZE", str(max_mb))
     env.setdefault("STREAMLIT_SERVER_MAX_MESSAGE_SIZE", str(max_mb))
-    if no_telemetry:
-        env["STREAMLIT_BROWSER_GATHER_USAGE_STATS"] = "false"
+    # Skip Streamlit's first-run welcome/email prompt
+    env.setdefault("STREAMLIT_CREDENTIALS_EMAIL", "")
+    # ALWAYS disable telemetry - we never want Streamlit collecting usage stats
+    env["STREAMLIT_BROWSER_GATHER_USAGE_STATS"] = "false"
 
     # Optional: reduce auto-reruns in production (cuts stale-media churn)
     env.setdefault("STREAMLIT_SERVER_FILE_WATCHER_TYPE", "none")
@@ -77,8 +80,8 @@ def _launch_ui(argv):
     ]
     if headless:
         cmd.append("--server.headless=true")
-    if no_telemetry:
-        cmd.append("--browser.gatherUsageStats=false")
+    # ALWAYS disable telemetry
+    cmd.append("--browser.gatherUsageStats=false")
 
     return subprocess.call(cmd, env=env)
 
@@ -96,23 +99,34 @@ def main():
             "  --public                     Bind on 0.0.0.0 for LAN access\n"
             "  --headless                   Run without opening a browser\n"
             "  --port N                     Port to serve on (default 8501)\n"
-            "  --max-mb N                   Max upload size in MB (default 2048)\n"
-            "  --no-telemetry               Disable Streamlit usage stats\n\n"
+            "  --max-mb N                   Max upload size in MB (default 2048)\n\n"
             "Env vars:\n"
-            "  TANML_SERVER_ADDRESS, TANML_HEADLESS, TANML_PORT, TANML_MAX_MB, TANML_NO_TELEMETRY\n"
+            "  TANML_SERVER_ADDRESS, TANML_HEADLESS, TANML_PORT, TANML_MAX_MB\n\n"
+            "Note: Streamlit telemetry is always disabled.\n"
         )
         sys.exit(0)
     
-    # If no args or first arg is "ui", launch the UI
-    if not argv or argv[0] == "ui":
-        # Strip "ui" if present
-        ui_args = argv[1:] if argv and argv[0] == "ui" else argv
-        sys.exit(_launch_ui(ui_args))
+    # If no args, show help
+    if not argv:
+        print(
+            "TanML - Industrial-Grade Model Validation Framework\n\n"
+            "Usage:\n"
+            "  tanml ui [options]           Launch the TanML UI\n\n"
+            "Options:\n"
+            "  --public                     Bind on 0.0.0.0 for LAN access\n"
+            "  --headless                   Run without opening a browser\n"
+            "  --port N                     Port to serve on (default 8501)\n"
+            "  --max-mb N                   Max upload size in MB (default 2048)\n\n"
+            "Env vars:\n"
+            "  TANML_SERVER_ADDRESS, TANML_HEADLESS, TANML_PORT, TANML_MAX_MB\n\n"
+            "Note: Streamlit telemetry is always disabled.\n"
+        )
+        sys.exit(0)
     
-    # Check if first arg looks like an option (starts with -)
-    if argv[0].startswith("-"):
-        # Pass all args to UI launcher
-        sys.exit(_launch_ui(argv))
+    # Only "tanml ui" launches the UI
+    if argv[0] == "ui":
+        ui_args = argv[1:]
+        sys.exit(_launch_ui(ui_args))
     
     # Unknown command
     print(f"Unknown command: {argv[0]}\nTry: tanml --help")

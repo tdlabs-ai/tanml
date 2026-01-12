@@ -42,7 +42,19 @@ def render_model_development_page(run_dir):
     st.write("Upload a dedicated Development Dataset to experiment with models.")
     
     # 1. Dedicated Upload
-    upl = st.file_uploader("Upload Model Development Dataset", type=["csv", "xlsx", "xls", "parquet", "dta", "sav", "sas7bdat"], key="upl_dev")
+    STANDARD_TYPES = ["csv", "xlsx", "xls", "parquet", "dta", "sav", "sas7bdat", "data", "test", "txt", "tsv"]
+    
+    allow_any = st.checkbox(
+        "Allow any file type", 
+        help="Enable to upload files with non-standard extensions (e.g., .names from UCI).",
+        key="chk_dev_any_ext"
+    )
+    
+    upl = st.file_uploader(
+        "Upload Model Development Dataset", 
+        type=None if allow_any else STANDARD_TYPES,
+        key="upl_dev"
+    )
     df_dev = None
     if upl:
         path = _save_upload(upl, run_dir)
