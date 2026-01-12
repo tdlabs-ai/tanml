@@ -30,4 +30,13 @@ Thumbs.db
 .env
 .streamlit/secrets.toml
 tanml/tmp_report_assets/
-tanml/tmp_report_assets/
+
+# Internal/development files (not for public repo)
+Figure_*.png
+manuscript_draft.md
+roadmap.md
+generate_figures*.py
+measure_startup.py
+run_case_study.py
+test_dataset*.csv
+testpypi_verification/
