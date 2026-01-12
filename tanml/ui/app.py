@@ -59,6 +59,9 @@ def main():
             "Model Development", 
             "Model Evaluation"
         ])
+        
+        st.markdown("---")
+
     
     if "Home" in nav:
         render_setup_page(run_dir)

@@ -47,7 +47,15 @@
 
 ## Install
 
+We strongly recommend using a virtual environment to isolate dependencies:
+
 ```bash
+# Create and activate virtual environment
+python -m venv .venv
+source .venv/bin/activate  # Linux/Mac
+# .venv\Scripts\activate   # Windows
+
+# Install TanML
 pip install tanml
 ```
 

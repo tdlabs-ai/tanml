@@ -127,6 +127,7 @@ def get_custom_css() -> str:
     /* Global Background */
     .stApp {
         background-color: #f8fafc; /* Slate-50 */
+        color: #0f172a; /* Slate-900 - Force dark text on light bg for Dark Mode users */
     }
     
     /* Layout Fixes */

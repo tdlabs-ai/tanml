@@ -1,9 +1,6 @@
 # tanml/checks/explainability/shap_check.py
 from tanml.checks.base import BaseCheck
 
-import matplotlib
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
 
 import shap
 import numpy as np
@@ -175,6 +172,9 @@ class SHAPCheck(BaseCheck):
     # ---------------------------- main ----------------------------
 
     def run(self):
+        import matplotlib
+        matplotlib.use("Agg")
+        import matplotlib.pyplot as plt
         out = {}
         try:
             warnings.filterwarnings("ignore", category=UserWarning)

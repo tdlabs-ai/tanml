@@ -19,7 +19,7 @@ def render(context):
     with col1:
         epsilon = st.slider(
             "Perturbation Magnitude", 
-            0.001, 0.5, 0.01, step=0.001, format="%.3f", 
+            0.001, 1.0, 0.01, step=0.001, format="%.3f", 
             help="How much noise to add to the data. E.g., 0.01 means values are perturbed by ±1% (multiplicative noise)."
         )
     with col2:
@@ -73,7 +73,9 @@ def render(context):
                 
                 # Store results for report
                 context.results["stress"] = df_stress.to_dict(orient="records")
-                st.toast("Stress Test saved to Report!", icon="💥")
+                # Store results for report
+                context.results["stress"] = df_stress.to_dict(orient="records")
+                st.toast("Stress Test Check Completed & Saved to Report!", icon="✅")
                 
             except Exception as e:
                 st.error(f"Stress Test Failed: {e}")

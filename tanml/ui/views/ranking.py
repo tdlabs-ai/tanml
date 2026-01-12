@@ -6,7 +6,6 @@ from __future__ import annotations
 import streamlit as st
 import pandas as pd
 import numpy as np
-import altair as alt
 from datetime import datetime
 from tanml.ui.services.data import _save_upload
 from tanml.utils.data_loader import load_dataframe
@@ -14,6 +13,7 @@ from tanml.models.registry import infer_task_from_target
 from tanml.ui.reports import _generate_ranking_report_docx
 
 def render_feature_ranking_page(run_dir):
+    import altair as alt
     st.markdown("""
     <div style="
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -145,7 +145,7 @@ def render_feature_ranking_page(run_dir):
         # 3. Power Score (The Plot logic)
         # ... (Previous Logic) ...
         # Data Prep
-        X = df[contenders]
+        X = df_sub[contenders]
         
         # Simple Preprocessing for Models (Handle Categoricals & NaNs)
         # This ensures the ranker doesn't crash on strings or missing values (RF/DT hate NaNs)

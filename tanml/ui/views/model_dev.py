@@ -6,17 +6,9 @@ from __future__ import annotations
 import streamlit as st
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
 import io
-import scipy.stats as scipy_stats
 from datetime import datetime
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import (accuracy_score, precision_score, recall_score, f1_score, roc_auc_score, 
-                             average_precision_score, brier_score_loss, log_loss, balanced_accuracy_score, matthews_corrcoef,
-                             mean_squared_error, mean_absolute_error, median_absolute_error, r2_score,
-                             confusion_matrix, roc_curve, precision_recall_curve, auc)
-from scipy.stats import ks_2samp
+from tanml.ui.services.cv import _run_repeated_cv
 
 # TanML Internal
 from tanml.ui.services.data import _save_upload
@@ -28,6 +20,15 @@ from tanml.models.registry import build_estimator, infer_task_from_target
 from tanml.ui.services.cv import _run_repeated_cv
 
 def render_model_development_page(run_dir):
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    import scipy.stats as scipy_stats
+    from sklearn.model_selection import train_test_split
+    from sklearn.metrics import (accuracy_score, precision_score, recall_score, f1_score, roc_auc_score, 
+                                 average_precision_score, brier_score_loss, log_loss, balanced_accuracy_score, matthews_corrcoef,
+                                 mean_squared_error, mean_absolute_error, median_absolute_error, r2_score,
+                                 confusion_matrix, roc_curve, precision_recall_curve, auc)
+    from scipy.stats import ks_2samp
     st.markdown("""
     <div style="
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -129,8 +130,24 @@ def render_model_development_page(run_dir):
         try:
             # Build estimator
             model = build_estimator(library, algo, hp)
-            X = df_dev[features]
-            y = df_dev[target]
+            
+            # --- Robust Data Prep ---
+            # 1. subset to features + target
+            temp_df = df_dev[features + [target]].copy()
+            
+            # 2. Drop NaN target rows
+            temp_df = temp_df.dropna(subset=[target])
+            
+            # 3. Drop Inf target rows (if numeric)
+            if pd.api.types.is_numeric_dtype(temp_df[target]):
+                temp_df = temp_df[np.isfinite(temp_df[target])]
+                
+            if len(temp_df) == 0:
+                st.error("No valid data rows remaining. Check if your Target column contains all NaNs or Infs.")
+                st.stop()
+                
+            X = temp_df[features]
+            y = temp_df[target]
             
             with st.status("Running Experiments...", expanded=True) as status:
                 st.write(f"Running {n_folds}-Fold Cross-Validation (×{n_repeats} repeats)...")
@@ -160,7 +177,16 @@ def render_model_development_page(run_dir):
                 "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             }
         except Exception as e:
-            st.error(f"Experiment Failure: {e}")
+            msg = str(e)
+            st.error("❌ **Experiment Failed**")
+            
+            # Friendly Advice
+            if "could not convert string to float" in msg:
+                st.info("💡 **Tip**: It looks like some features contain text or objects. Models need numbers! Try using **Data Preprocessing** to encode categorical variables.")
+            elif "contains NaN" in msg or "NaN" in msg or "infinity" in msg:
+                st.info("💡 **Tip**: Your features contain missing values (NaN) or infinite values. Try using **Data Preprocessing** to impute missing values.")
+            
+            st.warning(f"Technical Error: {msg}")
             
     # 4. Rendering (Persistent)
     if "dev_results" in st.session_state:

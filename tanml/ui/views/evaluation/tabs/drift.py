@@ -7,14 +7,21 @@ import io
 import numpy as np
 import pandas as pd
 import streamlit as st
-import matplotlib.pyplot as plt
+
 
 from tanml.ui.views.evaluation.tabs import register_tab
-from tanml.analysis.drift import calculate_psi, calculate_ks
 
 
 @register_tab(name="Drift Analysis (PSI/KS)", order=30, key="tab_drift")
 def render(context):
+    import io
+    import numpy as np
+    import pandas as pd
+    import streamlit as st
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+
+    from tanml.analysis.drift import calculate_psi, calculate_ks
     """Render the drift analysis tab."""
     
     st.markdown("### Feature Drift Analysis")

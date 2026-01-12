@@ -8,12 +8,17 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 import matplotlib.pyplot as plt
-
 from tanml.ui.views.evaluation.tabs import register_tab
 
 
 @register_tab(name="Benchmarking", order=50, key="tab_bench")
 def render(context):
+    import io
+    import numpy as np
+    import pandas as pd
+    import streamlit as st
+    import matplotlib.pyplot as plt
+    import seaborn as sns
     """Render the benchmarking tab."""
     from tanml.models.registry import list_models, build_estimator, ui_schema_for, get_spec
     

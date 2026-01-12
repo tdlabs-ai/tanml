@@ -7,7 +7,7 @@ import io
 import numpy as np
 import pandas as pd
 import streamlit as st
-import matplotlib.pyplot as plt
+
 
 from tanml.ui.views.evaluation.tabs import register_tab
 from tanml.analysis.clustering import analyze_cluster_coverage
@@ -24,7 +24,7 @@ def render(context):
     col_clust_opt, col_clust_btn = st.columns([1, 2])
     with col_clust_opt:
         n_clusters_input = st.slider("Number of Clusters", min_value=2, max_value=20, value=5, 
-                                    help="Choose the number of K-Means clusters to partition the training data into.")
+                                    help="Choose the number of K-Means clusters to partition the training data into.\n\n💡 **Tip**: Fewer clusters = broader definitions = higher coverage. More clusters = stricter definitions = lower coverage.")
     
     with col_clust_btn:
         run_cluster = st.button("🎯 Run Cluster Coverage Check", type="secondary", key="btn_cluster_cov")
@@ -108,6 +108,7 @@ def render(context):
     
     # Display Results if available
     if "eval_cluster_results" in st.session_state:
+        import matplotlib.pyplot as plt
         cr = st.session_state["eval_cluster_results"]
         
         # Key Metrics
@@ -274,4 +275,6 @@ def render(context):
 
             # Save results to context
             context.results["cluster_coverage"] = cr
-            st.toast("Cluster Coverage saved to Report!", icon="🎯")
+            # Save results to context
+            context.results["cluster_coverage"] = cr
+            st.toast("Cluster Coverage Check Completed & Saved to Report!", icon="✅")

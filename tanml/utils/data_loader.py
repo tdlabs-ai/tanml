@@ -9,10 +9,33 @@ def load_dataframe(filepath: str | Path,
                    sheet_name: Optional[str | int] = None,
                    sep: Optional[str] = None,
                    encoding: Optional[str] = None,
+                   **kwargs: Any) -> pd.DataFrame:
+    """
+    Universal table loader with safe fallbacks and memory optimization.
+    """
+    df = _load_raw(filepath, sheet_name, sep, encoding, **kwargs)
+    
+    # --- Memory Optimization ---
+    # Convert object columns to category if cardinality is low (<50%)
+    # This significantly reduces RAM usage for large datasets with repeated strings
+    for col in df.select_dtypes(include=['object']).columns:
+        try:
+            if df[col].nunique() / len(df) < 0.5:
+                df[col] = df[col].astype('category')
+        except Exception:
+            pass # Keep as object if conversion fails
+            
+    return df
+
+
+def _load_raw(filepath: str | Path,
+                   sheet_name: Optional[str | int] = None,
+                   sep: Optional[str] = None,
+                   encoding: Optional[str] = None,
                    **_: Any) -> pd.DataFrame:
     """
-    Universal table loader with safe fallbacks.
-
+    Internal raw loader (original logic).
+    
     Supports:
       .csv, .txt, .tsv
       .xlsx, .xls          (needs openpyxl)

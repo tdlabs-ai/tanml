@@ -6,12 +6,13 @@ from __future__ import annotations
 import streamlit as st
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
+
 from tanml.ui.services.data import _save_upload
 from tanml.utils.data_loader import load_dataframe
 
 def _render_rich_profile(df):
     """Shared logic for detailed data profiling (KPIs, Risks, Tabs)."""
+    import matplotlib.pyplot as plt
     st.divider()
     st.subheader("Dataset Readiness Snapshot")
     
@@ -82,7 +83,7 @@ def _render_rich_profile(df):
     with t2:
         st.markdown("#### Duplicates & Integrity")
         dups = df.duplicated().sum()
-        st.metric("Duplicate Rows", dups, delta_color="inverse")
+        st.metric("Duplicate Rows", dups, delta_color="inverse", help="Rows where every single value is identical to another row (exact duplicates).")
         if dups > 0:
             st.warning(f"Found {dups} duplicate rows. Consider dropping them if they are data errors.")
         else:
@@ -95,6 +96,20 @@ def _render_rich_profile(df):
             num_sel = st.selectbox("Select Numeric Feature", nums, key="prof_dist_feat_sel")
             try:
                 arr = df[num_sel].dropna()
+                
+                # Outlier Filtering Toggle
+                hide_outliers = st.checkbox("Hide Outliers (Standard 1.5 IQR)", key=f"hide_out_{num_sel}", help="Removes extreme values to show the core distribution better.")
+                if hide_outliers and len(arr) > 0:
+                    q1 = arr.quantile(0.25)
+                    q3 = arr.quantile(0.75)
+                    iqr = q3 - q1
+                    low = q1 - 1.5 * iqr
+                    high = q3 + 1.5 * iqr
+                    arr_filtered = arr[(arr >= low) & (arr <= high)]
+                    if len(arr_filtered) > 0:
+                        arr = arr_filtered
+                    else:
+                        st.warning("All data would be hidden! Showing original data.")
                 
                 # Layout: Histogram | Box Plot
                 c_hist, c_box = st.columns(2)
