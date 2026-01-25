@@ -40,3 +40,22 @@ measure_startup.py
 run_case_study.py
 test_dataset*.csv
 testpypi_verification/
+
+# Submission & Research Artifacts (Exclude from GitHub)
+manuscript_submission.md
+manuscript_submission.tex
+manuscript_submission.pdf
+tanml_submission_v0.1.10/
+tanml_submission_v0.1.10.zip
+*.zip
+*.pdf
+convert_to_latex.py
+reproduce_paper_figures.py
+generate_promo_banners.py
+generate_v2_banners.py
+resize_banners.py
+promotion/
+uploaded_media_*.png
+heygen_video_script.md
+mdpdf.log
+tanml_submission_v0.1.10 2/

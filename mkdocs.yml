@@ -1,0 +1,37 @@
+site_name: TanML
+site_description: Automated validation toolkit for tabular ML models—MRM, credit risk, insurance, and other regulated use cases.
+site_url: https://tdlabs-ai.github.io/tanml/
+
+repo_url: https://github.com/tdlabs-ai/tanml
+repo_name: tdlabs-ai/tanml
+
+theme:
+  name: material
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - content.code.copy
+
+plugins:
+  - search
+  - mkdocstrings
+
+nav:
+  - Home: index.md
+  - Installation: installation.md
+  - User Guide:
+    - Getting Started: user-guide/getting-started.md
+    - Tutorials: user-guide/tutorials.md
+  - API Reference: reference.md
+  - Contributing: contributing.md
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - admonition
+  - pymdownx.details
+  - attr_list
+  - pymdownx.superfences

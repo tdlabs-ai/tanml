@@ -89,7 +89,7 @@ dependencies = [
 
 
 [project.optional-dependencies]
-dev = ["pytest", "black", "isort"]
+dev = ["pytest", "black", "isort", "mkdocs", "mkdocs-material", "mkdocstrings[python]"]
 
 [project.scripts]
 tanml = "tanml.cli.main:main"
