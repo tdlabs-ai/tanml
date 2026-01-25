@@ -80,20 +80,29 @@ def render(context):
         
         fig_drift, axes = plt.subplots(1, 3, figsize=(14, 4))
         
+        # Get data and convert boolean to int for histogram compatibility (Python 3.13 fix)
+        train_data = context.X_train[top_drift].dropna()
+        test_data = context.X_test[top_drift].dropna()
+        
+        # Convert boolean columns to int to avoid numpy boolean subtract error
+        if train_data.dtype == bool or train_data.dtype == 'bool':
+            train_data = train_data.astype(np.int64)
+            test_data = test_data.astype(np.int64)
+        
         # Train Distribution
-        axes[0].hist(context.X_train[top_drift].dropna(), bins=20, alpha=0.7, color='blue', edgecolor='black')
+        axes[0].hist(train_data, bins=20, alpha=0.7, color='blue', edgecolor='black')
         axes[0].set_title(f"Train: {top_drift}")
         axes[0].set_xlabel("Value")
         axes[0].set_ylabel("Frequency")
         
         # Test Distribution
-        axes[1].hist(context.X_test[top_drift].dropna(), bins=20, alpha=0.7, color='orange', edgecolor='black')
+        axes[1].hist(test_data, bins=20, alpha=0.7, color='orange', edgecolor='black')
         axes[1].set_title(f"Test: {top_drift}")
         axes[1].set_xlabel("Value")
         
         # CDF Comparison
-        train_sorted = np.sort(context.X_train[top_drift].dropna())
-        test_sorted = np.sort(context.X_test[top_drift].dropna())
+        train_sorted = np.sort(train_data)
+        test_sorted = np.sort(test_data)
         train_cdf = np.arange(1, len(train_sorted)+1) / len(train_sorted)
         test_cdf = np.arange(1, len(test_sorted)+1) / len(test_sorted)
         

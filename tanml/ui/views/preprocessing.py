@@ -40,10 +40,15 @@ def render_preprocessing_hub(run_dir):
     c_reset, c_msg = st.columns([1, 3])
     with c_reset:
         if st.button("🔄 Reset", help="Undo all imputation and encoding changes"):
-            if st.session_state.get("df_raw") is not None:
-                st.session_state["df_cleaned"] = st.session_state["df_raw"].copy()
-                st.session_state["fe_history"] = ["Dataset reset to Raw state."]
+            # Find the original data source (raw > profiling > train)
+            original_df = st.session_state.get("df_raw") or st.session_state.get("df_profiling") or st.session_state.get("df_train")
+            if original_df is not None:
+                st.session_state["df_cleaned"] = original_df.copy()
+                # Clear history completely, then add reset message
+                st.session_state["fe_history"] = ["✅ Dataset reset to original state. All changes undone."]
                 st.rerun()
+            else:
+                st.warning("No original data found to reset to.")
     
     # Persistent Status History
     if "fe_history" in st.session_state and st.session_state["fe_history"]:

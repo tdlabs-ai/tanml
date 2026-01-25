@@ -2,6 +2,28 @@
 from __future__ import annotations
 
 import os
+import sys
+
+# ============================================================================
+# CLI Launch Guard: Ensure TanML is launched via `tanml ui`, not directly
+# ============================================================================
+if os.environ.get("TANML_CLI_LAUNCH") != "1":
+    print(
+        "\n"
+        "╔════════════════════════════════════════════════════════════════╗\n"
+        "║  ⚠️  TanML must be launched using the CLI command: tanml ui    ║\n"
+        "╠════════════════════════════════════════════════════════════════╣\n"
+        "║  Running Streamlit directly is not supported.                  ║\n"
+        "║                                                                ║\n"
+        "║  Usage:                                                        ║\n"
+        "║    tanml ui                     # Launch UI                    ║\n"
+        "║    tanml ui --port 9000         # Custom port                  ║\n"
+        "║    tanml ui --public            # LAN access                   ║\n"
+        "║    tanml ui --help              # More options                 ║\n"
+        "╚════════════════════════════════════════════════════════════════╝\n"
+    )
+    sys.exit(1)
+
 import streamlit as st
 
 # TanML Pages

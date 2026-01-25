@@ -52,7 +52,20 @@ def render_feature_ranking_page(run_dir):
     # For now, if nothing loaded, show uploader.
     if df is None:
         st.info("Please upload your **Preprocessed Dataset** here to analyze feature importance.")
-        upl = st.file_uploader("Upload Preprocessed Dataset", type=["csv", "xlsx", "xls", "parquet", "dta", "sav", "sas7bdat"], key="upl_rank_standalone")
+        
+        STANDARD_TYPES = ["csv", "xlsx", "xls", "parquet", "dta", "sav", "sas7bdat", "data", "test", "txt", "tsv"]
+        
+        allow_any = st.checkbox(
+            "Allow any file type", 
+            help="Enable to upload files with non-standard extensions (e.g., .names from UCI).",
+            key="chk_rank_any_ext"
+        )
+        
+        upl = st.file_uploader(
+            "Upload Preprocessed Dataset", 
+            type=None if allow_any else STANDARD_TYPES,
+            key="upl_rank_standalone"
+        )
         if upl:
             path = _save_upload(upl, run_dir)
             if path:

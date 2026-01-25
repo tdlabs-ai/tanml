@@ -59,15 +59,23 @@ def render_model_evaluation_page(run_dir):
     st.caption("Upload independent Training and Testing datasets to strictly evaluate model performance.")
 
     # === 1. DATA UPLOAD ===
+    STANDARD_TYPES = ["csv", "xlsx", "xls", "parquet", "dta", "sav", "sas7bdat", "data", "test", "txt", "tsv"]
+    
+    allow_any = st.checkbox(
+        "Allow any file type", 
+        help="Enable to upload files with non-standard extensions (e.g., .names from UCI).",
+        key="chk_eval_any_ext"
+    )
+    
     c_up1, c_up2 = st.columns(2)
     f_train = c_up1.file_uploader(
         "Upload Training Data", 
-        type=["csv", "xlsx", "xls", "parquet", "dta", "sav", "sas7bdat"], 
+        type=None if allow_any else STANDARD_TYPES, 
         key="eval_u_train"
     )
     f_test = c_up2.file_uploader(
         "Upload Testing Data", 
-        type=["csv", "xlsx", "xls", "parquet", "dta", "sav", "sas7bdat"], 
+        type=None if allow_any else STANDARD_TYPES, 
         key="eval_u_test"
     )
     
