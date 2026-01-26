@@ -109,22 +109,24 @@ tanml/
 
 ## Data Flow
 
+## Lifecycle Data Flow
+
 ```mermaid
 flowchart LR
-    A[📁 Upload Data] --> B[📊 Data Profiling]
-    B --> C[🔧 Preprocessing]
-    C --> D[📈 Feature Ranking]
-    D --> E[🤖 Model Development]
-    E --> F[🎯 Model Evaluation]
-    F --> G[📝 Generate Report]
+    A["📁 Data Ingestion"] --> B["📊 Profiling"]
+    B --> C["🔧 Preprocessing"]
+    C --> D["📈 Feature Tech"]
+    D --> E["🤖 Model Build"]
+    E --> F["🎯 Validation"]
+    F --> G["📝 Audit Report"]
     
-    style A fill:#e3f2fd
-    style B fill:#e8f5e9
-    style C fill:#fff3e0
-    style D fill:#fce4ec
-    style E fill:#f3e5f5
-    style F fill:#e0f7fa
-    style G fill:#fff8e1
+    style A fill:#e3f2fd,stroke:#1565c0
+    style B fill:#e8f5e9,stroke:#2e7d32
+    style C fill:#fff3e0,stroke:#e65100
+    style D fill:#fce4ec,stroke:#c2185b
+    style E fill:#f3e5f5,stroke:#7b1fa2
+    style F fill:#e0f7fa,stroke:#0097a7
+    style G fill:#fff8e1,stroke:#fbc02d
 ```
 
 ## Key Components
