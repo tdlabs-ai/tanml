@@ -26,5 +26,9 @@ jobs:
           path: .cache
           restore-keys: |
             mkdocs-material-
-      - run: pip install ".[dev]"
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip setuptools wheel
+          pip install --only-binary :all: catboost xgboost lightgbm
+          pip install ".[dev]"
       - run: mkdocs gh-deploy --force
