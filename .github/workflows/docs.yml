@@ -31,4 +31,6 @@ jobs:
           pip install --upgrade pip setuptools wheel
           pip install --only-binary :all: catboost xgboost lightgbm
           pip install ".[dev]"
+      - name: Verify package imports
+        run: python -c "import tanml.models.registry; import tanml.analysis.drift; print('API modules importable!')"
       - run: mkdocs gh-deploy --force

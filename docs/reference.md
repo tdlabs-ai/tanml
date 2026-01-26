@@ -4,11 +4,15 @@
     handler: python
     options:
       members:
-        - ModelRegistry
-        - create_model
+        - ModelSpec
+        - build_estimator
+        - list_models
+        - get_spec
 
 ::: tanml.analysis.drift
     handler: python
     options:
       members:
         - calculate_psi
+        - calculate_ks
+        - analyze_drift
