@@ -15,7 +15,10 @@ theme:
 
 plugins:
   - search
-  - mkdocstrings
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: ["."]
 
 nav:
   - Home: index.md
