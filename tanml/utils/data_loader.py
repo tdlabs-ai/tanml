@@ -18,13 +18,12 @@ def load_dataframe(filepath: str | Path,
     # --- Memory Optimization ---
     # Convert object columns to category if cardinality is low (<50%)
     # This significantly reduces RAM usage for large datasets with repeated strings
-    # NOTE: Temporarily disabled to debug display issues
-    # for col in df.select_dtypes(include=['object']).columns:
-    #     try:
-    #         if df[col].nunique() / len(df) < 0.5:
-    #             df[col] = df[col].astype('category')
-    #     except Exception:
-    #         pass # Keep as object if conversion fails
+    for col in df.select_dtypes(include=['object']).columns:
+        try:
+            if df[col].nunique() / len(df) < 0.5:
+                df[col] = df[col].astype('category')
+        except Exception:
+            pass # Keep as object if conversion fails
             
     return df
 
