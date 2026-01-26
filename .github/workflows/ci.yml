@@ -38,7 +38,7 @@ jobs:
     - name: Install dependencies
       run: |
         pip install --upgrade pip setuptools wheel
-        pip install --only-binary :all: catboost xgboost lightgbm
+        pip install --only-binary :all: catboost xgboost lightgbm pyreadstat
         pip install ".[dev]"
         
     - name: Test with pytest
