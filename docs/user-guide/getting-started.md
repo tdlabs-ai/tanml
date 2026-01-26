@@ -58,7 +58,7 @@ The final and most critical step for compliance.
 
 ---
 
-## Pro Tips for Teams
+## Advanced Configuration
 
 ### Remote Access
 Running TanML on a powerful office server? Use the public flag:
