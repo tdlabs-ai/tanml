@@ -117,13 +117,41 @@ vif_results = calculate_vif(df, features=["col1", "col2"])
 - Follow existing patterns in similar files
 - Test your changes before submitting
 
+## Setup and Installation
+
+TanML requires **Python 3.10** or higher.
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/tdlabs-ai/tanml.git
+cd tanml
+
+# 2. Create a virtual environment (Recommended)
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# 3. Install in development mode
+pip install -e ".[dev]"
+
+# 4. Verify installation
+tanml ui --help
+```
+
+## Running Tests
+
+We use `pytest` for testing. Ensure all tests pass before submitting a PR.
+
+```bash
+# Run all tests
+pytest tests/
+
+# Run specific test file
+pytest tests/test_core.py
+```
+
 ## Running the App
 
 ```bash
-# Install in development mode
-pip install -e .
-
-# Run the UI
 tanml ui
 ```
 

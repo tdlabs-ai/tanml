@@ -2,49 +2,23 @@
 
 This document provides an overview of TanML's architecture, folder structure, and component interactions.
 
-## High-Level Architecture
+
+## Architecture Overview
+
+This diagram illustrates the end-to-end lifecycle of a TanML workflow, from raw data ingestion to the final audit report.
 
 ```mermaid
-graph TB
-    subgraph "User Interface"
-        APP[app.py<br/>Main Entry]
-        PAGES[Pages]
-        COMP[Components]
-    end
+flowchart LR
+    A["📁 Data Ingestion"] --> B["📊 Profiling"]
+    B --> C["🔧 Preprocessing"]
+    C --> D["📈 Feature Tech"]
+    D --> E["🤖 Model Build"]
+    E --> F["🎯 Validation"]
+    F --> G["📝 Audit Report"]
     
-    subgraph "Core Modules"
-        MODELS[models/registry<br/>Model Factory]
-        CHECKS[checks/<br/>Validation Logic]
-        ANALYSIS[analysis/<br/>Statistical Analysis]
-    end
-    
-    subgraph "Services"
-        DATA[services/data<br/>Data Management]
-        SESSION[services/session<br/>State Management]
-        CV[services/cv<br/>Cross-Validation]
-    end
-    
-    subgraph "Output"
-        REPORTS[reports/<br/>DOCX Generation]
-        NARRATIVES[narratives<br/>Auto-Generated Text]
-    end
-    
-    subgraph "Utilities"
-        UTILS[utils/<br/>Data Loader]
-        CLI[cli/<br/>Command Line]
-    end
-    
-    APP --> PAGES
-    PAGES --> COMP
-    PAGES --> DATA
-    PAGES --> MODELS
-    PAGES --> CHECKS
-    PAGES --> ANALYSIS
-    DATA --> UTILS
-    PAGES --> REPORTS
-    REPORTS --> NARRATIVES
-    CLI --> APP
 ```
+
+
 
 ## Folder Structure
 
@@ -107,27 +81,6 @@ tanml/
         └── templates/        # Report templates (if any)
 ```
 
-## Data Flow
-
-## Lifecycle Data Flow
-
-```mermaid
-flowchart LR
-    A["📁 Data Ingestion"] --> B["📊 Profiling"]
-    B --> C["🔧 Preprocessing"]
-    C --> D["📈 Feature Tech"]
-    D --> E["🤖 Model Build"]
-    E --> F["🎯 Validation"]
-    F --> G["📝 Audit Report"]
-    
-    style A fill:#e3f2fd,stroke:#1565c0
-    style B fill:#e8f5e9,stroke:#2e7d32
-    style C fill:#fff3e0,stroke:#e65100
-    style D fill:#fce4ec,stroke:#c2185b
-    style E fill:#f3e5f5,stroke:#7b1fa2
-    style F fill:#e0f7fa,stroke:#0097a7
-    style G fill:#fff8e1,stroke:#fbc02d
-```
 
 ## Key Components
 
