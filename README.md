@@ -44,6 +44,15 @@
 * **Robust evaluation:** Drift detection, stress testing, SHAP explainability, cluster coverage.
 * **Works with your stack:** scikit-learn, XGBoost, LightGBM, CatBoost.
 
+### Comparison to Similar Tools
+
+| Feature | TanML | Evidently AI | Deepchecks | AutoML (PyCaret/AutoGluon) | ydata-profiling |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| **Primary Focus** | **Model Risk Management** | Monitoring | Testing / CI | Model Training | Data EDA Only |
+| **Scope** | **Data + Model + Governance** | Data + Model | Data + Model | Model Building | Data Only |
+| **Output** | **Audit-Ready .docx** | Dashboards | Reports | Models | HTML Report |
+| **Drift Logic** | **PSI & KS (Regulatory)** | Stat. Tests | Multiple | N/A | Warnings |
+
 ---
 
 ## Install
@@ -181,6 +190,12 @@ Or in BibTeX (version-agnostic):
 ```
 
 A machine-readable citation file (`CITATION.cff`) is included for citation tools and GitHub’s “Cite this repository” button.
+
+---
+
+## AI Disclosure
+
+Portions of this codebase (including tests, documentation, and the data_loader module) were refactored and generated with the assistance of Large Language Models (LLMs). All AI-generated contributions have been reviewed and verified by the human maintainers.
 
 
 
