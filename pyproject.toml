@@ -8,7 +8,7 @@ version = "0.1.10"
 description = "Automated validation toolkit for tabular ML models—MRM, credit risk, insurance, and other regulated use cases."
 readme = { file = "README.md", content-type = "text/markdown" }
 requires-python = ">=3.8"
-license = "MIT"
+license = {text = "MIT"}
 license-files = ["LICENSE"]
 
 
