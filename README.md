@@ -16,7 +16,7 @@
 
 * **Status:** Beta (`0.x`)
 * **License:** MIT
-* **Python:** 3.8–3.13
+* **Python:** 3.10–3.13
 * **OS:** Linux / macOS / Windows (incl. WSL)
 
 ---
