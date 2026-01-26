@@ -3,6 +3,12 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'docs/**'
+      - 'mkdocs.yml'
+      - 'README.md'
+      - 'tanml/**/__init__.py'
+      - '.github/workflows/docs.yml'
 
 permissions:
   contents: write
