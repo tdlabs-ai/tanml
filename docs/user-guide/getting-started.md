@@ -4,7 +4,7 @@ This guide walks you through the end-to-end lifecycle of a model validation proj
 
 ## Prerequisites
 
-TanML requires **Python 3.8 or higher**. We strongly recommend using a virtual environment:
+TanML requires **Python 3.10 or higher**. We strongly recommend using a virtual environment:
 
 ```bash
 # Create and activate environment
