@@ -61,6 +61,9 @@ Most users just run `tanml ui`. These help on teams/servers:
 # Share on LAN
 tanml ui --public
 
+> [!WARNING]
+> Using `--public` makes the UI accessible to anyone on your network. Only use this on trusted networks (like a VPN or secure office LAN) and never on public Wi-Fi.
+
 # Different port
 tanml ui --port 9000
 
@@ -103,6 +106,7 @@ Reports are generated via `tanml/ui/reports/generators.py` and exported directly
 
 - TanML runs locally; no data is sent to external services.
 - Telemetry is disabled by default (and can be forced off via `--no-telemetry`).
+- **Security Note:** Running with the `--public` flag exposes the app to your local network. Ensure you are on a secure connection.
 - UI artifacts and reports are written under `./tanml_runs/<session>/` in your working directory.
 
 ---
