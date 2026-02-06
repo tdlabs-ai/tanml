@@ -9,11 +9,11 @@ Structure:
         metrics.py  - KPI displays, metric cards
         forms.py    - Configuration forms, file uploaders
         renderers.py - Specialized result renderers
-        
+
     pages/          - Page-level components
         setup.py    - Data upload page
         profiling.py - Data exploration page
-        
+
     services/       - Business logic layer
         session.py  - Session state management
         data.py     - Data loading/validation
@@ -21,7 +21,7 @@ Structure:
         cv.py       - Cross-validation logic
         tvr.py      - Train/Validate/Report workflow
         rule_config.py - Configuration building
-        
+
     config.py       - Styling and theming
     helpers.py      - Utility functions
     narratives.py   - Report narrative generation
@@ -32,71 +32,68 @@ For Contributors:
     - Add new widgets to components/
     - Add page-level logic to pages/
     - Add business logic to services/
-    
+
 Main Entry Point:
     streamlit run tanml/ui/app.py
 """
 
 from tanml.ui.config import (
-    APP_TITLE,
     APP_ICON,
+    APP_TITLE,
     COLORS,
     configure_page,
-    load_css,
     get_status_color,
+    load_css,
 )
-
+from tanml.ui.glossary import GLOSSARY
 from tanml.ui.helpers import (
-    session_dir,
-    save_upload,
-    pick_target,
     fmt2,
     get_value_or_default,
+    pick_target,
+    save_upload,
+    session_dir,
 )
-
 from tanml.ui.narratives import (
-    story_performance,
+    story_drift,
     story_features,
     story_overfitting,
-    story_drift,
-    story_stress,
+    story_performance,
     story_shap,
+    story_stress,
 )
 
-from tanml.ui.glossary import GLOSSARY
-
 __all__ = [
+    "APP_ICON",
     # Config
     "APP_TITLE",
-    "APP_ICON",
     "COLORS",
-    "configure_page",
-    "load_css",
-    "get_status_color",
-    # Helpers
-    "session_dir",
-    "save_upload",
-    "pick_target",
-    "fmt2",
-    "get_value_or_default",
-    # Narratives
-    "story_performance",
-    "story_features",
-    "story_overfitting",
-    "story_drift",
-    "story_stress",
-    "story_shap",
     # Glossary
     "GLOSSARY",
+    "configure_page",
+    "fmt2",
+    "get_status_color",
+    "get_value_or_default",
+    "load_css",
+    "pick_target",
+    "save_upload",
+    # Helpers
+    "session_dir",
+    "story_drift",
+    "story_features",
+    "story_overfitting",
+    # Narratives
+    "story_performance",
+    "story_shap",
+    "story_stress",
 ]
 
 
 def run_app():
     """
     Run the TanML Streamlit application.
-    
+
     This is an alternative entry point that can be called programmatically.
-    
+
     Example:
         from tanml.ui import run_app
         run_app()
@@ -104,6 +101,6 @@ def run_app():
     import subprocess
     import sys
     from pathlib import Path
-    
+
     app_path = Path(__file__).parent / "app.py"
     subprocess.run([sys.executable, "-m", "streamlit", "run", str(app_path)])

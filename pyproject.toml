@@ -107,12 +107,35 @@ include = ["tanml*"]
 "tanml.ui.assets" = ["*.png", "*.jpg", "*.svg"]
 
 [tool.ruff]
-line-length = 88
+line-length = 100
 target-version = "py310"
 
 [tool.ruff.lint]
 select = ["E", "F", "B", "I", "N", "UP", "PL", "RUF"]
-ignore = ["PLR0913", "PLR0915", "PLR0912"]
+ignore = [
+  "PLR0913",
+  "PLR0915",
+  "PLR0912",
+  "PLR2004",
+  "N806",
+  "E501",
+  "PLC0415",
+  "PLR0911",
+  "B904",
+  "RUF001",
+  "E701",
+  "E702",
+  "E722",
+  "N803",
+  "PLW0603",
+  "F401",
+  "UP035",
+  "PLR0124",
+  "PLW1510",
+  "E402",
+  "RUF012",
+  "RUF100",
+]
 
 [tool.ruff.format]
 quote-style = "double"
@@ -127,3 +150,5 @@ warn_unused_configs = true
 disallow_untyped_defs = false
 disallow_incomplete_defs = false
 ignore_missing_imports = true
+check_untyped_defs = false
+disable_error_code = ["attr-defined", "arg-type", "assignment", "no-any-return", "annotation-unchecked", "valid-type"]

@@ -12,19 +12,19 @@ Components:
     - tables: DataFrame display helpers
 """
 
-from tanml.ui.components.metrics import (
-    metric_card,
-    kpi_row,
-    metric_no_trunc,
-)
 from tanml.ui.components.forms import (
     render_model_form,
 )
+from tanml.ui.components.metrics import (
+    kpi_row,
+    metric_card,
+    metric_no_trunc,
+)
 
 __all__ = [
+    "kpi_row",
     # Metrics
     "metric_card",
-    "kpi_row",
     "metric_no_trunc",
     # Forms
     "render_model_form",

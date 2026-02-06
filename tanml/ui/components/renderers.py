@@ -7,14 +7,15 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
-import streamlit as st
+
 import pandas as pd
+import streamlit as st
 
 from tanml.ui.reports import _fmt2
 
-
-# Let's move _g to helpers.py (if it exists) or keep local copy. 
+# Let's move _g to helpers.py (if it exists) or keep local copy.
 # Copying local for safety and simplicity as it is very small.
+
 
 def _g(d, *keys, default=None):
     cur = d
@@ -25,9 +26,8 @@ def _g(d, *keys, default=None):
             return default
     return cur
 
-from tanml.ui.helpers.tvr import _tvr_key
 
-from tanml.ui.components.metrics import metric_no_trunc
+from tanml.ui.helpers.tvr import _tvr_key
 
 
 def _render_correlation_outputs(results, title="Numeric Correlation"):
@@ -39,10 +39,10 @@ def _render_correlation_outputs(results, title="Numeric Correlation"):
 
     heatmap_path = art.get("heatmap_path")
     if heatmap_path and os.path.exists(heatmap_path):
-        caption = (
-            f"Correlation Heatmap ({summary.get('method','')}) — "
-            + ("full matrix" if summary.get('plotted_full_matrix') else
-               f"showing {summary.get('plotted_features')}/{summary.get('n_numeric_features')} features (subset)")
+        caption = f"Correlation Heatmap ({summary.get('method', '')}) — " + (
+            "full matrix"
+            if summary.get("plotted_full_matrix")
+            else f"showing {summary.get('plotted_features')}/{summary.get('n_numeric_features')} features (subset)"
         )
         st.image(heatmap_path, caption=caption, width="stretch")
     else:
@@ -60,9 +60,9 @@ def _render_correlation_outputs(results, title="Numeric Correlation"):
         summary.get("n_pairs_flagged_ge_threshold", "—"),
         (summary.get("method", "—") or "—").capitalize(),
     ]
-    for col, lab in zip((c1, c2, c3, c4), labels):
+    for col, lab in zip((c1, c2, c3, c4), labels, strict=False):
         col.markdown(f'<div class="tanml-kpi-label">{lab}</div>', unsafe_allow_html=True)
-    for col, val in zip((c1, c2, c3, c4), values):
+    for col, val in zip((c1, c2, c3, c4), values, strict=False):
         col.markdown(f'<div class="tanml-kpi-value">{val}</div>', unsafe_allow_html=True)
 
     main_csv = art.get("top_pairs_main_csv")
@@ -81,7 +81,7 @@ def _render_correlation_outputs(results, title="Numeric Correlation"):
                 f,
                 file_name="correlation_top_pairs.csv",
                 mime="text/csv",
-                key=f"corrcsv::{full_csv}"
+                key=f"corrcsv::{full_csv}",
             )
     for n in notes:
         st.caption(f"• {n}")
@@ -97,26 +97,31 @@ def _render_regression_outputs(results):
     st.subheader("Key Metrics")
     c1, c2, c3 = st.columns(3)
     c1.metric("RMSE", _fmt2(_g(results, "summary", "rmse")))
-    c2.metric("MAE",  _fmt2(_g(results, "summary", "mae")))
+    c2.metric("MAE", _fmt2(_g(results, "summary", "mae")))
     r2_val = _g(results, "summary", "r2")
-    c3.metric("R²",   _fmt2(r2_val, decimals=2))
+    c3.metric("R²", _fmt2(r2_val, decimals=2))
 
     # Detailed metrics
     st.subheader("Regression Metrics (Detailed)")
     adj_r2 = _g(results, "RegressionMetrics", "r2_adjusted")
     med_ae = _g(results, "RegressionMetrics", "median_ae")
-    mv     = _g(results, "RegressionMetrics", "mape_or_smape")
+    mv = _g(results, "RegressionMetrics", "mape_or_smape")
     m_is_mape = bool(_g(results, "RegressionMetrics", "mape_used", default=False))
 
-    st.table({
-        "Metric": ["Adjusted R²", "Median AE", "MAPE/SMAPE"],
-        "Value": [
-            _fmt2(adj_r2, decimals=2) if adj_r2 is not None else "N/A",
-            _fmt2(med_ae, decimals=2) if med_ae is not None else "—",
-            (f"{_fmt2(mv, decimals=2)}% (MAPE)" if m_is_mape else
-             (f"{_fmt2(mv, decimals=2)}% (SMAPE)" if mv is not None else "N/A")),
-        ],
-    })
+    st.table(
+        {
+            "Metric": ["Adjusted R²", "Median AE", "MAPE/SMAPE"],
+            "Value": [
+                _fmt2(adj_r2, decimals=2) if adj_r2 is not None else "N/A",
+                _fmt2(med_ae, decimals=2) if med_ae is not None else "—",
+                (
+                    f"{_fmt2(mv, decimals=2)}% (MAPE)"
+                    if m_is_mape
+                    else (f"{_fmt2(mv, decimals=2)}% (SMAPE)" if mv is not None else "N/A")
+                ),
+            ],
+        }
+    )
 
     # Notes, if any
     notes = _g(results, "RegressionMetrics", "notes", default=[]) or []
@@ -142,9 +147,9 @@ def tvr_render_extras(section_id: str):
         _render_regression_outputs(results)
     else:
         st.subheader("Key Metrics")
-        summary = (results.get("summary") or {})
-        auc_val        = _fmt2(summary.get("auc"))
-        ks_val         = _fmt2(summary.get("ks"))
+        summary = results.get("summary") or {}
+        auc_val = _fmt2(summary.get("auc"))
+        ks_val = _fmt2(summary.get("ks"))
         rules_failed_v = _fmt2(summary.get("rules_failed"))
         c1, c2, c3 = st.columns(3)
         c1.metric("AUC", auc_val)
@@ -152,15 +157,17 @@ def tvr_render_extras(section_id: str):
         c3.metric("Rules failed", rules_failed_v)
 
     st.subheader("Run Summary")
-    st.write({
-        "Train rows": int(extras.get("train_rows", 0) or 0),
-        "Test rows": int(extras.get("test_rows", 0) or 0),
-        "Target": extras.get("target", "—"),
-        "Features used": int(extras.get("n_features", 0) or 0),
-        "Seed used": extras.get("seed_used", "—"),
-        "Effective config": extras.get("eff_path", "—"),
-        "Artifacts dir": extras.get("artifacts_dir", "—"),
-    })
+    st.write(
+        {
+            "Train rows": int(extras.get("train_rows", 0) or 0),
+            "Test rows": int(extras.get("test_rows", 0) or 0),
+            "Target": extras.get("target", "—"),
+            "Features used": int(extras.get("n_features", 0) or 0),
+            "Seed used": extras.get("seed_used", "—"),
+            "Effective config": extras.get("eff_path", "—"),
+            "Artifacts dir": extras.get("artifacts_dir", "—"),
+        }
+    )
 
     # ------- Artifacts -------
     art_dir = Path(extras.get("artifacts_dir") or "")
@@ -194,7 +201,9 @@ def tvr_render_extras(section_id: str):
         st.caption("No artifacts were saved.")
         return
 
-    files_list.sort(key=lambda p: (order_hint.index(p.name) if p.name in order_hint else 999, p.name.lower()))
+    files_list.sort(
+        key=lambda p: (order_hint.index(p.name) if p.name in order_hint else 999, p.name.lower())
+    )
 
     for p in files_list[:100]:
         label = pretty_names.get(p.name, p.name)

@@ -7,7 +7,7 @@ Provides consistent styling for KPIs and performance metrics.
 
 from __future__ import annotations
 
-from typing import Any, Optional, Union
+from typing import Any
 
 import streamlit as st
 
@@ -15,16 +15,16 @@ import streamlit as st
 def metric_no_trunc(
     label: str,
     value: Any,
-    delta: Optional[Any] = None,
+    delta: Any | None = None,
     delta_color: str = "normal",
-    help: Optional[str] = None,
+    help: str | None = None,
 ) -> None:
     """
     Display a metric without truncation.
-    
+
     Standard st.metric truncates long values. This version preserves
     the full value display.
-    
+
     Args:
         label: Metric label
         value: Metric value (any type, will be converted to string)
@@ -32,11 +32,14 @@ def metric_no_trunc(
         delta_color: "normal", "inverse", or "off"
         help: Optional tooltip text
     """
-    st.markdown(f'''
+    st.markdown(
+        f"""
     <div class="tanml-kpi-label">{label}</div>
     <div class="tanml-kpi-value">{value}</div>
-    ''', unsafe_allow_html=True)
-    
+    """,
+        unsafe_allow_html=True,
+    )
+
     if delta is not None:
         if delta_color == "inverse":
             color = "green" if float(delta) < 0 else "red"
@@ -44,8 +47,10 @@ def metric_no_trunc(
             color = "gray"
         else:
             color = "green" if float(delta) > 0 else "red"
-        st.markdown(f'<span style="color:{color}; font-size:0.8rem;">Δ {delta}</span>', 
-                    unsafe_allow_html=True)
+        st.markdown(
+            f'<span style="color:{color}; font-size:0.8rem;">Δ {delta}</span>',
+            unsafe_allow_html=True,
+        )
 
 
 def metric_card(
@@ -53,11 +58,11 @@ def metric_card(
     value: Any,
     icon: str = "📊",
     color: str = "#2563eb",
-    subtitle: Optional[str] = None,
+    subtitle: str | None = None,
 ) -> None:
     """
     Display a styled metric card.
-    
+
     Args:
         title: Card title
         value: Primary value to display
@@ -65,7 +70,8 @@ def metric_card(
         color: Accent color (hex)
         subtitle: Optional subtitle text
     """
-    st.markdown(f'''
+    st.markdown(
+        f"""
     <div style="
         background: linear-gradient(135deg, {color}15 0%, {color}05 100%);
         border-left: 4px solid {color};
@@ -80,22 +86,24 @@ def metric_card(
         <div style="font-size: 1.8rem; font-weight: 700; color: {color}; margin-top: 0.25rem;">
             {value}
         </div>
-        {f'<div style="font-size: 0.75rem; color: #888; margin-top: 0.25rem;">{subtitle}</div>' if subtitle else ''}
+        {f'<div style="font-size: 0.75rem; color: #888; margin-top: 0.25rem;">{subtitle}</div>' if subtitle else ""}
     </div>
-    ''', unsafe_allow_html=True)
+    """,
+        unsafe_allow_html=True,
+    )
 
 
 def kpi_row(
-    metrics: list[tuple[str, Any, Optional[str]]],
-    columns: Optional[int] = None,
+    metrics: list[tuple[str, Any, str | None]],
+    columns: int | None = None,
 ) -> None:
     """
     Display a row of KPI metrics.
-    
+
     Args:
         metrics: List of (label, value, icon) tuples
         columns: Number of columns (default: len(metrics))
-        
+
     Example:
         kpi_row([
             ("ROC AUC", 0.92, "🎯"),
@@ -105,7 +113,7 @@ def kpi_row(
     """
     n_cols = columns or len(metrics)
     cols = st.columns(n_cols)
-    
+
     for i, (label, value, icon) in enumerate(metrics):
         with cols[i % n_cols]:
             # Format value
@@ -116,15 +124,18 @@ def kpi_row(
                     display_val = f"{value:.2f}"
             else:
                 display_val = str(value)
-            
+
             icon_str = icon or "📊"
-            st.markdown(f'''
+            st.markdown(
+                f"""
             <div style="text-align: center; padding: 0.5rem;">
                 <div style="font-size: 1.5rem;">{icon_str}</div>
                 <div class="tanml-kpi-label" style="justify-content: center;">{label}</div>
                 <div class="tanml-kpi-value">{display_val}</div>
             </div>
-            ''', unsafe_allow_html=True)
+            """,
+                unsafe_allow_html=True,
+            )
 
 
 def progress_indicator(
@@ -134,7 +145,7 @@ def progress_indicator(
 ) -> None:
     """
     Display a progress indicator.
-    
+
     Args:
         current: Current step
         total: Total steps

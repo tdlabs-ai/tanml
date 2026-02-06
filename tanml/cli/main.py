@@ -1,6 +1,12 @@
 # tanml/cli/main.py
 from __future__ import annotations
-import sys, os, subprocess, argparse, importlib.util
+
+import argparse
+import importlib.util
+import os
+import subprocess
+import sys
+
 
 def _parse_args(argv):
     p = argparse.ArgumentParser(prog="tanml ui", add_help=False)
@@ -17,11 +23,13 @@ def _parse_args(argv):
         sys.exit(0)
     return args
 
+
 def _env_bool(name, default=False):
     v = os.environ.get(name)
     if v is None:
         return default
     return str(v).strip().lower() in {"1", "true", "yes", "on"}
+
 
 def _module_file(modname: str) -> str:
     """Return module file path WITHOUT importing it (avoids early st.* calls)."""
@@ -30,6 +38,7 @@ def _module_file(modname: str) -> str:
         print(f"Could not locate module: {modname}", file=sys.stderr)
         sys.exit(1)
     return os.path.abspath(spec.origin)
+
 
 def _launch_ui(argv):
     # ---- Resolve app path WITHOUT importing tanml.ui.app ----
@@ -51,8 +60,6 @@ def _launch_ui(argv):
     default_max_mb = int(os.environ.get("TANML_MAX_MB", "2048"))
     max_mb = args.max_mb if args.max_mb is not None else default_max_mb
 
-
-
     # ---- Environment for the child process (the Streamlit runner)
     env = os.environ.copy()
     # Marker to indicate app was launched via CLI (for validation in app.py)
@@ -69,7 +76,11 @@ def _launch_ui(argv):
 
     # ---- Hand off to the official runner (prevents ScriptRunContext warnings)
     cmd = [
-        sys.executable, "-m", "streamlit", "run", app_path,
+        sys.executable,
+        "-m",
+        "streamlit",
+        "run",
+        app_path,
         f"--server.port={port}",
         f"--server.address={address}",
     ]
@@ -85,9 +96,10 @@ def _launch_ui(argv):
 
     return subprocess.call(cmd, env=env)
 
+
 def main():
     argv = sys.argv[1:]
-    
+
     # Show help
     if argv and argv[0] in {"-h", "--help"}:
         print(
@@ -105,7 +117,7 @@ def main():
             "Note: Streamlit telemetry is always disabled.\n"
         )
         sys.exit(0)
-    
+
     # If no args, show help
     if not argv:
         print(
@@ -122,17 +134,16 @@ def main():
             "Note: Streamlit telemetry is always disabled.\n"
         )
         sys.exit(0)
-    
+
     # Only "tanml ui" launches the UI
     if argv[0] == "ui":
         ui_args = argv[1:]
         sys.exit(_launch_ui(ui_args))
-    
+
     # Unknown command
     print(f"Unknown command: {argv[0]}\nTry: tanml --help")
     sys.exit(2)
 
+
 if __name__ == "__main__":
     main()
-
-

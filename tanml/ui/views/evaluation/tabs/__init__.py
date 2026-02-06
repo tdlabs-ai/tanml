@@ -9,7 +9,7 @@ and using the @register_tab decorator.
 Example:
     # tanml/ui/pages/evaluation/tabs/my_tab.py
     from tanml.ui.views.evaluation.tabs import register_tab
-    
+
     @register_tab(name="My Analysis", order=80)
     def render(context):
         import streamlit as st
@@ -19,20 +19,22 @@ Example:
 
 from __future__ import annotations
 
-from dataclasses import dataclass
-from typing import Any, Callable, Dict, List, Optional
 import importlib
 import pkgutil
+from collections.abc import Callable
+from dataclasses import dataclass
 from pathlib import Path
+from typing import Any, Dict, List, Optional
 
 
 @dataclass
 class TabContext:
     """
     Context passed to each tab render function.
-    
+
     Contains all the data needed for analysis.
     """
+
     model: Any
     X_train: Any
     X_test: Any
@@ -41,18 +43,18 @@ class TabContext:
     y_pred_train: Any
     y_pred_test: Any
     task_type: str
-    features: List[str]
+    features: list[str]
     target: str
     run_dir: Path
-    
+
     # Optional
-    y_prob_train: Optional[Any] = None
-    y_prob_test: Optional[Any] = None
-    
+    y_prob_train: Any | None = None
+    y_prob_test: Any | None = None
+
     # For storing results (passed to report)
-    results: Dict[str, Any] = None
-    images: Dict[str, bytes] = None
-    
+    results: dict[str, Any] = None
+    images: dict[str, bytes] = None
+
     def __post_init__(self):
         if self.results is None:
             self.results = {}
@@ -63,44 +65,49 @@ class TabContext:
 @dataclass
 class TabDefinition:
     """Definition of a registered tab."""
-    name: str           # Display name in UI
-    render_fn: Callable # Function that renders the tab
-    order: int = 100    # Display order (lower = first)
-    key: str = ""       # Unique key for Streamlit
+
+    name: str  # Display name in UI
+    render_fn: Callable  # Function that renders the tab
+    order: int = 100  # Display order (lower = first)
+    key: str = ""  # Unique key for Streamlit
 
 
 # Global registry
-_TAB_REGISTRY: List[TabDefinition] = []
+_TAB_REGISTRY: list[TabDefinition] = []
 
 
 def register_tab(name: str, order: int = 100, key: str = ""):
     """
     Decorator to register a tab render function.
-    
+
     Args:
         name: Display name for the tab
         order: Sort order (lower = appears first)
         key: Optional unique key for Streamlit widgets
-        
+
     Example:
         @register_tab(name="Drift Analysis", order=30)
         def render(context):
             st.markdown("### Drift")
             ...
     """
+
     def decorator(fn: Callable):
         tab_key = key or fn.__name__
-        _TAB_REGISTRY.append(TabDefinition(
-            name=name,
-            render_fn=fn,
-            order=order,
-            key=tab_key,
-        ))
+        _TAB_REGISTRY.append(
+            TabDefinition(
+                name=name,
+                render_fn=fn,
+                order=order,
+                key=tab_key,
+            )
+        )
         return fn
+
     return decorator
 
 
-def get_registered_tabs() -> List[TabDefinition]:
+def get_registered_tabs() -> list[TabDefinition]:
     """Get all registered tabs sorted by order."""
     return sorted(_TAB_REGISTRY, key=lambda t: t.order)
 
@@ -108,15 +115,15 @@ def get_registered_tabs() -> List[TabDefinition]:
 def discover_tabs():
     """
     Auto-discover and import all tab modules in this package.
-    
+
     This imports all Python files in the tabs/ folder,
     which causes their @register_tab decorators to run.
     """
     import tanml.ui.views.evaluation.tabs as tabs_package
-    
-    for importer, modname, ispkg in pkgutil.iter_modules(tabs_package.__path__):
-        if not modname.startswith('_'):  # Skip __init__, etc.
-            importlib.import_module(f'tanml.ui.views.evaluation.tabs.{modname}')
+
+    for _importer, modname, _ispkg in pkgutil.iter_modules(tabs_package.__path__):
+        if not modname.startswith("_"):  # Skip __init__, etc.
+            importlib.import_module(f"tanml.ui.views.evaluation.tabs.{modname}")
 
 
 def clear_registry():

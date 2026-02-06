@@ -7,7 +7,6 @@ from __future__ import annotations
 
 import hashlib
 from pathlib import Path
-from typing import List, Optional, Tuple
 
 import pandas as pd
 import streamlit as st
@@ -15,7 +14,7 @@ import streamlit as st
 from tanml.utils.data_loader import load_dataframe
 
 
-def _save_upload(upload, dest_dir: Path, custom_name: str = None) -> Optional[Path]:
+def _save_upload(upload, dest_dir: Path, custom_name: str | None = None) -> Path | None:
     """Persist uploaded file to disk. If CSV, convert once to Parquet for efficiency."""
     if upload is None:
         return None
@@ -49,7 +48,9 @@ def _normalize_vif(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def _schema_align_or_error(train_df: pd.DataFrame, test_df: pd.DataFrame) -> Tuple[pd.DataFrame, Optional[str]]:
+def _schema_align_or_error(
+    train_df: pd.DataFrame, test_df: pd.DataFrame
+) -> tuple[pd.DataFrame, str | None]:
     """
     Ensure test_df has same columns as train_df (name & order).
     - If extra columns in test: drop them.
@@ -64,15 +65,18 @@ def _schema_align_or_error(train_df: pd.DataFrame, test_df: pd.DataFrame) -> Tup
     aligned = test_df[train_cols].copy()
     for c in train_cols:
         td = train_df[c].dtype
-        if pd.api.types.is_numeric_dtype(td) and not pd.api.types.is_numeric_dtype(aligned[c].dtype):
+        if pd.api.types.is_numeric_dtype(td) and not pd.api.types.is_numeric_dtype(
+            aligned[c].dtype
+        ):
             aligned[c] = pd.to_numeric(aligned[c], errors="coerce")
     return aligned, None
 
 
-def _row_overlap_pct(train_df: pd.DataFrame, test_df: pd.DataFrame, cols: List[str]) -> float:
+def _row_overlap_pct(train_df: pd.DataFrame, test_df: pd.DataFrame, cols: list[str]) -> float:
     """Approximate leakage check via row-hash overlap on selected columns."""
     if not cols:
         return 0.0
+
     def _hash_rows(df: pd.DataFrame) -> set:
         sub = df[cols].copy()
         num = sub.select_dtypes(include="number").columns

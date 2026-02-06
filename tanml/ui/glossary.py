@@ -8,10 +8,7 @@ used in model validation reports.
 
 from __future__ import annotations
 
-from typing import Dict
-
-
-GLOSSARY: Dict[str, str] = {
+GLOSSARY: dict[str, str] = {
     # General Concepts
     "Cross-Validation": (
         "A technique to assess model performance by training and testing on "
@@ -25,7 +22,6 @@ GLOSSARY: Dict[str, str] = {
         "Techniques that prevent overfitting by penalizing model complexity. "
         "Helps models generalize to new data."
     ),
-    
     # Classification Metrics
     "ROC AUC": (
         "Area Under the ROC Curve. Measures the model's ability to distinguish "
@@ -64,10 +60,8 @@ GLOSSARY: Dict[str, str] = {
         "Important when false negatives are costly (e.g., fraud detection)."
     ),
     "Accuracy": (
-        "Overall correctness: (TP + TN) / Total. Can be misleading for "
-        "imbalanced datasets."
+        "Overall correctness: (TP + TN) / Total. Can be misleading for imbalanced datasets."
     ),
-    
     # Regression Metrics
     "RMSE": (
         "Root Mean Squared Error. Average prediction error in target units. "
@@ -82,10 +76,8 @@ GLOSSARY: Dict[str, str] = {
         "the model. 1.0 is perfect, 0 is baseline."
     ),
     "Median Absolute Error": (
-        "Median of absolute prediction errors. Very robust to outliers. "
-        "Lower is better."
+        "Median of absolute prediction errors. Very robust to outliers. Lower is better."
     ),
-    
     # Diagnostic Features
     "VIF": (
         "Variance Inflation Factor. Measures multicollinearity between features. "
@@ -99,7 +91,6 @@ GLOSSARY: Dict[str, str] = {
         "Population Stability Index. Measures distribution shift between two "
         "datasets. PSI > 0.25 suggests significant drift."
     ),
-    
     # Validation Techniques
     "Stress Test": (
         "Tests model robustness by adding noise to data. Small performance "
@@ -114,7 +105,6 @@ GLOSSARY: Dict[str, str] = {
         "using K-Means clustering. Low coverage suggests test data may be "
         "out-of-distribution."
     ),
-    
     # Data Quality
     "Missing Values": (
         "Data points with no recorded value. Can bias models if not handled "
@@ -125,8 +115,7 @@ GLOSSARY: Dict[str, str] = {
         "appears in both train and test sets."
     ),
     "Constant Columns": (
-        "Features with only one unique value. Provide no predictive power "
-        "and should be removed."
+        "Features with only one unique value. Provide no predictive power and should be removed."
     ),
     "Power Score": (
         "A normalized metric (0-100) representing the relative importance of a feature "
@@ -138,10 +127,10 @@ GLOSSARY: Dict[str, str] = {
 def get_definition(term: str) -> str:
     """
     Get the definition for a term.
-    
+
     Args:
         term: Technical term to look up
-        
+
     Returns:
         Definition string or empty string if not found
     """
@@ -151,7 +140,7 @@ def get_definition(term: str) -> str:
 def get_all_terms() -> list[str]:
     """
     Get all terms in the glossary.
-    
+
     Returns:
         List of term names
     """
@@ -161,12 +150,12 @@ def get_all_terms() -> list[str]:
 def format_glossary_html() -> str:
     """
     Format glossary as HTML for display.
-    
+
     Returns:
         HTML string with formatted glossary
     """
     html_parts = ['<div class="tanml-glossary">']
     for term, definition in sorted(GLOSSARY.items()):
-        html_parts.append(f'<p><strong>{term}</strong>: {definition}</p>')
-    html_parts.append('</div>')
-    return '\n'.join(html_parts)
+        html_parts.append(f"<p><strong>{term}</strong>: {definition}</p>")
+    html_parts.append("</div>")
+    return "\n".join(html_parts)

@@ -10,30 +10,30 @@ from tanml.ui.reports.base import (
     ReportContext,
     ReportSection,
     SectionRegistry,
-    add_table_with_borders,
     add_image_from_figure,
+    add_table_with_borders,
 )
 
 # Re-export all report generator functions from generators.py for backward compatibility
 from tanml.ui.reports.generators import (
     _choose_report_template,
     _filter_metrics_for_task,
+    _fmt2,
     _generate_dev_report_docx,
     _generate_eval_report_docx,
     _generate_ranking_report_docx,
-    _fmt2,
 )
 
 __all__ = [
     "ReportContext",
     "ReportSection",
     "SectionRegistry",
-    "add_table_with_borders",
-    "add_image_from_figure",
     "_choose_report_template",
     "_filter_metrics_for_task",
+    "_fmt2",
     "_generate_dev_report_docx",
     "_generate_eval_report_docx",
     "_generate_ranking_report_docx",
-    "_fmt2",
+    "add_image_from_figure",
+    "add_table_with_borders",
 ]

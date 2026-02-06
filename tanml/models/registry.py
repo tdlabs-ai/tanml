@@ -1,26 +1,34 @@
 from __future__ import annotations
+
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import Any, Callable, Dict, Optional, Tuple, Literal
+from typing import Any, Literal
 
 Task = Literal["classification", "regression"]
+
 
 @dataclass(frozen=True)
 class ModelSpec:
     task: Task
-    import_path: str                      # e.g., "sklearn.ensemble.RandomForestClassifier"
-    defaults: Dict[str, Any] = field(default_factory=dict)
+    import_path: str  # e.g., "sklearn.ensemble.RandomForestClassifier"
+    defaults: dict[str, Any] = field(default_factory=dict)
     # UI schema: param -> (type, choices_or_None, help_or_None)
-    ui_schema: Dict[str, Tuple[str, Optional[Tuple[Any, ...]], Optional[str]]] = field(default_factory=dict)
-    aliases: Dict[str, str] = field(default_factory=dict)  # optional param alias map
+    ui_schema: dict[str, tuple[str, tuple[Any, ...] | None, str | None]] = field(
+        default_factory=dict
+    )
+    aliases: dict[str, str] = field(default_factory=dict)  # optional param alias map
+
 
 # -------------------- 20 MODELS --------------------
 
-_REGISTRY: Dict[Tuple[str, str], ModelSpec] = {
+_REGISTRY: dict[tuple[str, str], ModelSpec] = {
     # -------- Classification (10) --------
     ("sklearn", "LogisticRegression"): ModelSpec(
         task="classification",
         import_path="sklearn.linear_model.LogisticRegression",
-        defaults=dict(penalty="l2", solver="lbfgs", C=1.0, class_weight=None, max_iter=1000, random_state=42),
+        defaults=dict(
+            penalty="l2", solver="lbfgs", C=1.0, class_weight=None, max_iter=1000, random_state=42
+        ),
         ui_schema={
             "penalty": ("choice", ("l2", "l1"), "Regularization"),
             "solver": ("choice", ("lbfgs", "liblinear", "saga"), "Solver"),
@@ -33,8 +41,15 @@ _REGISTRY: Dict[Tuple[str, str], ModelSpec] = {
     ("sklearn", "RandomForestClassifier"): ModelSpec(
         task="classification",
         import_path="sklearn.ensemble.RandomForestClassifier",
-        defaults=dict(n_estimators=400, max_depth=16, min_samples_split=2, min_samples_leaf=1,
-                      class_weight=None, random_state=42, n_jobs=-1),
+        defaults=dict(
+            n_estimators=400,
+            max_depth=16,
+            min_samples_split=2,
+            min_samples_leaf=1,
+            class_weight=None,
+            random_state=42,
+            n_jobs=-1,
+        ),
         ui_schema={
             "n_estimators": ("int", None, "Number of trees"),
             "max_depth": ("int", None, "Tree depth (None=unbounded)"),
@@ -47,8 +62,18 @@ _REGISTRY: Dict[Tuple[str, str], ModelSpec] = {
     ("xgboost", "XGBClassifier"): ModelSpec(
         task="classification",
         import_path="xgboost.XGBClassifier",
-        defaults=dict(n_estimators=600, max_depth=6, learning_rate=0.05, subsample=0.8, colsample_bytree=0.8,
-                      min_child_weight=1, reg_lambda=1.0, tree_method="hist", random_state=42, n_jobs=-1),
+        defaults=dict(
+            n_estimators=600,
+            max_depth=6,
+            learning_rate=0.05,
+            subsample=0.8,
+            colsample_bytree=0.8,
+            min_child_weight=1,
+            reg_lambda=1.0,
+            tree_method="hist",
+            random_state=42,
+            n_jobs=-1,
+        ),
         ui_schema={
             "n_estimators": ("int", None, "Boosting rounds"),
             "max_depth": ("int", None, "Tree depth"),
@@ -65,8 +90,18 @@ _REGISTRY: Dict[Tuple[str, str], ModelSpec] = {
     ("lightgbm", "LGBMClassifier"): ModelSpec(
         task="classification",
         import_path="lightgbm.LGBMClassifier",
-        defaults=dict(n_estimators=800, num_leaves=31, max_depth=-1, learning_rate=0.05, subsample=0.8,
-                      colsample_bytree=0.8, min_child_samples=20, reg_lambda=1.0, random_state=42, n_jobs=-1),
+        defaults=dict(
+            n_estimators=800,
+            num_leaves=31,
+            max_depth=-1,
+            learning_rate=0.05,
+            subsample=0.8,
+            colsample_bytree=0.8,
+            min_child_samples=20,
+            reg_lambda=1.0,
+            random_state=42,
+            n_jobs=-1,
+        ),
         ui_schema={
             "n_estimators": ("int", None, "Boosting rounds"),
             "num_leaves": ("int", None, "Max leaves"),
@@ -82,7 +117,9 @@ _REGISTRY: Dict[Tuple[str, str], ModelSpec] = {
     ("sklearn", "SVC"): ModelSpec(
         task="classification",
         import_path="sklearn.svm.SVC",
-        defaults=dict(C=1.0, gamma="scale", kernel="rbf", probability=True, class_weight=None, random_state=42),
+        defaults=dict(
+            C=1.0, gamma="scale", kernel="rbf", probability=True, class_weight=None, random_state=42
+        ),
         ui_schema={
             "C": ("float", None, "Regularization"),
             "gamma": ("choice", ("scale", "auto"), "RBF width"),
@@ -111,8 +148,16 @@ _REGISTRY: Dict[Tuple[str, str], ModelSpec] = {
     ("catboost", "CatBoostClassifier"): ModelSpec(
         task="classification",
         import_path="catboost.CatBoostClassifier",
-        defaults=dict(iterations=800, depth=6, learning_rate=0.05, l2_leaf_reg=3.0, subsample=0.8,
-                      loss_function="Logloss", random_state=42, verbose=False),
+        defaults=dict(
+            iterations=800,
+            depth=6,
+            learning_rate=0.05,
+            l2_leaf_reg=3.0,
+            subsample=0.8,
+            loss_function="Logloss",
+            random_state=42,
+            verbose=False,
+        ),
         ui_schema={
             "iterations": ("int", None, "Rounds"),
             "depth": ("int", None, "Depth"),
@@ -125,8 +170,15 @@ _REGISTRY: Dict[Tuple[str, str], ModelSpec] = {
     ("sklearn", "ExtraTreesClassifier"): ModelSpec(
         task="classification",
         import_path="sklearn.ensemble.ExtraTreesClassifier",
-        defaults=dict(n_estimators=400, max_depth=None, min_samples_split=2, min_samples_leaf=1,
-                      class_weight=None, random_state=42, n_jobs=-1),
+        defaults=dict(
+            n_estimators=400,
+            max_depth=None,
+            min_samples_split=2,
+            min_samples_leaf=1,
+            class_weight=None,
+            random_state=42,
+            n_jobs=-1,
+        ),
         ui_schema={
             "n_estimators": ("int", None, "Trees"),
             "max_depth": ("int", None, "Depth"),
@@ -139,8 +191,14 @@ _REGISTRY: Dict[Tuple[str, str], ModelSpec] = {
     ("sklearn", "HistGradientBoostingClassifier"): ModelSpec(
         task="classification",
         import_path="sklearn.ensemble.HistGradientBoostingClassifier",
-        defaults=dict(max_depth=None, learning_rate=0.1, max_bins=255, l2_regularization=0.0,
-                      early_stopping=True, random_state=42),
+        defaults=dict(
+            max_depth=None,
+            learning_rate=0.1,
+            max_bins=255,
+            l2_regularization=0.0,
+            early_stopping=True,
+            random_state=42,
+        ),
         ui_schema={
             "max_depth": ("int", None, "Depth (None=auto)"),
             "learning_rate": ("float", None, "Eta"),
@@ -150,7 +208,6 @@ _REGISTRY: Dict[Tuple[str, str], ModelSpec] = {
             "random_state": ("int", None, "Seed"),
         },
     ),
-
     # -------- Regression (10) --------
     ("sklearn", "LinearRegression"): ModelSpec(
         task="regression",
@@ -164,8 +221,14 @@ _REGISTRY: Dict[Tuple[str, str], ModelSpec] = {
     ("sklearn", "RandomForestRegressor"): ModelSpec(
         task="regression",
         import_path="sklearn.ensemble.RandomForestRegressor",
-        defaults=dict(n_estimators=400, max_depth=16, min_samples_split=2, min_samples_leaf=1,
-                      random_state=42, n_jobs=-1),
+        defaults=dict(
+            n_estimators=400,
+            max_depth=16,
+            min_samples_split=2,
+            min_samples_leaf=1,
+            random_state=42,
+            n_jobs=-1,
+        ),
         ui_schema={
             "n_estimators": ("int", None, "Trees"),
             "max_depth": ("int", None, "Depth"),
@@ -177,8 +240,18 @@ _REGISTRY: Dict[Tuple[str, str], ModelSpec] = {
     ("xgboost", "XGBRegressor"): ModelSpec(
         task="regression",
         import_path="xgboost.XGBRegressor",
-        defaults=dict(n_estimators=800, max_depth=6, learning_rate=0.05, subsample=0.8, colsample_bytree=0.8,
-                      min_child_weight=1, reg_lambda=1.0, tree_method="hist", random_state=42, n_jobs=-1),
+        defaults=dict(
+            n_estimators=800,
+            max_depth=6,
+            learning_rate=0.05,
+            subsample=0.8,
+            colsample_bytree=0.8,
+            min_child_weight=1,
+            reg_lambda=1.0,
+            tree_method="hist",
+            random_state=42,
+            n_jobs=-1,
+        ),
         ui_schema={
             "n_estimators": ("int", None, "Rounds"),
             "max_depth": ("int", None, "Depth"),
@@ -195,8 +268,18 @@ _REGISTRY: Dict[Tuple[str, str], ModelSpec] = {
     ("lightgbm", "LGBMRegressor"): ModelSpec(
         task="regression",
         import_path="lightgbm.LGBMRegressor",
-        defaults=dict(n_estimators=1200, num_leaves=31, max_depth=-1, learning_rate=0.05, subsample=0.8,
-                      colsample_bytree=0.8, min_child_samples=20, reg_lambda=1.0, random_state=42, n_jobs=-1),
+        defaults=dict(
+            n_estimators=1200,
+            num_leaves=31,
+            max_depth=-1,
+            learning_rate=0.05,
+            subsample=0.8,
+            colsample_bytree=0.8,
+            min_child_samples=20,
+            reg_lambda=1.0,
+            random_state=42,
+            n_jobs=-1,
+        ),
         ui_schema={
             "n_estimators": ("int", None, "Rounds"),
             "num_leaves": ("int", None, "Max leaves"),
@@ -244,8 +327,16 @@ _REGISTRY: Dict[Tuple[str, str], ModelSpec] = {
     ("catboost", "CatBoostRegressor"): ModelSpec(
         task="regression",
         import_path="catboost.CatBoostRegressor",
-        defaults=dict(iterations=1000, depth=6, learning_rate=0.05, l2_leaf_reg=3.0, subsample=0.8,
-                      loss_function="RMSE", random_state=42, verbose=False),
+        defaults=dict(
+            iterations=1000,
+            depth=6,
+            learning_rate=0.05,
+            l2_leaf_reg=3.0,
+            subsample=0.8,
+            loss_function="RMSE",
+            random_state=42,
+            verbose=False,
+        ),
         ui_schema={
             "iterations": ("int", None, "Rounds"),
             "depth": ("int", None, "Depth"),
@@ -258,8 +349,14 @@ _REGISTRY: Dict[Tuple[str, str], ModelSpec] = {
     ("sklearn", "ExtraTreesRegressor"): ModelSpec(
         task="regression",
         import_path="sklearn.ensemble.ExtraTreesRegressor",
-        defaults=dict(n_estimators=400, max_depth=None, min_samples_split=2, min_samples_leaf=1,
-                      random_state=42, n_jobs=-1),
+        defaults=dict(
+            n_estimators=400,
+            max_depth=None,
+            min_samples_split=2,
+            min_samples_leaf=1,
+            random_state=42,
+            n_jobs=-1,
+        ),
         ui_schema={
             "n_estimators": ("int", None, "Trees"),
             "max_depth": ("int", None, "Depth"),
@@ -271,8 +368,14 @@ _REGISTRY: Dict[Tuple[str, str], ModelSpec] = {
     ("sklearn", "HistGradientBoostingRegressor"): ModelSpec(
         task="regression",
         import_path="sklearn.ensemble.HistGradientBoostingRegressor",
-        defaults=dict(max_depth=None, learning_rate=0.1, max_bins=255, l2_regularization=0.0,
-                      early_stopping=True, random_state=42),
+        defaults=dict(
+            max_depth=None,
+            learning_rate=0.1,
+            max_bins=255,
+            l2_regularization=0.0,
+            early_stopping=True,
+            random_state=42,
+        ),
         ui_schema={
             "max_depth": ("int", None, "Depth (None=auto)"),
             "learning_rate": ("float", None, "Eta"),
@@ -286,10 +389,12 @@ _REGISTRY: Dict[Tuple[str, str], ModelSpec] = {
 
 # --------------- Helpers ---------------
 
-def list_models(task: Optional[Task] = None) -> Dict[Tuple[str, str], ModelSpec]:
+
+def list_models(task: Task | None = None) -> dict[tuple[str, str], ModelSpec]:
     if task:
         return {k: v for k, v in _REGISTRY.items() if v.task == task}
     return dict(_REGISTRY)
+
 
 def get_spec(library: str, algo: str) -> ModelSpec:
     key = (library, algo)
@@ -297,12 +402,14 @@ def get_spec(library: str, algo: str) -> ModelSpec:
         raise KeyError(f"Unknown model: {library}.{algo}")
     return _REGISTRY[key]
 
+
 def _lazy_import(import_path: str) -> Callable[..., Any]:
     mod_name, cls_name = import_path.rsplit(".", 1)
     mod = __import__(mod_name, fromlist=[cls_name])
     return getattr(mod, cls_name)
 
-def build_estimator(library: str, algo: str, params: Optional[Dict[str, Any]] = None):
+
+def build_estimator(library: str, algo: str, params: dict[str, Any] | None = None):
     spec = get_spec(library, algo)
     Cls = _lazy_import(spec.import_path)
     kwargs = dict(spec.defaults)
@@ -314,22 +421,24 @@ def build_estimator(library: str, algo: str, params: Optional[Dict[str, Any]] = 
         kwargs.update({k: v for k, v in canon.items() if v is not None})
     return Cls(**kwargs)
 
-def ui_schema_for(library: str, algo: str) -> Dict[str, Tuple[str, Optional[Tuple[Any, ...]], Optional[str]]]:
+
+def ui_schema_for(
+    library: str, algo: str
+) -> dict[str, tuple[str, tuple[Any, ...] | None, str | None]]:
     return get_spec(library, algo).ui_schema
 
+
 def infer_task_from_target(y) -> Task:
-    import pandas as pd
     import numpy as np
-    
+    import pandas as pd
+
     # 1. Float check: if float and has decimals -> Regression
     # (Checking if it's effectively integer, e.g. 1.0, 2.0 is still maybe classification)
-    is_float = False
     try:
         # Try to convert to numeric if object
-        y_num = pd.to_numeric(y, errors='coerce')
-        
+        y_num = pd.to_numeric(y, errors="coerce")
+
         if pd.api.types.is_float_dtype(y_num):
-            is_float = True
             # Check if any non-integer values exist
             # dropna is important because nan % 1 is nan
             valid = y_num.dropna()
@@ -346,7 +455,7 @@ def infer_task_from_target(y) -> Task:
             n = len(set(y))
         except Exception:
             n = 10
-            
+
     # Default rule: few unique values = classification
     # Bumped threshold slightly to 5 to be safer, but float check above handles most regression cases.
     return "classification" if n <= 5 else "regression"

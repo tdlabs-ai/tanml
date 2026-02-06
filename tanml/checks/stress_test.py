@@ -1,13 +1,12 @@
 from __future__ import annotations
-from typing import Any, Dict, List, Tuple
+
+from typing import Any
+
 import numpy as np
 import pandas as pd
 from pandas.api.types import is_bool_dtype, is_numeric_dtype
+from sklearn.metrics import accuracy_score, mean_squared_error, r2_score, roc_auc_score
 
-from sklearn.metrics import (
-    accuracy_score, roc_auc_score,
-    mean_squared_error, r2_score
-)
 
 def _infer_task_type(model, y) -> str:
     # 1) model hint
@@ -25,6 +24,7 @@ def _infer_task_type(model, y) -> str:
     except Exception:
         return "classification"
 
+
 def _scores_for_classification(model, X) -> np.ndarray:
     # Prefer probabilities
     if hasattr(model, "predict_proba"):
@@ -36,6 +36,7 @@ def _scores_for_classification(model, X) -> np.ndarray:
     # Last resort: hard predictions (will be used directly for acc; AUC may be NaN)
     return np.ravel(model.predict(X))
 
+
 def _bin_pred_from_score(score: np.ndarray) -> np.ndarray:
     # If looks like probability in [0,1], threshold at 0.5; else at 0.0
     if np.all(np.isfinite(score)):
@@ -46,7 +47,8 @@ def _bin_pred_from_score(score: np.ndarray) -> np.ndarray:
     # fallback
     return (score >= 0.5).astype(int)
 
-def _cls_metrics(y_true, y_score, y_pred) -> Tuple[float, float]:
+
+def _cls_metrics(y_true, y_score, y_pred) -> tuple[float, float]:
     acc = float(accuracy_score(y_true, y_pred))
     try:
         auc = float(roc_auc_score(y_true, y_score)) if len(np.unique(y_true)) > 1 else np.nan
@@ -54,10 +56,12 @@ def _cls_metrics(y_true, y_score, y_pred) -> Tuple[float, float]:
         auc = np.nan
     return acc, auc
 
-def _reg_metrics(y_true, y_pred) -> Tuple[float, float]:
+
+def _reg_metrics(y_true, y_pred) -> tuple[float, float]:
     rmse = float(np.sqrt(mean_squared_error(y_true, y_pred)))
     r2 = float(r2_score(y_true, y_pred))
     return rmse, r2
+
 
 class StressTestCheck:
     """
@@ -68,7 +72,15 @@ class StressTestCheck:
     For each numeric feature, perturb a random subset of rows by (1 ± epsilon).
     """
 
-    def __init__(self, model, X, y, epsilon: float = 0.01, perturb_fraction: float = 0.2, random_state: int = 42):
+    def __init__(
+        self,
+        model,
+        X,
+        y,
+        epsilon: float = 0.01,
+        perturb_fraction: float = 0.2,
+        random_state: int = 42,
+    ):
         self.model = model
         self.X = pd.DataFrame(X, columns=getattr(X, "columns", None))
         self.y = np.asarray(y)
@@ -77,12 +89,20 @@ class StressTestCheck:
         self.rng = np.random.default_rng(int(random_state))
 
         # 🔧 Cast ALL numeric columns to float once to avoid int64→float assignment warnings
-        num_cols = [c for c in self.X.columns if is_numeric_dtype(self.X[c]) and not is_bool_dtype(self.X[c])]
+        num_cols = [
+            c
+            for c in self.X.columns
+            if is_numeric_dtype(self.X[c]) and not is_bool_dtype(self.X[c])
+        ]
         if num_cols:
             self.X[num_cols] = self.X[num_cols].astype("float64")
 
-    def _numeric_cols(self) -> List[str]:
-        return [c for c in self.X.columns if is_numeric_dtype(self.X[c]) and not is_bool_dtype(self.X[c])]
+    def _numeric_cols(self) -> list[str]:
+        return [
+            c
+            for c in self.X.columns
+            if is_numeric_dtype(self.X[c]) and not is_bool_dtype(self.X[c])
+        ]
 
     def _perturb_scaled(self, X: pd.DataFrame, col: str, sign: int) -> pd.DataFrame:
         """Scale a random subset of column 'col' by (1 + sign*epsilon)."""
@@ -101,7 +121,7 @@ class StressTestCheck:
 
     def run(self):
         task_type = _infer_task_type(self.model, self.y)
-        results: List[Dict[str, Any]] = []
+        results: list[dict[str, Any]] = []
 
         # ---------- Baseline ----------
         if task_type == "regression":
@@ -118,22 +138,26 @@ class StressTestCheck:
 
         # ---------- Per-feature perturbations ----------
         for col in self._numeric_cols():
-            for sign, lab in [(+1, f"+{round(self.epsilon * 100, 2)}%"),
-                              (-1, f"-{round(self.epsilon * 100, 2)}%")]:
+            for sign, lab in [
+                (+1, f"+{round(self.epsilon * 100, 2)}%"),
+                (-1, f"-{round(self.epsilon * 100, 2)}%"),
+            ]:
                 try:
                     Xp = self._perturb_scaled(self.X, col, sign)
 
                     if task_type == "regression":
                         y_pred_p = np.ravel(self.model.predict(Xp))
                         rmse_p, r2_p = _reg_metrics(self.y, y_pred_p)
-                        results.append({
-                            "feature": col,
-                            "perturbation": lab,
-                            "rmse": round(rmse_p, 4),
-                            "r2": round(r2_p, 4),
-                            "delta_rmse": round(rmse_p - rmse_base, 4),
-                            "delta_r2": round(r2_p - r2_base, 4),
-                        })
+                        results.append(
+                            {
+                                "feature": col,
+                                "perturbation": lab,
+                                "rmse": round(rmse_p, 4),
+                                "r2": round(r2_p, 4),
+                                "delta_rmse": round(rmse_p - rmse_base, 4),
+                                "delta_r2": round(r2_p - r2_base, 4),
+                            }
+                        )
                     else:
                         y_score_p = _scores_for_classification(self.model, Xp)
                         try:
@@ -141,28 +165,42 @@ class StressTestCheck:
                         except Exception:
                             y_pred_p = np.ravel(self.model.predict(Xp))
                         acc_p, auc_p = _cls_metrics(self.y, y_score_p, y_pred_p)
-                        results.append({
-                            "feature": col,
-                            "perturbation": lab,
-                            "accuracy": round(acc_p, 4),
-                            "auc": round(auc_p, 4) if auc_p == auc_p else np.nan,
-                            "delta_accuracy": round(acc_p - acc_base, 4),
-                            "delta_auc": round((auc_p - auc_base), 4) if (auc_base == auc_base and auc_p == auc_p) else np.nan,
-                        })
+                        results.append(
+                            {
+                                "feature": col,
+                                "perturbation": lab,
+                                "accuracy": round(acc_p, 4),
+                                "auc": round(auc_p, 4) if auc_p == auc_p else np.nan,
+                                "delta_accuracy": round(acc_p - acc_base, 4),
+                                "delta_auc": round((auc_p - auc_base), 4)
+                                if (auc_base == auc_base and auc_p == auc_p)
+                                else np.nan,
+                            }
+                        )
 
                 # Robust error row in either mode
                 except Exception as e:
                     if task_type == "regression":
-                        results.append({
-                            "feature": col, "perturbation": lab,
-                            "rmse": "error", "r2": "error",
-                            "delta_rmse": f"Error: {e}", "delta_r2": f"Error: {e}",
-                        })
+                        results.append(
+                            {
+                                "feature": col,
+                                "perturbation": lab,
+                                "rmse": "error",
+                                "r2": "error",
+                                "delta_rmse": f"Error: {e}",
+                                "delta_r2": f"Error: {e}",
+                            }
+                        )
                     else:
-                        results.append({
-                            "feature": col, "perturbation": lab,
-                            "accuracy": "error", "auc": "error",
-                            "delta_accuracy": f"Error: {e}", "delta_auc": f"Error: {e}",
-                        })
+                        results.append(
+                            {
+                                "feature": col,
+                                "perturbation": lab,
+                                "accuracy": "error",
+                                "auc": "error",
+                                "delta_accuracy": f"Error: {e}",
+                                "delta_auc": f"Error: {e}",
+                            }
+                        )
 
         return pd.DataFrame(results)

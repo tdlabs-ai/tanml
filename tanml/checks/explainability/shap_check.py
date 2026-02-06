@@ -1,15 +1,16 @@
 # tanml/checks/explainability/shap_check.py
-from tanml.checks.base import BaseCheck
-
-
-import shap
-import numpy as np
-import pandas as pd
 import traceback
 import warnings
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+import shap
 from scipy import sparse as sp
+
+from tanml.checks.base import BaseCheck
+
 
 def _safe_numeric_cast_df(df: pd.DataFrame) -> pd.DataFrame:
     """Convert columns to numeric where possible; leave others unchanged."""
@@ -63,7 +64,11 @@ class SHAPCheck(BaseCheck):
         if forced and forced != "auto":
             return forced
         try:
-            yv = y.iloc[:, 0] if isinstance(y, pd.DataFrame) else (y if isinstance(y, pd.Series) else pd.Series(y))
+            yv = (
+                y.iloc[:, 0]
+                if isinstance(y, pd.DataFrame)
+                else (y if isinstance(y, pd.Series) else pd.Series(y))
+            )
             uniq = pd.Series(yv).dropna().unique()
             return "classification" if len(uniq) <= 2 else "regression"
         except Exception:
@@ -121,10 +126,12 @@ class SHAPCheck(BaseCheck):
         Returns positive-class probability when classification is detected and predict_proba is available.
         """
         if is_cls and hasattr(self.model, "predict_proba"):
+
             def f(X):
                 p = self.model.predict_proba(X)
                 i = 1 if (p.ndim == 2 and p.shape[1] == 2) else (pos_idx or 0)
                 return p[:, i]
+
             return f
         return self.model.predict
 
@@ -156,7 +163,7 @@ class SHAPCheck(BaseCheck):
         if alg == "linear" or (alg == "auto" and self._looks_like_linear(m)):
             return shap.LinearExplainer(m, background), "linear"
 
-        if alg == "permutation" or alg == "auto":
+        if alg in {"permutation", "auto"}:
             fn = self._predict_fn(is_cls, pos_idx)
             return shap.explainers.Permutation(fn, background, max_evals=2000), "perm"
 
@@ -173,8 +180,10 @@ class SHAPCheck(BaseCheck):
 
     def run(self):
         import matplotlib
+
         matplotlib.use("Agg")
         import matplotlib.pyplot as plt
+
         out = {}
         try:
             warnings.filterwarnings("ignore", category=UserWarning)
@@ -195,12 +204,18 @@ class SHAPCheck(BaseCheck):
             out_dir_opt = cfg.get("out_dir")
             options_dir = ((self.config or {}).get("options") or {}).get("save_artifacts_dir")
             # prefer explicit shap.out_dir, then global artifacts dir, then local fallback
-            outdir = Path(out_dir_opt or options_dir or (Path(__file__).resolve().parents[2] / "tmp_report_assets"))
+            outdir = Path(
+                out_dir_opt
+                or options_dir
+                or (Path(__file__).resolve().parents[2] / "tmp_report_assets")
+            )
             outdir.mkdir(parents=True, exist_ok=True)
             ts = datetime.now().strftime("%Y%m%d_%H%M%S")
 
             # -------- materialize dataframes & coerce dtypes ----------
-            feature_names = list(self.X_train.columns) if isinstance(self.X_train, pd.DataFrame) else None
+            feature_names = (
+                list(self.X_train.columns) if isinstance(self.X_train, pd.DataFrame) else None
+            )
             Xtr = self._to_df(self.X_train, feature_names)
             Xte = self._to_df(self.X_test, feature_names)
             if Xtr.empty or Xte.empty:
@@ -210,12 +225,15 @@ class SHAPCheck(BaseCheck):
             Xtr = _safe_numeric_cast_df(Xtr)
             Xte = _safe_numeric_cast_df(Xte)
 
-
             # -------- task resolution & sanity for binary classification ----------
             task = self._task(self.y_train, forced=task_forced)
-            is_cls = (task == "classification")
+            is_cls = task == "classification"
             if is_cls:
-                yv = self.y_train if isinstance(self.y_train, (pd.Series, pd.DataFrame)) else pd.Series(self.y_train)
+                yv = (
+                    self.y_train
+                    if isinstance(self.y_train, (pd.Series, pd.DataFrame))
+                    else pd.Series(self.y_train)
+                )
                 if len(pd.Series(yv).dropna().unique()) > 2:
                     raise ValueError("Binary classification only: y_train has >2 classes.")
 
@@ -232,15 +250,19 @@ class SHAPCheck(BaseCheck):
             Xs = Xte.head(test_n)
 
             # -------- choose explainer & compute SHAP once ----------
-            explainer, kind = self._explainer(algorithm, background, model_output_hint, is_cls, pos_idx_hint)
+            explainer, kind = self._explainer(
+                algorithm, background, model_output_hint, is_cls, pos_idx_hint
+            )
             if kind == "tree":
                 sv = explainer(Xs, check_additivity=False)  # big speedup, visually identical plots
             else:
                 sv = explainer(Xs)
 
             bg_shape = background.shape if hasattr(background, "shape") else None
-            print(f"SHAP explainer={type(explainer).__name__} kind={kind} Xs={Xs.shape} "
-                  f"bg={'kmeans' if bg_shape is None else bg_shape}")
+            print(
+                f"SHAP explainer={type(explainer).__name__} kind={kind} Xs={Xs.shape} "
+                f"bg={'kmeans' if bg_shape is None else bg_shape}"
+            )
 
             # -------- squeeze to 2-D for binary cls (if needed) ----------
             vals = sv.values
@@ -250,19 +272,23 @@ class SHAPCheck(BaseCheck):
                 if isinstance(sv.base_values, np.ndarray) and sv.base_values.ndim == 2:
                     sv.base_values = sv.base_values[:, pos_idx]
             else:
-                pos_idx = None if task == "regression" else self._pos_cls_idx(self.model, Xs.iloc[:1].values)
-            
+                pos_idx = (
+                    None
+                    if task == "regression"
+                    else self._pos_cls_idx(self.model, Xs.iloc[:1].values)
+                )
+
             # -------- Python 3.13 fix: ensure SHAP values are proper numpy arrays ----------
             # SHAP beeswarm plot fails in Python 3.13 if values are Python floats instead of numpy floats
             if not isinstance(sv.values, np.ndarray):
                 sv.values = np.asarray(sv.values, dtype=np.float64)
             elif sv.values.dtype == object:
                 sv.values = sv.values.astype(np.float64)
-            
-            if hasattr(sv, 'base_values') and sv.base_values is not None:
+
+            if hasattr(sv, "base_values") and sv.base_values is not None:
                 if not isinstance(sv.base_values, np.ndarray):
                     sv.base_values = np.asarray(sv.base_values, dtype=np.float64)
-                elif hasattr(sv.base_values, 'dtype') and sv.base_values.dtype == object:
+                elif hasattr(sv.base_values, "dtype") and sv.base_values.dtype == object:
                     sv.base_values = sv.base_values.astype(np.float64)
 
             # -------- save plots ----------
@@ -287,19 +313,29 @@ class SHAPCheck(BaseCheck):
             mean_abs = np.abs(sv.values).mean(axis=0)
             idx = np.argsort(mean_abs)[::-1][:max_display]
             cols = list(Xs.columns)
-            top = [{"feature": cols[i] if i < len(cols) else f"f{i}", "mean_abs_shap": float(mean_abs[i])} for i in idx]
-            top_list_pairs = [[d["feature"], d["mean_abs_shap"]] for d in top]  # compat with old report builder
+            top = [
+                {
+                    "feature": cols[i] if i < len(cols) else f"f{i}",
+                    "mean_abs_shap": float(mean_abs[i]),
+                }
+                for i in idx
+            ]
+            top_list_pairs = [
+                [d["feature"], d["mean_abs_shap"]] for d in top
+            ]  # compat with old report builder
 
-            out.update({
-                "status": "ok",
-                "task": task,
-                "positive_class_index": pos_idx if task == "classification" else None,
-                # new + old keys (backward-compatible)
-                "plots": {"beeswarm": str(beeswarm_path), "bar": str(bar_path)},
-                "images": {"beeswarm": str(beeswarm_path), "bar": str(bar_path)},
-                "top_features": top,
-                "shap_top_features": top_list_pairs,
-            })
+            out.update(
+                {
+                    "status": "ok",
+                    "task": task,
+                    "positive_class_index": pos_idx if task == "classification" else None,
+                    # new + old keys (backward-compatible)
+                    "plots": {"beeswarm": str(beeswarm_path), "bar": str(bar_path)},
+                    "images": {"beeswarm": str(beeswarm_path), "bar": str(bar_path)},
+                    "top_features": top,
+                    "shap_top_features": top_list_pairs,
+                }
+            )
             print(f"✅ SHAP saved: {beeswarm_path}, {bar_path}")
 
         except Exception:

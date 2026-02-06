@@ -9,7 +9,6 @@ from __future__ import annotations
 
 import streamlit as st
 
-
 # =============================================================================
 # App Configuration
 # =============================================================================
@@ -23,6 +22,7 @@ APP_DESCRIPTION = "Industrial-Grade Model Validation"
 # Page Configuration
 # =============================================================================
 
+
 def configure_page(
     title: str = APP_TITLE,
     icon: str = APP_ICON,
@@ -30,9 +30,9 @@ def configure_page(
 ) -> None:
     """
     Configure Streamlit page settings.
-    
+
     Should be called once at app startup.
-    
+
     Args:
         title: Page title
         icon: Page icon (emoji)
@@ -50,10 +50,11 @@ def configure_page(
 # CSS Styling
 # =============================================================================
 
+
 def load_css() -> None:
     """
     Load custom CSS styling for TanML UI.
-    
+
     Should be called once at app startup after configure_page().
     """
     st.markdown(get_custom_css(), unsafe_allow_html=True)
@@ -62,7 +63,7 @@ def load_css() -> None:
 def get_custom_css() -> str:
     """
     Get the custom CSS for TanML UI.
-    
+
     Returns:
         CSS string
     """
@@ -245,10 +246,10 @@ COLORS = {
 def get_status_color(status: str) -> str:
     """
     Get color for a status value.
-    
+
     Args:
         status: "ok", "warning", "error", or "skipped"
-        
+
     Returns:
         Hex color code
     """
@@ -261,14 +262,14 @@ def get_status_color(status: str) -> str:
     return status_colors.get(status, COLORS["neutral"])
 
 
-def get_status_badge(status: str, text: str = None) -> str:
+def get_status_badge(status: str, text: str | None = None) -> str:
     """
     Get HTML for a status badge.
-    
+
     Args:
         status: "ok", "warning", "error", or "skipped"
         text: Optional custom text (defaults to status)
-        
+
     Returns:
         HTML string for the badge
     """

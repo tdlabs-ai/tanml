@@ -6,9 +6,14 @@ Configuration forms and input widgets for TanML UI.
 from __future__ import annotations
 
 import streamlit as st
+
 from tanml.models.registry import (
-    list_models, ui_schema_for, get_spec, infer_task_from_target
+    get_spec,
+    infer_task_from_target,
+    list_models,
+    ui_schema_for,
 )
+
 
 def render_model_form(y_train, seed_global: int, target_name: str = "default"):
     """Return (library, algorithm, params, task) using the 20-model registry,
@@ -20,7 +25,7 @@ def render_model_form(y_train, seed_global: int, target_name: str = "default"):
         ["classification", "regression"],
         index=0 if task_auto == "classification" else 1,
         horizontal=True,
-        key=f"mdl_task_{target_name}_salted"
+        key=f"mdl_task_{target_name}_salted",
     )
 
     libraries_all = ["sklearn", "xgboost", "lightgbm", "catboost"]
@@ -46,24 +51,24 @@ def render_model_form(y_train, seed_global: int, target_name: str = "default"):
             seed_key = seed_keys[0]  # Use the first matching seed key
             default_seed = st.session_state.get("global_seed", 42)
             user_seed = st.number_input(
-                f"🎲 Random Seed ({seed_key})", 
-                min_value=0, 
-                max_value=999999, 
-                value=default_seed, 
+                f"🎲 Random Seed ({seed_key})",
+                min_value=0,
+                max_value=999999,
+                value=default_seed,
                 step=1,
-                help="Set the random seed for reproducibility. Change this to get different model results."
+                help="Set the random seed for reproducibility. Change this to get different model results.",
             )
             params[seed_key] = int(user_seed)
 
         # Custom 2-Column Grid for Params
         c1, c2 = st.columns(2)
-        
+
         # Filter out seed keys first to keep indexing clean
         valid_items = {k: v for k, v in schema.items() if k not in seed_keys}
-        
+
         for i, (name, (typ, choices, helptext)) in enumerate(valid_items.items()):
             col = c1 if i % 2 == 0 else c2
-            
+
             with col:
                 default_val = defaults.get(name)
 
@@ -83,39 +88,43 @@ def render_model_form(y_train, seed_global: int, target_name: str = "default"):
                         params[name] = st.text_input(
                             name,
                             value=str(default_val) if default_val is not None else "",
-                            help=helptext
+                            help=helptext,
                         )
 
                 elif typ == "bool":
                     params[name] = st.checkbox(
                         name,
                         value=bool(default_val) if default_val is not None else False,
-                        help=helptext
+                        help=helptext,
                     )
 
                 elif typ == "int":
-                    params[name] = int(st.number_input(
-                        name,
-                        value=int(default_val) if default_val is not None else 0,
-                        step=1,
-                        help=helptext
-                    ))
+                    params[name] = int(
+                        st.number_input(
+                            name,
+                            value=int(default_val) if default_val is not None else 0,
+                            step=1,
+                            help=helptext,
+                        )
+                    )
 
                 elif typ == "float":
-                    params[name] = float(st.number_input(
-                        name,
-                        value=float(default_val) if default_val is not None else 0.0,
-                        help=helptext
-                    ))
+                    params[name] = float(
+                        st.number_input(
+                            name,
+                            value=float(default_val) if default_val is not None else 0.0,
+                            help=helptext,
+                        )
+                    )
 
                 else:  # "str"
                     params[name] = st.text_input(
                         name,
                         value=str(default_val) if default_val is not None else "",
-                        help=helptext
+                        help=helptext,
                     )
 
     for k in seed_keys:
         params[k] = int(seed_global)
-        
+
     return library, algo, params, task
