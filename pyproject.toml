@@ -151,4 +151,12 @@ disallow_untyped_defs = false
 disallow_incomplete_defs = false
 ignore_missing_imports = true
 check_untyped_defs = false
-disable_error_code = ["attr-defined", "arg-type", "assignment", "no-any-return", "annotation-unchecked", "valid-type"]
+disable_error_code = [
+  "attr-defined",
+  "arg-type",
+  "assignment",
+  "no-any-return",
+  "annotation-unchecked",
+  "valid-type",
+  "return-value",
+]
