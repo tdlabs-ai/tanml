@@ -84,7 +84,7 @@ dependencies = [
 
 
 [project.optional-dependencies]
-dev = ["pytest", "black", "isort", "mkdocs", "mkdocs-material", "mkdocstrings[python]"]
+dev = ["pytest", "black", "isort", "ruff", "mypy", "mkdocs", "mkdocs-material", "mkdocstrings[python]"]
 
 [project.scripts]
 tanml = "tanml.cli.main:main"
@@ -104,4 +104,26 @@ where = ["."]
 include = ["tanml*"]
 
 [tool.setuptools.package-data]
-"tanml.ui.assets" = ["*.png", "*.jpg", "*.svg"] 
+"tanml.ui.assets" = ["*.png", "*.jpg", "*.svg"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "B", "I", "N", "UP", "PL", "RUF"]
+ignore = ["PLR0913", "PLR0915", "PLR0912"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+ignore_missing_imports = true

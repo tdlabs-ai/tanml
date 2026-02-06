@@ -21,11 +21,20 @@
 
 ---
 
+## 📖 Documentation
+
+For detailed guides, API reference, and tutorials, visit our official documentation:
+
+👉 **[https://tdlabs-ai.github.io/tanml/](https://tdlabs-ai.github.io/tanml/)**
+
+---
+
 ## Table of Contents
 
 - Why TanML?
 - Install
 - Quick Start (UI)
+- Testing
 - Optional CLI Flags
 - Reports
 - Data Privacy
@@ -78,6 +87,22 @@ tanml ui
 * Opens at **[http://127.0.0.1:8501](http://127.0.0.1:8501)**
 * **Upload limit ~2 GB** (preconfigured)
 * **Telemetry disabled by default**
+
+---
+
+## Testing
+
+TanML uses `pytest` for automated unit testing. To run tests locally:
+
+```bash
+# Install with dev dependencies
+pip install -e ".[dev]"
+
+# Run all tests
+pytest tests/
+```
+
+We also use `ruff` for linting and `mypy` for type checking. These are integrated into our CI pipeline.
 
 ---
 

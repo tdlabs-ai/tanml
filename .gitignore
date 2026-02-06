@@ -1,6 +1,9 @@
 # venv & editors
 .venv/
 .venv_wsl/
+venv/
+venv310/
+venv*/
 .vscode/
 .idea/
 
@@ -15,49 +18,16 @@ __pycache__/
 .pytest_cache/
 .ipynb_checkpoints/
 
-# local outputs (don’t commit)
-tanml_runs/
-/reports
-data/
-# models/
-catboost_info/
-
 # OS junk
 .DS_Store
 Thumbs.db
+
+# local outputs (don’t commit)
+local_research/
+data/
+catboost_info/
 
 # secrets
 .env
 .streamlit/secrets.toml
 tanml/tmp_report_assets/
-
-# Internal/development files (not for public repo)
-Figure_*.png
-manuscript_draft.md
-roadmap.md
-generate_figures*.py
-measure_startup.py
-run_case_study.py
-test_dataset*.csv
-testpypi_verification/
-
-# Submission & Research Artifacts (Exclude from GitHub)
-manuscript_submission.md
-manuscript_submission.tex
-manuscript_submission.pdf
-tanml_submission_v0.1.10/
-tanml_submission_v0.1.10.zip
-*.zip
-*.pdf
-convert_to_latex.py
-reproduce_paper_figures.py
-generate_promo_banners.py
-generate_v2_banners.py
-resize_banners.py
-promotion/
-uploaded_media_*.png
-heygen_video_script.md
-mdpdf.log
-tanml_submission_v0.1.10 2/
-paper.md
-paper.bib

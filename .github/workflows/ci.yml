@@ -41,6 +41,15 @@ jobs:
         pip install --only-binary :all: catboost xgboost lightgbm pyreadstat
         pip install ".[dev]"
         
+    - name: Run linting (ruff)
+      run: |
+        ruff check .
+        ruff format --check .
+        
+    - name: Run type checking (mypy)
+      run: |
+        mypy tanml
+        
     - name: Test with pytest
       run: |
         pytest tests/
