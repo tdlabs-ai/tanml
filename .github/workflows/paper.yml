@@ -11,4 +11,4 @@ jobs:
         uses: openjournals/openjournals-draft-action@master
         with:
           journal: joss
-          paper_path: paper.md
+          paper-path: paper.md
