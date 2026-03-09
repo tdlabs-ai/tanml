@@ -8,6 +8,7 @@ on:
     paths:
       - 'paper.md'
       - 'paper.bib'
+      - 'architecture.png'
       - '.github/workflows/joss-paper.yml'
   pull_request:
     paths:
