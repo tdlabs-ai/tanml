@@ -1,0 +1,14 @@
+name: Generate PDF
+on: [push, pull_request]
+jobs:
+  paper:
+    runs-on: ubuntu-latest
+    name: Paper Draft
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Build PDF
+        uses: openjournals/openjournals-multi-journal-action@master
+        with:
+          journal: joss
+          paper_path: paper.md

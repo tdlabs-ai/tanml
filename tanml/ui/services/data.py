@@ -94,3 +94,48 @@ def _row_overlap_pct(train_df: pd.DataFrame, test_df: pd.DataFrame, cols: list[s
         return 100.0 * inter / max(1, len(te))
     except Exception:
         return 0.0
+
+
+def _get_demo_datasets_dir() -> Path | None:
+    """Try to find the demo_datasets directory in the repo root."""
+    # Try common locations relative to the package
+    search_paths = [
+        Path(__file__).parents[3] / "demo_datasets",  # From tanml/ui/services/data.py to root
+        Path.cwd() / "demo_datasets",
+        Path(__file__).parents[2] / "demo_datasets",
+    ]
+    for p in search_paths:
+        if p.exists() and p.is_dir():
+            return p
+    return None
+
+
+def _load_demo_data():
+    """Helper to load standard demo datasets into session state."""
+    demo_dir = _get_demo_datasets_dir()
+    if not demo_dir:
+        st.error("Demo datasets directory not found. Please ensure you are running from the source repo.")
+        return
+
+    train_path = demo_dir / "train.csv"
+    test_path = demo_dir / "test.csv"
+
+    if not train_path.exists() or not test_path.exists():
+        st.error(f"Missing demo files in {demo_dir}. Need train.csv and test.csv.")
+        return
+
+    try:
+        df_train = pd.read_csv(train_path)
+        st.session_state["df_train"] = df_train
+        st.session_state["df_test"] = pd.read_csv(test_path)
+        
+        # Populate other keys for a seamless cross-page experience
+        st.session_state["df_profiling"] = df_train
+        st.session_state["df_cleaned"] = df_train
+        st.session_state["df_dev"] = df_train
+        st.session_state["path_dev"] = str(train_path)
+        
+        st.session_state["target_col"] = _pick_target(df_train)
+        st.success("✅ Demo datasets loaded! You can now proceed to Data Profiling, Splitting, or Evaluation.")
+    except Exception as e:
+        st.error(f"Failed to load demo data: {e}")

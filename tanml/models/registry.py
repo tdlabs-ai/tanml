@@ -9,6 +9,16 @@ Task = Literal["classification", "regression"]
 
 @dataclass(frozen=True)
 class ModelSpec:
+    """
+    Specification for a model registered in TanML.
+
+    Attributes:
+        task: Either 'classification' or 'regression'.
+        import_path: Fully qualified path to the estimator class.
+        defaults: Default hyperparameters for the estimator.
+        ui_schema: Metadata for rendering parameter inputs in the UI.
+        aliases: Mapping of UI parameter names to estimator-specific names.
+    """
     task: Task
     import_path: str  # e.g., "sklearn.ensemble.RandomForestClassifier"
     defaults: dict[str, Any] = field(default_factory=dict)
@@ -385,18 +395,59 @@ _REGISTRY: dict[tuple[str, str], ModelSpec] = {
             "random_state": ("int", None, "Seed"),
         },
     ),
+    # -------- statsmodels (New) --------
+    ("statsmodels", "Logit"): ModelSpec(
+        task="classification",
+        import_path="statsmodels.api.Logit",
+        defaults=dict(),
+        ui_schema={},
+    ),
+    ("statsmodels", "OLS"): ModelSpec(
+        task="regression",
+        import_path="statsmodels.api.OLS",
+        defaults=dict(),
+        ui_schema={},
+    ),
 }
 
 # --------------- Helpers ---------------
 
 
 def list_models(task: Task | None = None) -> dict[tuple[str, str], ModelSpec]:
+    """
+    List all registered models in the TanML ecosystem.
+
+    This function returns the metadata specifications for all models that the
+    system is capable of building and validating.
+
+    Args:
+        task: Optional filter. Use 'classification' for classifiers,
+            'regression' for regressors, or None for the full registry.
+
+    Returns:
+        A dictionary where:
+            - Keys: (library_name, algorithm_name) strings, e.g., ("sklearn", "RandomForestClassifier").
+            - Values: A `ModelSpec` instance containing defaults and UI schema metadata.
+    """
     if task:
         return {k: v for k, v in _REGISTRY.items() if v.task == task}
     return dict(_REGISTRY)
 
 
 def get_spec(library: str, algo: str) -> ModelSpec:
+    """
+    Retrieve the ModelSpec for a specific library and algorithm.
+
+    Args:
+        library: e.g., 'sklearn', 'xgboost'.
+        algo: e.g., 'RandomForestClassifier'.
+
+    Returns:
+        The matched ModelSpec instance.
+
+    Raises:
+        KeyError: If the library/algorithm combination is not registered.
+    """
     key = (library, algo)
     if key not in _REGISTRY:
         raise KeyError(f"Unknown model: {library}.{algo}")
@@ -410,6 +461,47 @@ def _lazy_import(import_path: str) -> Callable[..., Any]:
 
 
 def build_estimator(library: str, algo: str, params: dict[str, Any] | None = None):
+    """
+    Factory function to create a scikit-learn compatible estimator instance.
+
+    This is the primary entry point for programmatic model creation in TanML.
+    It resolves the requested model from the internal registry, applies
+    sane defaults for the specific task, and overrides them with any
+    user-provided parameters.
+
+    Supported Libraries:
+        - `sklearn`: LogisticRegression, RandomForestClassifier, SVC, OLS, etc.
+        - `xgboost`: XGBClassifier, XGBRegressor.
+        - `lightgbm`: LGBMClassifier, LGBMRegressor.
+        - `catboost`: CatBoostClassifier, CatBoostRegressor.
+        - `statsmodels`: Logit, OLS.
+
+    Args:
+        library: The library containing the model (e.g., 'sklearn', 'xgboost').
+        algo: The specific algorithm class name (e.g., 'RandomForestClassifier').
+        params: Optional dictionary of hyperparameters to override the
+            pre-configured TanML defaults.
+
+    Returns:
+        An initialized estimator object. For most libraries, this is a
+        standard scikit-learn compatible object. For `statsmodels`, it
+        is a wrapped instance that supports the `.fit()` API.
+
+    Raises:
+        KeyError: If the library/algo combination is not in the registry.
+        ImportError: If the underlying library (e.g., xgboost) is not installed.
+
+    Example:
+        Create a Random Forest with custom depth:
+        >>> from tanml.models.registry import build_estimator
+        >>> model = build_estimator(
+        ...     library="sklearn",
+        ...     algo="RandomForestClassifier",
+        ...     params={"max_depth": 5}
+        ... )
+        >>> print(model.max_depth)
+        5
+    """
     spec = get_spec(library, algo)
     Cls = _lazy_import(spec.import_path)
     kwargs = dict(spec.defaults)
@@ -425,6 +517,11 @@ def build_estimator(library: str, algo: str, params: dict[str, Any] | None = Non
 def ui_schema_for(
     library: str, algo: str
 ) -> dict[str, tuple[str, tuple[Any, ...] | None, str | None]]:
+    """
+    Retrieve the UI metadata schema for a specific algorithm.
+
+    Used by the Streamlit frontend to dynamically render hyperparameter sliders and inputs.
+    """
     return get_spec(library, algo).ui_schema
 
 

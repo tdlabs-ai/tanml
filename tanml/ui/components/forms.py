@@ -28,7 +28,7 @@ def render_model_form(y_train, seed_global: int, target_name: str = "default"):
         key=f"mdl_task_{target_name}_salted",
     )
 
-    libraries_all = ["sklearn", "xgboost", "lightgbm", "catboost"]
+    libraries_all = ["sklearn", "xgboost", "lightgbm", "catboost", "statsmodels"]
     library = st.selectbox("Library", libraries_all, index=0, key="mdl_lib")
 
     avail = [(lib, algo) for (lib, algo), spec in list_models(task).items() if lib == library]

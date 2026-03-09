@@ -11,6 +11,7 @@ import pandas as pd
 import streamlit as st
 from sklearn.impute import KNNImputer, SimpleImputer
 from sklearn.preprocessing import LabelEncoder
+from pathlib import Path
 
 
 def render_preprocessing_hub(run_dir):
@@ -241,8 +242,114 @@ def render_preprocessing_hub(run_dir):
 
     st.divider()
 
+    st.subheader("3. Data Splitting")
+    df_for_split = st.session_state.get("df_cleaned", df)
+    
+    col1, col2 = st.columns(2)
+    with col1:
+        test_size = st.slider("Test Set Size (%)", 10, 50, 20, 5) / 100
+        random_state = st.number_input("Random Seed", value=42)
+    
+    with col2:
+        stratify_col = st.selectbox(
+            "Stratify by (Optional)", 
+            ["None"] + list(df_for_split.columns),
+            help="Ensures the Train/Test sets have the same proportion of classes as the original data for the selected column (useful for imbalanced targets)."
+        )
+        shuffle = st.checkbox(
+            "Shuffle data", 
+            value=True,
+            help="Randomizes row order before splitting. Recommended for most machine learning tasks."
+        )
+
+    stratify = None
+    if stratify_col != "None":
+        stratify = df_for_split[stratify_col]
+
+    if st.button("🚀 Execute Split", type="primary", use_container_width=True):
+        from sklearn.model_selection import train_test_split
+        try:
+            df_train, df_test = train_test_split(
+                df_for_split,
+                test_size=test_size,
+                random_state=random_state,
+                shuffle=shuffle,
+                stratify=stratify
+            )
+            
+            st.session_state["df_split_train"] = df_train
+            st.session_state["df_split_test"] = df_test
+            st.session_state["df_train"] = df_train
+            st.session_state["df_test"] = df_test
+            
+            # Append detailed message to history
+            full_msg = f"✅ Applied Changes: Split data into Train ({df_train.shape[0]} rows) and Test ({df_test.shape[0]} rows)."
+            hist = st.session_state.get("fe_history", [])
+            hist.append(full_msg)
+            st.session_state["fe_history"] = hist
+            
+            st.success(f"Split Complete! Train: {df_train.shape[0]} rows | Test: {df_test.shape[0]} rows")
+        except Exception as e:
+            st.error(f"Split Failed: {e}")
+
+    if "df_split_train" in st.session_state:
+        # Download buttons
+        st.markdown("**Download Splits**")
+        dcol1, dcol2 = st.columns(2)
+        train_csv = st.session_state["df_split_train"].to_csv(index=False).encode('utf-8')
+        dcol1.download_button(
+            "📥 Download Training Set",
+            data=train_csv,
+            file_name="train_split.csv",
+            mime="text/csv",
+            use_container_width=True
+        )
+        
+        test_csv = st.session_state["df_split_test"].to_csv(index=False).encode('utf-8')
+        dcol2.download_button(
+            "📥 Download Testing Set",
+            data=test_csv,
+            file_name="test_split.csv",
+            mime="text/csv",
+            use_container_width=True
+        )
+        
+        with st.expander("Preview Splits"):
+            pcol1, pcol2 = st.columns(2)
+            with pcol1:
+                st.caption("Training Data")
+                st.dataframe(st.session_state["df_split_train"].head(5))
+            with pcol2:
+                st.caption("Testing Data")
+                st.dataframe(st.session_state["df_split_test"].head(5))
+
+    st.divider()
+
     # Save / Export
-    st.subheader("3. Finish & Save")
+    st.subheader("4. Finish & Save")
+    
+    # Determine original extension
+    orig_ext = ".csv"
+    if "path_raw" in st.session_state and st.session_state.get("path_raw"):
+        orig_ext = Path(st.session_state["path_raw"]).suffix.lower()
+    elif "path_profiling" in st.session_state and st.session_state.get("path_profiling"):
+        orig_ext = Path(st.session_state["path_profiling"]).suffix.lower()
+
+    # Friendly names for formats
+    format_options = [
+        f"Original Format ({orig_ext})", 
+        "CSV (.csv)", 
+        "Parquet (.parquet)", 
+        "Excel (.xlsx)", 
+        "JSON (.json)", 
+        "Pickle (.pkl)", 
+        "Feather (.feather)", 
+        "Stata (.dta)", 
+        "SPSS (.sav)", 
+        "SAS XPORT (.xpt)"
+    ]
+    save_format = st.selectbox("Export Format", format_options, index=0)
+    
     if st.button("Save Processed Dataset"):
         final_df = st.session_state.get("df_cleaned", df)
         ts = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -250,12 +357,74 @@ def render_preprocessing_hub(run_dir):
         # Save to visible directory
         save_dir = run_dir / "exported_data"
         save_dir.mkdir(parents=True, exist_ok=True)
-        p = save_dir / f"processed_data_{ts}.csv"
+        
+        # Determine actual extension
+        target_ext = orig_ext
+        if not save_format.startswith("Original Format"):
+            # Extract extension from parens, e.g. "SAS XPORT (.xpt)" -> ".xpt"
+            target_ext = save_format.split("(")[1].strip(")")
+        
+        p = save_dir / f"processed_data_{ts}{target_ext}"
 
-        # Always overwrite current cleaned path so next steps use it
-        final_df.to_csv(p, index=False)
-        st.session_state["path_cleaned"] = str(p)
+        def save_df(dataframe: pd.DataFrame, target_path: Path, ext: str):
+            try:
+                if ext in [".csv", ".txt", ".data", ".test"]:
+                    dataframe.to_csv(target_path, index=False)
+                elif ext == ".tsv":
+                    dataframe.to_csv(target_path, sep="\t", index=False)
+                elif ext == ".parquet":
+                    dataframe.to_parquet(target_path, index=False)
+                elif ext in [".xlsx", ".xls"]:
+                    dataframe.to_excel(target_path, index=False)
+                elif ext == ".json":
+                    dataframe.to_json(target_path, orient="records")
+                elif ext in [".pkl", ".pickle"]:
+                    dataframe.to_pickle(target_path)
+                elif ext in [".feather", ".ft"]:
+                    dataframe.to_feather(target_path)
+                elif ext == ".dta":
+                    dataframe.to_stata(target_path, write_index=False)
+                elif ext == ".sav":
+                    import pyreadstat
+                    pyreadstat.write_sav(dataframe, str(target_path))
+                elif ext in [".xpt", ".sas7bdat"]:
+                    # SAS7BDAT writing is usually not supported in python natively, fallback to XPORT for SAS
+                    target_path = target_path.with_suffix(".xpt")
+                    import pyreadstat
+                    pyreadstat.write_xport(dataframe, str(target_path))
+                else:
+                    # Fallback to CSV for unknown types
+                    target_path = target_path.with_suffix(".csv")
+                    dataframe.to_csv(target_path, index=False)
+                    st.warning(f"Native write for '{ext}' is unsupported. Saved as CSV instead.")
+                return target_path
+            except ModuleNotFoundError as e:
+                st.error(f"Missing dependency for {ext}. Try installing pyreadstat/pyarrow. Falling back to CSV.")
+                target_path = target_path.with_suffix(".csv")
+                dataframe.to_csv(target_path, index=False)
+                return target_path
+            except Exception as e:
+                st.error(f"Failed to save {ext}: {e}. Falling back to CSV.")
+                target_path = target_path.with_suffix(".csv")
+                dataframe.to_csv(target_path, index=False)
+                return target_path
+
+        # Save main processed data
+        actual_p = save_df(final_df, p, target_ext)
+        st.session_state["path_cleaned"] = str(actual_p)
         st.session_state["df_cleaned"] = final_df  # reinforce
+        
+        st.success(f"Full Dataset saved to: `{actual_p}`")
+        
+        # Save splits if they exist
+        if "df_split_train" in st.session_state and "df_split_test" in st.session_state:
+            p_train = save_dir / f"train_split_{ts}{target_ext}"
+            p_test = save_dir / f"test_split_{ts}{target_ext}"
+            
+            actual_p_train = save_df(st.session_state["df_split_train"], p_train, target_ext)
+            actual_p_test = save_df(st.session_state["df_split_test"], p_test, target_ext)
+            
+            st.success(f"Training Set saved to: `{actual_p_train}`")
+            st.success(f"Testing Set saved to: `{actual_p_test}`")
 
-        st.success(f"Saved to: `{p}`")
-        st.info("You can now go to **Model Validation** and use this dataset.")
+        st.info("You can now go to **Feature Power Ranking** or **Model Development** and use this dataset.")

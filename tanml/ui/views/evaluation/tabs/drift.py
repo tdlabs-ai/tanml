@@ -73,8 +73,20 @@ def render(context):
         - **KS**: 🟢 < 0.1 (Stable), 🟡 0.1-0.2 (Minor), 🟠 0.2-0.3 (Moderate), 🔴 > 0.3 (Critical)
         """)
 
+        def color_p_value(val):
+            """Color specific significance thresholds."""
+            if val < 0.01:
+                return 'background-color: rgba(34, 197, 94, 0.2); color: #15803d;' # Significant (Strong)
+            if val < 0.05:
+                return 'background-color: rgba(34, 197, 94, 0.1); color: #166534;' # Significant
+            if val < 0.1:
+                return 'background-color: rgba(234, 179, 8, 0.1); color: #854d0e;' # Borderline
+            return ''
+
         st.dataframe(
-            df_drift.style.format({"PSI": "{:.4f}", "KS Stat": "{:.4f}", "KS p-value": "{:.4f}"})
+            df_drift.style
+            .format({"PSI": "{:.4f}", "KS Stat": "{:.4f}", "KS p-value": "{:.4f}"})
+            .applymap(color_p_value, subset=["KS p-value"])
         )
 
         # Plot top drift feature

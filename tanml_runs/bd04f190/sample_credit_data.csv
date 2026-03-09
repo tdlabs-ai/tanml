@@ -1,0 +1,1001 @@
+Person_Age,Person_Income,Loan_Amount,Credit_Score,Years_at_Job,Existing_Loans,Education_Level,Home_Ownership,Default_Next_Month,Application_Source,Application_ID
+58,112193,1545,313,33.0,2,Master,Mortgage,0,Web_Portal,APP-1000
+71,56187,38114,717,28.0,3,Master,Own,1,Web_Portal,APP-1001
+48,132734,30430,736,23.0,0,High School,Mortgage,1,Web_Portal,APP-1002
+34,27239,10996,676,23.0,1,PhD,Mortgage,0,Web_Portal,APP-1003
+62,144454,28788,319,3.0,1,Bachelor,Rent,0,Web_Portal,APP-1004
+27,34489,30969,369,2.0,0,Master,Mortgage,0,Web_Portal,APP-1005
+40,134937,14919,510,33.0,3,High School,Mortgage,0,Web_Portal,APP-1006
+58,78017,4810,400,22.0,1,High School,Rent,1,Web_Portal,APP-1007
+77,81877,31586,431,22.0,3,Bachelor,Rent,0,Web_Portal,APP-1008
+38,63125,17371,680,4.0,3,Master,Own,0,Web_Portal,APP-1009
+42,69922,30629,431,30.0,2,High School,Mortgage,1,Web_Portal,APP-1010
+30,114074,9436,319,5.0,0,Bachelor,Own,0,Web_Portal,APP-1011
+30,52049,13984,835,36.0,3,PhD,Own,1,Web_Portal,APP-1012
+43,57131,34039,526,9.0,4,PhD,Rent,1,Web_Portal,APP-1013
+72,62944,20895,453,39.0,0,PhD,Own,0,Web_Portal,APP-1014
+55,135765,19155,768,6.0,1,Master,Mortgage,0,Web_Portal,APP-1015
+59,93963,11616,704,38.0,2,Bachelor,Rent,1,Web_Portal,APP-1016
+43,126884,38129,501,37.0,1,Bachelor,Mortgage,1,Web_Portal,APP-1017
+22,145917,25574,337,20.0,1,High School,Mortgage,0,Web_Portal,APP-1018
+41,44285,4430,487,19.0,0,High School,Rent,1,Web_Portal,APP-1019
+72,57626,13676,356,2.0,1,High School,Mortgage,0,Web_Portal,APP-1020
+21,62808,11816,319,21.0,3,Bachelor,Rent,0,Web_Portal,APP-1021
+43,108464,33733,572,3.0,1,High School,Mortgage,1,Web_Portal,APP-1022
+63,73871,21144,418,27.0,2,Bachelor,Rent,0,Web_Portal,APP-1023
+49,39198,3050,815,11.0,2,Bachelor,Own,1,Web_Portal,APP-1024
+57,39758,34933,520,,4,PhD,Mortgage,0,Web_Portal,APP-1025
+21,35254,25951,825,35.0,2,High School,Rent,0,Web_Portal,APP-1026
+79,64238,33413,814,4.0,1,PhD,Mortgage,0,Web_Portal,APP-1027
+40,21252,35801,635,12.0,2,Master,Mortgage,0,Web_Portal,APP-1028
+52,59764,33913,354,22.0,0,Master,Mortgage,0,Web_Portal,APP-1029
+31,97709,26280,799,29.0,2,Master,Rent,0,Web_Portal,APP-1030
+77,57441,25557,835,36.0,3,Bachelor,Own,0,Web_Portal,APP-1031
+41,112234,36400,461,24.0,0,Bachelor,Own,0,Web_Portal,APP-1032
+63,73682,5494,458,26.0,4,Bachelor,Own,0,Web_Portal,APP-1033
+44,79494,16152,487,13.0,3,High School,Rent,1,Web_Portal,APP-1034
+68,101317,24895,359,35.0,1,PhD,Own,0,Web_Portal,APP-1035
+46,85215,10155,618,38.0,1,Bachelor,Rent,0,Web_Portal,APP-1036
+78,98587,32883,510,15.0,1,PhD,Mortgage,0,Web_Portal,APP-1037
+61,125185,2828,705,21.0,3,PhD,Mortgage,0,Web_Portal,APP-1038
+47,26949,33123,408,20.0,3,PhD,Own,0,Web_Portal,APP-1039
+79,127825,38573,375,20.0,3,High School,Rent,0,Web_Portal,APP-1040
+35,75393,1806,841,,0,High School,Mortgage,0,Web_Portal,APP-1041
+34,93553,30757,613,15.0,0,Master,Rent,0,Web_Portal,APP-1042
+66,26941,35636,416,30.0,1,Master,Rent,1,Web_Portal,APP-1043
+70,45934,15561,318,9.0,2,PhD,Mortgage,0,Web_Portal,APP-1044
+63,43386,25262,731,31.0,1,Master,Rent,0,Web_Portal,APP-1045
+74,145362,15899,649,33.0,4,PhD,Mortgage,0,Web_Portal,APP-1046
+71,81886,16934,482,8.0,0,High School,Mortgage,0,Web_Portal,APP-1047
+76,95745,39197,412,16.0,3,High School,Mortgage,0,Web_Portal,APP-1048
+22,103251,37332,482,10.0,0,High School,Rent,0,Web_Portal,APP-1049
+56,114456,35157,780,31.0,3,Bachelor,Mortgage,0,Web_Portal,APP-1050
+70,73413,12593,445,9.0,4,PhD,Rent,0,Web_Portal,APP-1051
+26,76800,18320,412,21.0,4,High School,Mortgage,0,Web_Portal,APP-1052
+40,117239,28376,775,16.0,0,PhD,Mortgage,0,Web_Portal,APP-1053
+28,62318,15199,602,3.0,3,Master,Own,0,Web_Portal,APP-1054
+58,139803,16876,417,,4,Master,Own,0,Web_Portal,APP-1055
+37,90173,9245,460,20.0,1,High School,Own,0,Web_Portal,APP-1056
+23,90390,8214,700,36.0,1,PhD,Rent,0,Web_Portal,APP-1057
+44,72329,1726,497,37.0,3,High School,Rent,0,Web_Portal,APP-1058
+79,142418,12362,559,0.0,0,Master,Mortgage,0,Web_Portal,APP-1059
+33,63088,19297,346,24.0,4,High School,Mortgage,0,Web_Portal,APP-1060
+69,136868,31448,698,35.0,0,PhD,Mortgage,0,Web_Portal,APP-1061
+77,123196,27172,377,16.0,1,Master,Mortgage,0,Web_Portal,APP-1062
+28,59811,8657,423,23.0,4,Bachelor,Rent,0,Web_Portal,APP-1063
+45,134825,19850,374,1.0,0,Master,Mortgage,0,Web_Portal,APP-1064
+72,75479,26425,436,39.0,2,Bachelor,Mortgage,0,Web_Portal,APP-1065
+21,105392,27685,699,14.0,3,High School,Own,0,Web_Portal,APP-1066
+39,107369,25578,804,31.0,3,High School,Mortgage,1,Web_Portal,APP-1067
+47,137520,29831,799,38.0,2,PhD,Mortgage,0,Web_Portal,APP-1068
+66,39963,8906,437,5.0,1,Bachelor,Mortgage,0,Web_Portal,APP-1069
+79,75123,8287,349,0.0,4,High School,Rent,1,Web_Portal,APP-1070
+26,145911,34660,553,22.0,3,Bachelor,Own,1,Web_Portal,APP-1071
+63,122468,11222,725,38.0,2,High School,Mortgage,0,Web_Portal,APP-1072
+27,112705,38443,846,16.0,2,Master,Mortgage,0,Web_Portal,APP-1073
+66,93477,35701,601,33.0,1,High School,Own,0,Web_Portal,APP-1074
+54,34388,18764,648,28.0,1,PhD,Mortgage,0,Web_Portal,APP-1075
+33,25569,18674,348,8.0,0,Master,Rent,0,Web_Portal,APP-1076
+36,89836,19024,373,12.0,3,PhD,Mortgage,0,Web_Portal,APP-1077
+55,124573,24874,560,5.0,0,Master,Rent,0,Web_Portal,APP-1078
+69,56586,33284,655,5.0,2,Bachelor,Rent,1,Web_Portal,APP-1079
+59,147018,18602,559,19.0,4,PhD,Mortgage,1,Web_Portal,APP-1080
+23,32015,38784,594,2.0,4,High School,Own,0,Web_Portal,APP-1081
+21,65002,24265,612,16.0,1,Bachelor,Rent,0,Web_Portal,APP-1082
+25,136594,26931,481,11.0,4,High School,Own,0,Web_Portal,APP-1083
+73,26254,29841,663,0.0,4,Master,Mortgage,1,Web_Portal,APP-1084
+61,37144,30192,487,16.0,4,Master,Rent,0,Web_Portal,APP-1085
+23,44214,16585,842,2.0,2,High School,Mortgage,0,Web_Portal,APP-1086
+73,125654,26559,847,25.0,4,High School,Own,0,Web_Portal,APP-1087
+48,100719,34742,707,14.0,4,Bachelor,Mortgage,0,Web_Portal,APP-1088
+37,91774,5133,713,35.0,4,High School,Mortgage,0,Web_Portal,APP-1089
+45,26090,15663,641,,0,PhD,Rent,0,Web_Portal,APP-1090
+63,31637,22754,519,31.0,2,PhD,Mortgage,0,Web_Portal,APP-1091
+53,42415,4972,462,3.0,1,High School,Mortgage,0,Web_Portal,APP-1092
+29,44071,6295,519,17.0,0,PhD,Mortgage,0,Web_Portal,APP-1093
+55,78243,30125,569,18.0,3,High School,Rent,0,Web_Portal,APP-1094
+33,130951,10903,699,34.0,2,Bachelor,Own,1,Web_Portal,APP-1095
+50,145827,4020,481,39.0,2,PhD,Own,1,Web_Portal,APP-1096
+67,128215,21420,504,13.0,3,PhD,Mortgage,1,Web_Portal,APP-1097
+34,61240,22452,527,32.0,3,High School,Rent,1,Web_Portal,APP-1098
+27,146146,39001,549,13.0,3,PhD,Mortgage,0,Web_Portal,APP-1099
+33,103807,10516,740,33.0,1,Master,Own,0,Web_Portal,APP-1100
+42,121570,3396,832,3.0,4,Bachelor,Rent,0,Web_Portal,APP-1101
+79,53434,19546,495,23.0,2,Bachelor,Own,1,Web_Portal,APP-1102
+76,89724,20129,818,28.0,4,PhD,Own,0,Web_Portal,APP-1103
+59,135359,2591,369,18.0,4,PhD,Rent,0,Web_Portal,APP-1104
+40,95697,12303,698,,3,Master,Rent,1,Web_Portal,APP-1105
+35,48732,31561,502,32.0,1,Master,Mortgage,0,Web_Portal,APP-1106
+64,141465,7183,447,39.0,0,PhD,Mortgage,0,Web_Portal,APP-1107
+37,31314,27572,771,18.0,1,PhD,Own,0,Web_Portal,APP-1108
+66,43954,35080,498,,4,Master,Rent,0,Web_Portal,APP-1109
+72,77108,21695,725,4.0,1,High School,Rent,0,Web_Portal,APP-1110
+43,107044,8314,791,26.0,3,Master,Mortgage,0,Web_Portal,APP-1111
+45,107505,20623,441,15.0,0,High School,Own,0,Web_Portal,APP-1112
+44,131195,3139,612,5.0,3,Bachelor,Own,1,Web_Portal,APP-1113
+79,123081,32290,464,39.0,0,Bachelor,Mortgage,0,Web_Portal,APP-1114
+79,56668,19088,613,12.0,4,Master,Rent,0,Web_Portal,APP-1115
+79,43061,34130,320,34.0,0,High School,Mortgage,0,Web_Portal,APP-1116
+64,99252,33088,381,18.0,0,Master,Mortgage,0,Web_Portal,APP-1117
+60,59749,27292,430,11.0,0,Master,Mortgage,0,Web_Portal,APP-1118
+48,149668,21670,604,15.0,1,High School,Mortgage,0,Web_Portal,APP-1119
+34,124680,4738,670,9.0,1,Master,Rent,0,Web_Portal,APP-1120
+64,36907,3469,683,24.0,4,Bachelor,Mortgage,0,Web_Portal,APP-1121
+20,38777,23534,744,19.0,0,PhD,Rent,0,Web_Portal,APP-1122
+44,113229,10017,724,30.0,2,PhD,Mortgage,0,Web_Portal,APP-1123
+26,71745,3808,460,3.0,4,Master,Own,0,Web_Portal,APP-1124
+28,128464,13713,477,22.0,0,High School,Rent,0,Web_Portal,APP-1125
+43,148077,3719,789,1.0,0,High School,Own,0,Web_Portal,APP-1126
+20,111865,23890,626,21.0,1,Bachelor,Mortgage,1,Web_Portal,APP-1127
+63,132428,12700,588,36.0,4,High School,Mortgage,0,Web_Portal,APP-1128
+27,101818,37509,653,,0,High School,Mortgage,0,Web_Portal,APP-1129
+43,43624,37766,327,6.0,0,Bachelor,Rent,0,Web_Portal,APP-1130
+30,43321,27705,342,13.0,4,Master,Own,0,Web_Portal,APP-1131
+70,30488,19787,722,2.0,2,PhD,Rent,0,Web_Portal,APP-1132
+36,42574,27588,476,15.0,4,Bachelor,Rent,0,Web_Portal,APP-1133
+27,25240,27123,828,18.0,4,Master,Mortgage,0,Web_Portal,APP-1134
+54,63221,34062,793,17.0,2,Bachelor,Own,0,Web_Portal,APP-1135
+54,30478,11177,497,15.0,4,Master,Mortgage,0,Web_Portal,APP-1136
+52,148055,22727,816,,0,Bachelor,Rent,0,Web_Portal,APP-1137
+78,75645,31220,813,32.0,4,Master,Mortgage,0,Web_Portal,APP-1138
+24,130698,10882,321,11.0,2,Bachelor,Own,0,Web_Portal,APP-1139
+61,39262,2136,411,10.0,3,Master,Mortgage,1,Web_Portal,APP-1140
+58,138831,35832,356,4.0,4,Bachelor,Own,0,Web_Portal,APP-1141
+77,72796,32966,365,26.0,1,PhD,Own,0,Web_Portal,APP-1142
+60,24432,8009,397,11.0,0,PhD,Mortgage,0,Web_Portal,APP-1143
+47,115257,13987,443,16.0,0,High School,Rent,0,Web_Portal,APP-1144
+26,84291,38311,734,5.0,1,Master,Mortgage,0,Web_Portal,APP-1145
+28,99104,32575,385,32.0,1,Bachelor,Rent,0,Web_Portal,APP-1146
+27,79399,2007,643,4.0,4,Master,Rent,0,Web_Portal,APP-1147
+31,147600,6445,593,27.0,1,PhD,Mortgage,0,Web_Portal,APP-1148
+53,99714,11706,542,13.0,3,Master,Rent,1,Web_Portal,APP-1149
+52,70428,30257,331,4.0,2,Bachelor,Rent,0,Web_Portal,APP-1150
+67,107731,22736,690,32.0,1,Master,Mortgage,0,Web_Portal,APP-1151
+74,145646,14281,576,18.0,1,Bachelor,Mortgage,1,Web_Portal,APP-1152
+42,20302,2435,831,21.0,3,PhD,Mortgage,1,Web_Portal,APP-1153
+43,102558,34339,453,4.0,0,PhD,Rent,0,Web_Portal,APP-1154
+56,20055,36150,682,1.0,0,PhD,Own,0,Web_Portal,APP-1155
+54,131317,26821,367,29.0,4,High School,Rent,1,Web_Portal,APP-1156
+63,28717,27660,513,38.0,3,PhD,Own,0,Web_Portal,APP-1157
+59,147449,6084,675,3.0,2,Master,Mortgage,0,Web_Portal,APP-1158
+41,48699,17661,512,32.0,2,High School,Own,0,Web_Portal,APP-1159
+46,93686,14507,378,12.0,3,PhD,Mortgage,0,Web_Portal,APP-1160
+54,87661,8059,680,19.0,2,Master,Mortgage,0,Web_Portal,APP-1161
+20,64247,19271,357,6.0,0,Master,Own,0,Web_Portal,APP-1162
+54,134049,8491,325,14.0,2,Master,Mortgage,0,Web_Portal,APP-1163
+56,36748,15859,746,,2,Bachelor,Own,0,Web_Portal,APP-1164
+66,125113,9073,365,13.0,3,High School,Mortgage,0,Web_Portal,APP-1165
+33,24621,10077,553,22.0,3,Master,Rent,1,Web_Portal,APP-1166
+22,35034,21953,343,,2,Bachelor,Rent,1,Web_Portal,APP-1167
+20,131927,12383,396,28.0,1,PhD,Mortgage,0,Web_Portal,APP-1168
+24,147858,3353,526,19.0,3,Master,Mortgage,0,Web_Portal,APP-1169
+45,25126,24821,735,28.0,4,Bachelor,Own,0,Web_Portal,APP-1170
+74,25122,38567,678,23.0,4,Master,Rent,0,Web_Portal,APP-1171
+33,38030,25860,477,17.0,0,High School,Own,0,Web_Portal,APP-1172
+58,102838,22195,726,9.0,2,High School,Mortgage,0,Web_Portal,APP-1173
+46,104717,12939,606,7.0,1,PhD,Mortgage,1,Web_Portal,APP-1174
+28,75658,26338,803,25.0,0,Master,Own,0,Web_Portal,APP-1175
+34,58638,22730,567,28.0,2,Bachelor,Mortgage,0,Web_Portal,APP-1176
+34,87067,22427,307,9.0,3,PhD,Rent,0,Web_Portal,APP-1177
+45,126476,36196,807,16.0,4,Master,Own,0,Web_Portal,APP-1178
+61,138033,28083,775,1.0,1,PhD,Rent,0,Web_Portal,APP-1179
+79,125977,22510,596,5.0,4,Bachelor,Rent,0,Web_Portal,APP-1180
+32,108869,8813,463,4.0,3,PhD,Rent,0,Web_Portal,APP-1181
+70,125186,32598,784,27.0,2,PhD,Own,1,Web_Portal,APP-1182
+51,54674,28570,371,4.0,3,PhD,Mortgage,0,Web_Portal,APP-1183
+58,55854,28082,537,17.0,3,Master,Rent,1,Web_Portal,APP-1184
+68,66271,30241,403,25.0,4,Bachelor,Rent,0,Web_Portal,APP-1185
+71,93688,31678,509,,1,High School,Rent,0,Web_Portal,APP-1186
+51,58518,12745,767,26.0,3,Master,Mortgage,0,Web_Portal,APP-1187
+23,131076,27029,753,11.0,4,High School,Mortgage,0,Web_Portal,APP-1188
+49,30267,14025,567,6.0,1,High School,Own,0,Web_Portal,APP-1189
+56,110825,37124,685,2.0,2,Master,Mortgage,0,Web_Portal,APP-1190
+42,21062,15288,686,9.0,2,Master,Own,0,Web_Portal,APP-1191
+58,136664,24650,558,33.0,0,Bachelor,Own,0,Web_Portal,APP-1192
+64,70448,7540,582,24.0,4,Bachelor,Own,0,Web_Portal,APP-1193
+34,115462,33232,339,34.0,1,PhD,Own,0,Web_Portal,APP-1194
+62,26229,17422,785,15.0,3,High School,Own,0,Web_Portal,APP-1195
+48,76793,4342,519,1.0,2,Bachelor,Rent,0,Web_Portal,APP-1196
+55,134813,36612,428,23.0,1,PhD,Mortgage,0,Web_Portal,APP-1197
+32,67915,11396,819,9.0,4,Bachelor,Rent,1,Web_Portal,APP-1198
+51,24632,18482,559,37.0,0,Master,Own,0,Web_Portal,APP-1199
+26,124592,24411,665,21.0,2,Bachelor,Mortgage,0,Web_Portal,APP-1200
+78,23596,14261,843,25.0,1,High School,Rent,0,Web_Portal,APP-1201
+70,129779,4093,823,38.0,1,Bachelor,Rent,0,Web_Portal,APP-1202
+41,26168,12722,315,26.0,1,High School,Own,0,Web_Portal,APP-1203
+47,128099,23042,428,28.0,4,Master,Rent,1,Web_Portal,APP-1204
+21,27561,29087,408,37.0,4,High School,Rent,1,Web_Portal,APP-1205
+61,93794,33347,832,19.0,4,Bachelor,Rent,0,Web_Portal,APP-1206
+64,102152,34756,568,26.0,3,PhD,Rent,0,Web_Portal,APP-1207
+76,145036,17335,461,19.0,1,Master,Rent,0,Web_Portal,APP-1208
+72,144049,29602,559,18.0,2,Bachelor,Own,0,Web_Portal,APP-1209
+25,46734,35450,401,19.0,4,Master,Own,0,Web_Portal,APP-1210
+47,26371,33196,805,34.0,4,Master,Rent,0,Web_Portal,APP-1211
+47,138894,6626,546,1.0,1,Bachelor,Own,0,Web_Portal,APP-1212
+63,46069,8424,836,29.0,4,Bachelor,Own,1,Web_Portal,APP-1213
+63,99905,13857,430,33.0,3,PhD,Mortgage,0,Web_Portal,APP-1214
+39,32910,20982,652,21.0,3,Master,Rent,0,Web_Portal,APP-1215
+49,93479,12425,495,2.0,4,Master,Own,1,Web_Portal,APP-1216
+30,97735,2980,681,5.0,1,Bachelor,Own,0,Web_Portal,APP-1217
+77,101264,27431,526,14.0,1,High School,Rent,1,Web_Portal,APP-1218
+74,43275,20440,775,26.0,1,Bachelor,Mortgage,0,Web_Portal,APP-1219
+47,92274,18175,776,9.0,0,Master,Rent,0,Web_Portal,APP-1220
+44,101449,27385,564,8.0,4,Bachelor,Mortgage,1,Web_Portal,APP-1221
+58,120776,39158,671,32.0,1,PhD,Rent,0,Web_Portal,APP-1222
+52,80004,24019,785,31.0,3,High School,Rent,0,Web_Portal,APP-1223
+20,82981,19639,733,5.0,2,Bachelor,Rent,0,Web_Portal,APP-1224
+76,104659,20994,510,35.0,2,PhD,Rent,0,Web_Portal,APP-1225
+46,74553,35375,676,1.0,1,Master,Mortgage,0,Web_Portal,APP-1226
+76,68447,22563,694,28.0,2,Bachelor,Mortgage,1,Web_Portal,APP-1227
+71,54529,6776,749,3.0,2,Master,Own,1,Web_Portal,APP-1228
+32,146394,37444,663,0.0,0,PhD,Rent,1,Web_Portal,APP-1229
+60,95703,4380,756,18.0,3,Master,Mortgage,0,Web_Portal,APP-1230
+22,96090,9711,525,25.0,3,PhD,Mortgage,0,Web_Portal,APP-1231
+58,37260,9782,430,24.0,0,PhD,Mortgage,0,Web_Portal,APP-1232
+25,132581,18434,775,9.0,0,PhD,Rent,1,Web_Portal,APP-1233
+27,23812,21017,576,14.0,2,Bachelor,Own,0,Web_Portal,APP-1234
+46,48024,31707,455,21.0,4,Master,Mortgage,0,Web_Portal,APP-1235
+28,78656,18343,517,20.0,2,Master,Rent,0,Web_Portal,APP-1236
+56,136148,39827,489,21.0,0,High School,Mortgage,0,Web_Portal,APP-1237
+52,47285,6655,716,35.0,3,High School,Mortgage,0,Web_Portal,APP-1238
+70,112436,16251,845,33.0,2,High School,Own,1,Web_Portal,APP-1239
+61,136421,1526,340,29.0,4,High School,Mortgage,1,Web_Portal,APP-1240
+63,21605,4224,606,24.0,2,Master,Mortgage,0,Web_Portal,APP-1241
+43,91158,12536,637,27.0,1,PhD,Rent,0,Web_Portal,APP-1242
+34,92303,29541,613,0.0,2,PhD,Rent,1,Web_Portal,APP-1243
+78,47139,14547,374,3.0,0,Bachelor,Own,0,Web_Portal,APP-1244
+73,97149,35531,578,6.0,3,PhD,Rent,0,Web_Portal,APP-1245
+51,76138,9712,475,8.0,3,Master,Rent,0,Web_Portal,APP-1246
+51,138205,39565,572,35.0,0,Master,Own,0,Web_Portal,APP-1247
+43,96125,10208,588,18.0,1,Master,Mortgage,0,Web_Portal,APP-1248
+60,33918,6109,571,0.0,0,Bachelor,Own,0,Web_Portal,APP-1249
+71,105655,36201,365,9.0,2,High School,Rent,0,Web_Portal,APP-1250
+68,47446,17967,782,35.0,0,PhD,Own,0,Web_Portal,APP-1251
+68,144040,30759,547,,0,Master,Mortgage,1,Web_Portal,APP-1252
+77,33046,21172,455,31.0,1,Master,Own,1,Web_Portal,APP-1253
+71,149922,37935,346,31.0,2,High School,Rent,1,Web_Portal,APP-1254
+31,44818,27589,753,5.0,4,Master,Rent,0,Web_Portal,APP-1255
+58,120894,31015,500,37.0,4,PhD,Own,0,Web_Portal,APP-1256
+21,135751,30009,423,16.0,3,Bachelor,Mortgage,0,Web_Portal,APP-1257
+22,24324,18773,300,9.0,0,Master,Own,1,Web_Portal,APP-1258
+68,96323,27143,490,26.0,3,PhD,Mortgage,0,Web_Portal,APP-1259
+56,29111,7154,815,34.0,1,Master,Mortgage,0,Web_Portal,APP-1260
+68,58110,22804,741,20.0,4,High School,Own,0,Web_Portal,APP-1261
+75,36389,21581,442,24.0,0,Master,Mortgage,0,Web_Portal,APP-1262
+36,142177,31087,490,27.0,1,Master,Rent,0,Web_Portal,APP-1263
+78,61427,33981,832,14.0,1,Bachelor,Own,1,Web_Portal,APP-1264
+68,99579,4762,526,3.0,0,High School,Mortgage,1,Web_Portal,APP-1265
+21,48746,10768,612,28.0,1,High School,Rent,0,Web_Portal,APP-1266
+21,142883,39559,601,8.0,0,Bachelor,Own,1,Web_Portal,APP-1267
+47,107886,9783,759,26.0,0,Master,Rent,0,Web_Portal,APP-1268
+73,127141,30781,700,25.0,2,PhD,Rent,0,Web_Portal,APP-1269
+42,20117,31811,692,18.0,3,High School,Rent,0,Web_Portal,APP-1270
+56,145808,36488,506,27.0,1,High School,Mortgage,0,Web_Portal,APP-1271
+51,132221,9905,509,16.0,1,Master,Own,0,Web_Portal,APP-1272
+52,104471,10127,414,19.0,2,Master,Own,1,Web_Portal,APP-1273
+20,132613,23431,550,39.0,2,High School,Mortgage,0,Web_Portal,APP-1274
+38,33234,7368,518,38.0,2,Master,Own,0,Web_Portal,APP-1275
+21,149597,28424,706,22.0,4,PhD,Rent,0,Web_Portal,APP-1276
+72,123864,19333,742,31.0,4,High School,Own,1,Web_Portal,APP-1277
+63,73441,24116,653,32.0,4,PhD,Mortgage,0,Web_Portal,APP-1278
+45,20846,16525,849,4.0,0,PhD,Rent,0,Web_Portal,APP-1279
+51,30954,24398,441,33.0,1,Master,Mortgage,0,Web_Portal,APP-1280
+25,99239,33857,800,39.0,3,PhD,Rent,0,Web_Portal,APP-1281
+51,133689,11361,846,10.0,0,Master,Rent,0,Web_Portal,APP-1282
+74,66514,17369,841,2.0,1,Bachelor,Own,0,Web_Portal,APP-1283
+23,108236,4041,806,,1,Master,Rent,0,Web_Portal,APP-1284
+74,117579,1105,580,10.0,2,PhD,Mortgage,0,Web_Portal,APP-1285
+30,148644,10078,723,15.0,2,Bachelor,Own,1,Web_Portal,APP-1286
+75,26469,26003,569,17.0,0,Master,Mortgage,0,Web_Portal,APP-1287
+78,50105,7090,453,29.0,2,PhD,Rent,0,Web_Portal,APP-1288
+36,62101,39850,382,9.0,1,High School,Mortgage,1,Web_Portal,APP-1289
+57,84323,2925,725,17.0,2,High School,Mortgage,0,Web_Portal,APP-1290
+43,111922,19440,574,37.0,4,Master,Rent,1,Web_Portal,APP-1291
+24,78067,27015,583,18.0,2,Master,Own,0,Web_Portal,APP-1292
+71,69376,34320,472,35.0,1,High School,Mortgage,0,Web_Portal,APP-1293
+53,65587,26291,626,,0,PhD,Rent,0,Web_Portal,APP-1294
+25,56976,37679,362,2.0,3,PhD,Own,1,Web_Portal,APP-1295
+41,124587,27289,372,9.0,2,PhD,Own,0,Web_Portal,APP-1296
+30,147534,4389,674,37.0,1,Master,Own,0,Web_Portal,APP-1297
+67,87584,26683,807,0.0,3,Bachelor,Mortgage,1,Web_Portal,APP-1298
+35,124537,14629,697,26.0,3,Bachelor,Mortgage,0,Web_Portal,APP-1299
+52,98477,25826,419,7.0,4,Bachelor,Mortgage,0,Web_Portal,APP-1300
+28,130911,36198,736,16.0,3,Bachelor,Own,0,Web_Portal,APP-1301
+79,62533,27630,764,8.0,1,Bachelor,Mortgage,0,Web_Portal,APP-1302
+78,21828,34226,585,5.0,1,Master,Rent,0,Web_Portal,APP-1303
+25,21917,33975,564,24.0,2,Master,Mortgage,0,Web_Portal,APP-1304
+35,40618,1899,619,38.0,2,Bachelor,Mortgage,0,Web_Portal,APP-1305
+48,52254,12653,675,27.0,2,Master,Own,0,Web_Portal,APP-1306
+22,125292,28961,388,,3,Master,Mortgage,1,Web_Portal,APP-1307
+39,136714,17405,502,36.0,3,Bachelor,Rent,1,Web_Portal,APP-1308
+79,67362,9601,633,8.0,4,PhD,Own,0,Web_Portal,APP-1309
+78,40128,34662,521,17.0,2,Master,Rent,1,Web_Portal,APP-1310
+55,143781,34282,340,20.0,0,PhD,Own,0,Web_Portal,APP-1311
+38,131281,22288,367,1.0,4,Master,Own,0,Web_Portal,APP-1312
+45,79383,30545,813,37.0,0,Master,Mortgage,0,Web_Portal,APP-1313
+22,85545,37877,426,39.0,3,Bachelor,Rent,0,Web_Portal,APP-1314
+38,102180,16313,554,35.0,4,Master,Own,0,Web_Portal,APP-1315
+39,107958,16349,315,36.0,4,High School,Mortgage,1,Web_Portal,APP-1316
+51,29865,8179,776,14.0,1,High School,Own,0,Web_Portal,APP-1317
+26,22219,11326,361,27.0,3,Bachelor,Own,1,Web_Portal,APP-1318
+71,59809,2560,731,17.0,3,PhD,Own,0,Web_Portal,APP-1319
+60,136748,14612,567,33.0,4,PhD,Own,0,Web_Portal,APP-1320
+52,25287,18650,334,21.0,3,PhD,Own,0,Web_Portal,APP-1321
+59,146593,27745,793,10.0,4,High School,Own,0,Web_Portal,APP-1322
+58,54387,32890,768,12.0,1,PhD,Mortgage,0,Web_Portal,APP-1323
+37,28512,21022,624,3.0,4,PhD,Own,0,Web_Portal,APP-1324
+59,21342,5780,603,21.0,3,Bachelor,Rent,0,Web_Portal,APP-1325
+20,83076,19311,575,6.0,3,PhD,Mortgage,0,Web_Portal,APP-1326
+30,128872,29380,500,23.0,4,High School,Rent,0,Web_Portal,APP-1327
+47,39216,3356,744,3.0,4,High School,Own,0,Web_Portal,APP-1328
+76,137512,5790,623,27.0,4,High School,Rent,1,Web_Portal,APP-1329
+44,136682,27911,334,14.0,2,Bachelor,Own,0,Web_Portal,APP-1330
+69,113070,25363,781,0.0,3,Bachelor,Own,0,Web_Portal,APP-1331
+42,99767,21049,779,2.0,3,Master,Mortgage,1,Web_Portal,APP-1332
+50,117829,11181,364,13.0,2,PhD,Mortgage,0,Web_Portal,APP-1333
+49,46614,17082,307,37.0,4,Bachelor,Own,0,Web_Portal,APP-1334
+61,56258,1661,600,0.0,1,High School,Mortgage,1,Web_Portal,APP-1335
+54,113789,38412,642,37.0,4,High School,Rent,0,Web_Portal,APP-1336
+26,62078,3920,730,37.0,4,Bachelor,Mortgage,0,Web_Portal,APP-1337
+79,126288,26658,723,20.0,2,Bachelor,Mortgage,0,Web_Portal,APP-1338
+35,103524,15025,631,,3,Bachelor,Rent,1,Web_Portal,APP-1339
+45,116573,9946,737,4.0,4,Master,Mortgage,1,Web_Portal,APP-1340
+67,32219,29706,473,9.0,3,High School,Own,0,Web_Portal,APP-1341
+76,20235,17309,826,27.0,0,Master,Rent,0,Web_Portal,APP-1342
+71,62929,34120,325,20.0,3,Master,Own,0,Web_Portal,APP-1343
+79,147309,31027,705,6.0,1,PhD,Rent,0,Web_Portal,APP-1344
+68,87444,8005,531,2.0,1,High School,Own,0,Web_Portal,APP-1345
+21,28567,1956,832,19.0,4,High School,Own,0,Web_Portal,APP-1346
+20,121834,35839,849,18.0,3,Bachelor,Mortgage,1,Web_Portal,APP-1347
+67,90792,9595,804,34.0,4,Bachelor,Own,1,Web_Portal,APP-1348
+31,85441,13803,478,3.0,2,PhD,Mortgage,0,Web_Portal,APP-1349
+24,104555,26963,431,4.0,1,Master,Rent,0,Web_Portal,APP-1350
+56,93698,37221,754,0.0,4,Bachelor,Own,0,Web_Portal,APP-1351
+51,144450,34723,647,3.0,2,Bachelor,Own,0,Web_Portal,APP-1352
+78,137248,16282,839,11.0,4,High School,Rent,0,Web_Portal,APP-1353
+74,25415,5703,705,26.0,3,High School,Rent,1,Web_Portal,APP-1354
+28,56159,7563,375,,3,Bachelor,Own,0,Web_Portal,APP-1355
+60,63925,26849,791,24.0,3,High School,Rent,0,Web_Portal,APP-1356
+54,146523,32860,493,20.0,3,PhD,Mortgage,0,Web_Portal,APP-1357
+38,25951,32585,461,23.0,0,Bachelor,Rent,0,Web_Portal,APP-1358
+67,107388,23015,646,24.0,2,High School,Rent,0,Web_Portal,APP-1359
+35,28007,13003,660,31.0,2,PhD,Own,0,Web_Portal,APP-1360
+22,146730,27958,386,31.0,3,High School,Mortgage,0,Web_Portal,APP-1361
+39,61832,27017,561,4.0,0,High School,Rent,1,Web_Portal,APP-1362
+43,78596,12171,513,35.0,3,High School,Mortgage,0,Web_Portal,APP-1363
+73,141101,13201,561,38.0,0,Bachelor,Mortgage,0,Web_Portal,APP-1364
+75,50523,30426,582,15.0,3,Master,Mortgage,0,Web_Portal,APP-1365
+52,108861,18778,766,32.0,1,High School,Own,0,Web_Portal,APP-1366
+43,144194,22116,679,20.0,1,PhD,Rent,0,Web_Portal,APP-1367
+71,106740,34297,661,8.0,4,Bachelor,Own,0,Web_Portal,APP-1368
+30,35524,20342,748,5.0,3,Bachelor,Rent,0,Web_Portal,APP-1369
+68,149028,28490,740,,2,PhD,Rent,0,Web_Portal,APP-1370
+27,39282,20975,392,38.0,4,High School,Own,0,Web_Portal,APP-1371
+55,43930,27723,723,21.0,1,Master,Mortgage,0,Web_Portal,APP-1372
+57,20077,24279,441,4.0,3,High School,Mortgage,1,Web_Portal,APP-1373
+59,125881,13765,590,22.0,4,PhD,Rent,0,Web_Portal,APP-1374
+39,145501,12561,731,,3,Bachelor,Own,0,Web_Portal,APP-1375
+54,40611,1525,348,11.0,1,Master,Mortgage,0,Web_Portal,APP-1376
+67,36984,23861,601,22.0,4,Bachelor,Mortgage,0,Web_Portal,APP-1377
+44,34060,34142,489,15.0,1,PhD,Rent,1,Web_Portal,APP-1378
+54,102985,27916,435,2.0,0,High School,Rent,0,Web_Portal,APP-1379
+44,104056,5648,703,29.0,1,Master,Own,1,Web_Portal,APP-1380
+48,145329,36133,640,21.0,3,Bachelor,Rent,1,Web_Portal,APP-1381
+37,63303,31523,617,8.0,2,Bachelor,Mortgage,0,Web_Portal,APP-1382
+65,79207,30052,662,28.0,1,Bachelor,Mortgage,0,Web_Portal,APP-1383
+37,95046,35414,681,,2,High School,Mortgage,0,Web_Portal,APP-1384
+21,49287,33781,532,22.0,0,Master,Mortgage,1,Web_Portal,APP-1385
+73,113709,5599,643,,4,High School,Own,0,Web_Portal,APP-1386
+54,59711,36046,848,31.0,4,High School,Own,0,Web_Portal,APP-1387
+35,31954,36923,828,22.0,2,High School,Rent,0,Web_Portal,APP-1388
+60,93340,4814,482,16.0,4,PhD,Rent,0,Web_Portal,APP-1389
+55,92101,36984,340,39.0,1,PhD,Rent,0,Web_Portal,APP-1390
+52,91520,27616,696,20.0,2,PhD,Own,0,Web_Portal,APP-1391
+23,107062,3113,793,,3,Master,Mortgage,0,Web_Portal,APP-1392
+52,122974,14760,632,36.0,1,High School,Rent,1,Web_Portal,APP-1393
+33,38574,22927,426,5.0,1,High School,Mortgage,0,Web_Portal,APP-1394
+40,29184,21939,300,17.0,1,PhD,Rent,0,Web_Portal,APP-1395
+67,39096,33419,467,29.0,3,High School,Rent,0,Web_Portal,APP-1396
+39,87728,13588,318,21.0,0,High School,Rent,0,Web_Portal,APP-1397
+75,54016,37142,631,32.0,4,Bachelor,Rent,0,Web_Portal,APP-1398
+27,31246,34397,755,29.0,2,High School,Rent,0,Web_Portal,APP-1399
+26,65558,17653,408,16.0,0,Bachelor,Mortgage,0,Web_Portal,APP-1400
+22,138721,11831,567,31.0,2,High School,Rent,0,Web_Portal,APP-1401
+36,38381,6724,744,13.0,4,Master,Mortgage,0,Web_Portal,APP-1402
+52,147796,12083,539,9.0,3,PhD,Own,0,Web_Portal,APP-1403
+67,56455,20816,600,35.0,1,Bachelor,Rent,0,Web_Portal,APP-1404
+31,112263,7276,402,33.0,1,PhD,Mortgage,0,Web_Portal,APP-1405
+78,24018,39663,549,8.0,3,Bachelor,Own,0,Web_Portal,APP-1406
+70,31302,14994,752,27.0,0,Bachelor,Own,0,Web_Portal,APP-1407
+41,87506,24499,819,10.0,0,Bachelor,Own,0,Web_Portal,APP-1408
+74,61157,24040,452,13.0,2,Master,Mortgage,0,Web_Portal,APP-1409
+41,74917,17959,473,38.0,3,High School,Rent,1,Web_Portal,APP-1410
+65,112738,7099,642,18.0,0,Bachelor,Rent,1,Web_Portal,APP-1411
+49,116646,20576,730,14.0,3,Master,Mortgage,0,Web_Portal,APP-1412
+57,103122,36946,623,27.0,4,Bachelor,Rent,0,Web_Portal,APP-1413
+57,44519,7116,719,23.0,1,High School,Mortgage,1,Web_Portal,APP-1414
+64,116809,16563,784,,1,Bachelor,Rent,0,Web_Portal,APP-1415
+70,107487,27788,711,8.0,1,Master,Own,0,Web_Portal,APP-1416
+73,76819,27928,383,32.0,3,High School,Rent,1,Web_Portal,APP-1417
+27,100910,37336,412,32.0,3,Master,Mortgage,0,Web_Portal,APP-1418
+46,140430,10847,631,18.0,2,High School,Mortgage,0,Web_Portal,APP-1419
+46,91324,27155,677,2.0,1,High School,Own,0,Web_Portal,APP-1420
+53,25408,15135,340,9.0,2,PhD,Mortgage,0,Web_Portal,APP-1421
+40,79379,18774,404,39.0,1,PhD,Rent,0,Web_Portal,APP-1422
+49,45053,2742,501,0.0,2,PhD,Rent,0,Web_Portal,APP-1423
+52,29446,19309,749,28.0,2,High School,Own,0,Web_Portal,APP-1424
+47,20922,1619,565,,4,Bachelor,Mortgage,0,Web_Portal,APP-1425
+66,118723,18658,509,12.0,2,Master,Own,0,Web_Portal,APP-1426
+52,71356,35707,417,0.0,3,Master,Rent,0,Web_Portal,APP-1427
+24,30789,21337,676,33.0,2,Master,Own,0,Web_Portal,APP-1428
+79,117720,17001,839,28.0,1,PhD,Mortgage,0,Web_Portal,APP-1429
+67,86656,1968,383,,2,High School,Own,0,Web_Portal,APP-1430
+38,64028,26892,753,28.0,0,PhD,Mortgage,1,Web_Portal,APP-1431
+23,84484,26619,813,38.0,1,Bachelor,Mortgage,0,Web_Portal,APP-1432
+54,52154,1281,686,23.0,0,High School,Rent,0,Web_Portal,APP-1433
+68,102870,28420,649,25.0,1,Master,Rent,0,Web_Portal,APP-1434
+36,22336,16360,595,16.0,3,PhD,Rent,0,Web_Portal,APP-1435
+63,123677,2058,557,6.0,3,PhD,Mortgage,0,Web_Portal,APP-1436
+47,87779,21677,380,12.0,3,Bachelor,Own,0,Web_Portal,APP-1437
+49,39029,11724,567,4.0,0,Bachelor,Mortgage,0,Web_Portal,APP-1438
+48,79201,29404,718,25.0,4,PhD,Rent,0,Web_Portal,APP-1439
+65,52265,38946,534,2.0,1,Bachelor,Rent,1,Web_Portal,APP-1440
+72,122916,30856,610,6.0,3,Master,Own,1,Web_Portal,APP-1441
+25,132250,10200,656,38.0,1,Bachelor,Rent,0,Web_Portal,APP-1442
+54,136553,34997,512,0.0,0,Bachelor,Rent,0,Web_Portal,APP-1443
+79,63872,26611,348,16.0,4,PhD,Rent,0,Web_Portal,APP-1444
+60,66197,36057,426,24.0,0,PhD,Own,0,Web_Portal,APP-1445
+56,145733,2239,522,2.0,1,High School,Mortgage,0,Web_Portal,APP-1446
+43,75180,39138,578,14.0,4,High School,Rent,0,Web_Portal,APP-1447
+48,43710,1125,707,28.0,4,PhD,Own,1,Web_Portal,APP-1448
+68,49486,24857,804,31.0,0,Bachelor,Rent,0,Web_Portal,APP-1449
+65,91907,16398,593,25.0,3,Bachelor,Own,0,Web_Portal,APP-1450
+72,148876,7638,576,15.0,1,High School,Rent,0,Web_Portal,APP-1451
+50,91895,7570,737,24.0,2,High School,Own,0,Web_Portal,APP-1452
+54,84435,4249,406,27.0,2,High School,Rent,0,Web_Portal,APP-1453
+79,60631,10110,719,8.0,0,Master,Mortgage,0,Web_Portal,APP-1454
+52,149038,14605,728,0.0,1,Master,Rent,1,Web_Portal,APP-1455
+71,121532,13115,674,28.0,1,High School,Own,0,Web_Portal,APP-1456
+40,40103,23911,372,21.0,0,Bachelor,Rent,0,Web_Portal,APP-1457
+51,84772,39525,329,15.0,1,High School,Mortgage,1,Web_Portal,APP-1458
+42,146108,33556,487,6.0,3,Master,Rent,0,Web_Portal,APP-1459
+52,34382,13595,663,13.0,0,Bachelor,Own,0,Web_Portal,APP-1460
+22,104291,2969,750,28.0,3,Master,Own,0,Web_Portal,APP-1461
+37,121195,18275,494,18.0,1,Bachelor,Mortgage,0,Web_Portal,APP-1462
+44,23756,5470,455,18.0,0,Master,Own,0,Web_Portal,APP-1463
+61,40609,11225,471,1.0,1,Bachelor,Rent,0,Web_Portal,APP-1464
+50,134074,24196,340,14.0,0,Bachelor,Rent,1,Web_Portal,APP-1465
+73,36478,14669,362,2.0,1,Bachelor,Rent,0,Web_Portal,APP-1466
+77,120978,38380,322,10.0,3,Bachelor,Own,0,Web_Portal,APP-1467
+22,59666,39006,659,29.0,3,PhD,Rent,0,Web_Portal,APP-1468
+59,95683,16577,374,39.0,1,Master,Rent,0,Web_Portal,APP-1469
+65,119097,23473,417,17.0,0,Master,Rent,0,Web_Portal,APP-1470
+43,144714,29625,679,1.0,2,PhD,Mortgage,0,Web_Portal,APP-1471
+69,120420,16504,589,31.0,3,Bachelor,Own,0,Web_Portal,APP-1472
+51,91315,25089,739,7.0,3,Bachelor,Own,0,Web_Portal,APP-1473
+66,97834,37487,306,21.0,2,Master,Own,1,Web_Portal,APP-1474
+41,146205,1302,495,5.0,1,PhD,Mortgage,0,Web_Portal,APP-1475
+42,34153,32463,720,11.0,0,Bachelor,Own,0,Web_Portal,APP-1476
+21,129415,30259,492,39.0,1,Bachelor,Mortgage,1,Web_Portal,APP-1477
+46,96325,38208,447,35.0,4,Bachelor,Mortgage,0,Web_Portal,APP-1478
+61,129701,31659,501,14.0,3,High School,Own,0,Web_Portal,APP-1479
+21,32999,36840,743,27.0,4,PhD,Rent,1,Web_Portal,APP-1480
+45,75318,32890,718,17.0,3,Bachelor,Rent,0,Web_Portal,APP-1481
+36,20814,14598,726,1.0,3,High School,Own,0,Web_Portal,APP-1482
+59,135033,20508,778,12.0,4,PhD,Own,0,Web_Portal,APP-1483
+52,96077,14380,774,14.0,4,Bachelor,Mortgage,0,Web_Portal,APP-1484
+28,110474,27984,425,19.0,1,Master,Own,0,Web_Portal,APP-1485
+62,22443,9125,694,28.0,4,High School,Mortgage,0,Web_Portal,APP-1486
+73,95993,37059,624,28.0,1,High School,Own,0,Web_Portal,APP-1487
+67,95916,5033,691,2.0,1,Bachelor,Rent,0,Web_Portal,APP-1488
+58,93319,38873,739,18.0,1,Bachelor,Rent,0,Web_Portal,APP-1489
+48,145885,18087,503,2.0,3,High School,Own,0,Web_Portal,APP-1490
+61,129777,6704,785,13.0,3,Master,Mortgage,1,Web_Portal,APP-1491
+74,37368,8848,330,39.0,4,Master,Rent,0,Web_Portal,APP-1492
+45,35328,22592,687,3.0,3,PhD,Mortgage,1,Web_Portal,APP-1493
+54,76942,7924,733,10.0,4,Bachelor,Own,0,Web_Portal,APP-1494
+69,111751,28208,675,30.0,3,Master,Own,0,Web_Portal,APP-1495
+44,119131,20614,643,31.0,0,PhD,Rent,0,Web_Portal,APP-1496
+43,47306,1488,742,26.0,0,Master,Own,0,Web_Portal,APP-1497
+32,105451,26923,374,29.0,4,Bachelor,Rent,0,Web_Portal,APP-1498
+79,59915,36941,454,1.0,3,PhD,Mortgage,0,Web_Portal,APP-1499
+77,57219,30165,729,8.0,3,PhD,Rent,0,Web_Portal,APP-1500
+26,100879,2667,662,27.0,1,PhD,Rent,0,Web_Portal,APP-1501
+76,131939,27213,747,30.0,2,Master,Mortgage,0,Web_Portal,APP-1502
+55,84644,5114,533,33.0,4,Bachelor,Rent,0,Web_Portal,APP-1503
+64,80279,37321,561,14.0,2,PhD,Rent,0,Web_Portal,APP-1504
+39,73028,8761,424,24.0,2,High School,Own,0,Web_Portal,APP-1505
+20,124263,32116,544,35.0,4,Bachelor,Mortgage,0,Web_Portal,APP-1506
+27,20126,34768,841,7.0,3,High School,Rent,0,Web_Portal,APP-1507
+65,72329,26426,784,8.0,4,High School,Mortgage,0,Web_Portal,APP-1508
+35,47632,18772,421,36.0,2,PhD,Mortgage,1,Web_Portal,APP-1509
+33,127099,39218,424,38.0,3,PhD,Rent,0,Web_Portal,APP-1510
+31,85310,4712,848,31.0,0,Master,Own,0,Web_Portal,APP-1511
+70,129945,2367,469,16.0,4,Master,Mortgage,0,Web_Portal,APP-1512
+42,75176,27200,423,34.0,4,Master,Rent,1,Web_Portal,APP-1513
+34,139797,4726,334,36.0,3,Bachelor,Mortgage,0,Web_Portal,APP-1514
+47,106066,24616,386,18.0,0,Master,Own,1,Web_Portal,APP-1515
+53,125500,28723,500,28.0,0,High School,Own,0,Web_Portal,APP-1516
+21,146413,38574,668,6.0,3,Master,Own,0,Web_Portal,APP-1517
+51,64327,35958,376,27.0,1,PhD,Rent,1,Web_Portal,APP-1518
+42,88904,10108,358,8.0,4,Master,Rent,0,Web_Portal,APP-1519
+41,23797,13178,730,27.0,4,Bachelor,Own,0,Web_Portal,APP-1520
+70,67882,36643,799,5.0,2,Bachelor,Rent,0,Web_Portal,APP-1521
+44,33718,32324,408,28.0,3,High School,Own,1,Web_Portal,APP-1522
+77,54560,39360,577,16.0,2,Bachelor,Rent,0,Web_Portal,APP-1523
+41,96589,18824,367,15.0,2,Master,Own,0,Web_Portal,APP-1524
+77,42116,9927,368,22.0,0,PhD,Mortgage,0,Web_Portal,APP-1525
+77,56244,29144,464,30.0,4,Bachelor,Own,0,Web_Portal,APP-1526
+41,121721,32010,788,2.0,2,High School,Own,1,Web_Portal,APP-1527
+68,21645,23443,604,20.0,0,Master,Rent,0,Web_Portal,APP-1528
+71,67523,15437,664,25.0,3,High School,Rent,0,Web_Portal,APP-1529
+61,144085,12207,678,35.0,2,Bachelor,Rent,1,Web_Portal,APP-1530
+25,137718,26537,642,36.0,4,Bachelor,Rent,0,Web_Portal,APP-1531
+34,39256,36757,653,21.0,2,High School,Rent,0,Web_Portal,APP-1532
+73,121376,13040,715,,3,Master,Rent,0,Web_Portal,APP-1533
+62,120158,23612,408,12.0,2,Bachelor,Mortgage,0,Web_Portal,APP-1534
+79,73173,29441,796,10.0,4,PhD,Own,0,Web_Portal,APP-1535
+56,57430,7471,640,15.0,0,Bachelor,Own,0,Web_Portal,APP-1536
+52,59282,36631,682,7.0,4,Master,Own,0,Web_Portal,APP-1537
+27,139719,27523,832,39.0,0,Bachelor,Mortgage,0,Web_Portal,APP-1538
+72,83374,32348,599,39.0,1,High School,Own,1,Web_Portal,APP-1539
+79,88244,2177,438,,4,Bachelor,Mortgage,0,Web_Portal,APP-1540
+63,31694,5760,658,29.0,4,Bachelor,Mortgage,0,Web_Portal,APP-1541
+63,76264,33779,798,29.0,3,Master,Mortgage,0,Web_Portal,APP-1542
+24,95060,22636,684,11.0,2,High School,Own,1,Web_Portal,APP-1543
+58,117416,17353,579,9.0,0,Master,Mortgage,0,Web_Portal,APP-1544
+23,77545,12556,782,10.0,0,Bachelor,Own,0,Web_Portal,APP-1545
+25,138195,28598,410,14.0,3,PhD,Own,0,Web_Portal,APP-1546
+64,59224,12563,438,15.0,3,Bachelor,Rent,0,Web_Portal,APP-1547
+51,122516,9234,734,16.0,2,Master,Rent,0,Web_Portal,APP-1548
+71,117945,26519,808,25.0,2,PhD,Mortgage,0,Web_Portal,APP-1549
+49,33224,27966,572,1.0,4,Master,Mortgage,0,Web_Portal,APP-1550
+66,60738,17173,398,11.0,1,Master,Own,1,Web_Portal,APP-1551
+54,45150,27987,403,25.0,2,High School,Mortgage,0,Web_Portal,APP-1552
+74,83731,14178,513,,3,PhD,Mortgage,0,Web_Portal,APP-1553
+59,69688,25596,464,17.0,2,Bachelor,Own,0,Web_Portal,APP-1554
+71,119929,34174,819,31.0,0,Master,Mortgage,0,Web_Portal,APP-1555
+35,128618,5431,583,37.0,1,Bachelor,Mortgage,0,Web_Portal,APP-1556
+32,93509,28764,816,2.0,4,High School,Own,0,Web_Portal,APP-1557
+69,28577,22627,463,37.0,0,High School,Own,0,Web_Portal,APP-1558
+79,28070,9906,363,2.0,0,PhD,Rent,0,Web_Portal,APP-1559
+61,146161,37914,390,,1,High School,Own,0,Web_Portal,APP-1560
+49,28666,14076,416,0.0,4,High School,Rent,0,Web_Portal,APP-1561
+38,77761,38650,566,29.0,3,Bachelor,Mortgage,0,Web_Portal,APP-1562
+36,141178,7012,439,31.0,4,High School,Own,0,Web_Portal,APP-1563
+75,56368,8151,545,,2,High School,Own,0,Web_Portal,APP-1564
+38,26783,29211,694,,0,Master,Own,0,Web_Portal,APP-1565
+47,131530,28117,786,12.0,2,High School,Mortgage,0,Web_Portal,APP-1566
+77,61914,37378,775,26.0,3,Master,Rent,1,Web_Portal,APP-1567
+74,90507,7894,816,35.0,2,High School,Mortgage,0,Web_Portal,APP-1568
+45,147738,14467,483,6.0,4,High School,Mortgage,0,Web_Portal,APP-1569
+56,99026,32010,319,21.0,2,PhD,Own,0,Web_Portal,APP-1570
+45,135893,13289,823,9.0,3,PhD,Rent,0,Web_Portal,APP-1571
+72,131255,24171,828,38.0,3,Master,Mortgage,0,Web_Portal,APP-1572
+42,130616,35905,446,14.0,3,High School,Own,1,Web_Portal,APP-1573
+28,87526,21829,603,14.0,4,Bachelor,Mortgage,0,Web_Portal,APP-1574
+31,90835,35054,527,3.0,3,PhD,Mortgage,1,Web_Portal,APP-1575
+72,65765,30734,401,31.0,0,Bachelor,Own,1,Web_Portal,APP-1576
+20,39956,8052,716,22.0,3,PhD,Own,0,Web_Portal,APP-1577
+77,107895,4654,515,5.0,2,PhD,Rent,0,Web_Portal,APP-1578
+77,66240,24486,706,23.0,2,High School,Mortgage,0,Web_Portal,APP-1579
+20,141008,19743,698,19.0,2,PhD,Own,0,Web_Portal,APP-1580
+66,57148,25489,798,36.0,4,Bachelor,Own,1,Web_Portal,APP-1581
+53,114270,9636,764,19.0,2,PhD,Rent,0,Web_Portal,APP-1582
+51,147978,7441,381,11.0,4,Master,Rent,1,Web_Portal,APP-1583
+73,24757,25611,664,,4,High School,Own,0,Web_Portal,APP-1584
+67,39097,13149,462,27.0,3,High School,Rent,1,Web_Portal,APP-1585
+44,30395,35566,347,7.0,0,Master,Own,1,Web_Portal,APP-1586
+59,36241,22675,810,0.0,3,Master,Mortgage,0,Web_Portal,APP-1587
+64,123892,6495,628,36.0,3,Master,Rent,0,Web_Portal,APP-1588
+72,47696,14673,415,21.0,4,PhD,Mortgage,0,Web_Portal,APP-1589
+20,135654,12130,636,5.0,4,High School,Mortgage,1,Web_Portal,APP-1590
+35,90480,23668,446,20.0,2,Master,Mortgage,1,Web_Portal,APP-1591
+58,66163,16222,622,31.0,2,PhD,Own,0,Web_Portal,APP-1592
+24,39816,24669,742,34.0,3,Master,Mortgage,0,Web_Portal,APP-1593
+41,69840,35068,312,14.0,1,Bachelor,Mortgage,0,Web_Portal,APP-1594
+48,122547,24253,793,4.0,1,Bachelor,Mortgage,1,Web_Portal,APP-1595
+74,72853,10435,586,5.0,2,High School,Own,0,Web_Portal,APP-1596
+22,44917,29552,413,24.0,1,PhD,Mortgage,1,Web_Portal,APP-1597
+31,116731,38384,779,39.0,2,Bachelor,Mortgage,0,Web_Portal,APP-1598
+45,41566,17393,321,28.0,4,Bachelor,Rent,0,Web_Portal,APP-1599
+35,95452,11617,648,6.0,3,PhD,Own,0,Web_Portal,APP-1600
+70,82823,39520,619,39.0,0,Master,Mortgage,0,Web_Portal,APP-1601
+56,141392,10852,425,12.0,3,PhD,Rent,0,Web_Portal,APP-1602
+41,40806,32401,576,37.0,2,Master,Own,0,Web_Portal,APP-1603
+76,95520,7295,503,17.0,2,Bachelor,Own,0,Web_Portal,APP-1604
+48,21759,36993,493,1.0,3,Bachelor,Own,0,Web_Portal,APP-1605
+33,146092,35084,846,7.0,2,Bachelor,Own,0,Web_Portal,APP-1606
+47,61949,37451,585,10.0,1,High School,Own,0,Web_Portal,APP-1607
+24,112374,8227,356,32.0,1,High School,Own,1,Web_Portal,APP-1608
+66,22482,32910,602,37.0,2,High School,Mortgage,0,Web_Portal,APP-1609
+68,44442,37041,462,26.0,2,PhD,Mortgage,1,Web_Portal,APP-1610
+49,53719,24384,318,19.0,1,Bachelor,Mortgage,0,Web_Portal,APP-1611
+65,78066,1145,669,11.0,2,Bachelor,Mortgage,0,Web_Portal,APP-1612
+71,113501,38778,563,30.0,2,PhD,Rent,0,Web_Portal,APP-1613
+24,22079,17035,412,26.0,3,High School,Mortgage,0,Web_Portal,APP-1614
+31,22717,4040,787,31.0,0,PhD,Own,0,Web_Portal,APP-1615
+35,79676,27160,626,9.0,1,High School,Mortgage,0,Web_Portal,APP-1616
+45,47952,18633,841,2.0,3,Bachelor,Mortgage,0,Web_Portal,APP-1617
+45,106444,30344,364,26.0,0,Master,Own,0,Web_Portal,APP-1618
+67,62460,18014,591,34.0,2,High School,Mortgage,0,Web_Portal,APP-1619
+40,110397,15996,324,30.0,2,Bachelor,Mortgage,0,Web_Portal,APP-1620
+58,92847,12695,848,14.0,3,Bachelor,Mortgage,0,Web_Portal,APP-1621
+55,113607,3852,300,15.0,2,Master,Rent,0,Web_Portal,APP-1622
+52,109106,17014,848,12.0,4,Bachelor,Mortgage,0,Web_Portal,APP-1623
+49,38449,28042,440,34.0,3,Bachelor,Own,0,Web_Portal,APP-1624
+56,53536,34755,487,10.0,0,High School,Own,0,Web_Portal,APP-1625
+42,84077,24711,427,20.0,3,High School,Mortgage,1,Web_Portal,APP-1626
+77,58258,27122,500,10.0,1,Master,Mortgage,1,Web_Portal,APP-1627
+29,68302,10160,426,29.0,3,Master,Mortgage,0,Web_Portal,APP-1628
+73,145937,28213,556,34.0,2,Bachelor,Own,0,Web_Portal,APP-1629
+24,48865,8421,846,21.0,2,High School,Own,0,Web_Portal,APP-1630
+55,26645,22400,493,37.0,4,Master,Rent,0,Web_Portal,APP-1631
+53,139771,34537,403,30.0,4,Master,Rent,0,Web_Portal,APP-1632
+71,58000,18727,834,,4,PhD,Rent,0,Web_Portal,APP-1633
+50,46737,5358,564,23.0,0,Master,Own,0,Web_Portal,APP-1634
+29,31485,29482,683,31.0,4,Bachelor,Rent,0,Web_Portal,APP-1635
+77,58565,33117,559,35.0,0,High School,Mortgage,0,Web_Portal,APP-1636
+38,45522,24164,713,31.0,4,Master,Mortgage,0,Web_Portal,APP-1637
+77,139614,32910,657,14.0,0,PhD,Own,0,Web_Portal,APP-1638
+51,85155,33496,374,34.0,3,High School,Rent,0,Web_Portal,APP-1639
+20,75168,30371,654,,3,Master,Mortgage,0,Web_Portal,APP-1640
+75,72487,39467,487,15.0,2,PhD,Own,0,Web_Portal,APP-1641
+24,149948,18625,589,4.0,0,Master,Rent,0,Web_Portal,APP-1642
+64,32342,34893,344,20.0,1,High School,Mortgage,0,Web_Portal,APP-1643
+23,60806,11793,382,9.0,2,High School,Rent,0,Web_Portal,APP-1644
+35,68770,32007,422,18.0,3,High School,Own,1,Web_Portal,APP-1645
+43,98623,26766,657,24.0,0,Bachelor,Rent,0,Web_Portal,APP-1646
+35,123177,13323,827,3.0,4,Master,Own,1,Web_Portal,APP-1647
+74,119785,8843,365,28.0,1,Bachelor,Rent,0,Web_Portal,APP-1648
+21,95629,15210,674,18.0,3,High School,Mortgage,0,Web_Portal,APP-1649
+68,140993,17456,461,1.0,2,PhD,Own,0,Web_Portal,APP-1650
+47,72603,32367,679,9.0,0,Master,Own,0,Web_Portal,APP-1651
+51,146944,11106,657,24.0,1,Bachelor,Own,0,Web_Portal,APP-1652
+46,132726,38957,487,19.0,0,Master,Rent,0,Web_Portal,APP-1653
+39,101974,3472,621,18.0,4,PhD,Rent,0,Web_Portal,APP-1654
+43,125947,7704,749,22.0,2,Bachelor,Mortgage,1,Web_Portal,APP-1655
+31,46399,4713,773,23.0,0,High School,Own,0,Web_Portal,APP-1656
+69,148177,6051,312,10.0,3,Bachelor,Own,0,Web_Portal,APP-1657
+54,105382,11756,483,33.0,2,Master,Rent,0,Web_Portal,APP-1658
+79,101244,3475,410,27.0,3,Master,Rent,0,Web_Portal,APP-1659
+52,129575,37378,807,4.0,0,Master,Mortgage,1,Web_Portal,APP-1660
+52,135520,5255,589,4.0,2,Master,Mortgage,1,Web_Portal,APP-1661
+70,130904,15484,594,20.0,3,High School,Rent,1,Web_Portal,APP-1662
+62,96534,35503,750,11.0,4,Bachelor,Own,0,Web_Portal,APP-1663
+56,75106,9258,514,3.0,4,High School,Mortgage,0,Web_Portal,APP-1664
+31,132599,36196,326,19.0,0,High School,Rent,0,Web_Portal,APP-1665
+22,50678,9533,530,37.0,2,High School,Rent,1,Web_Portal,APP-1666
+20,96218,33581,620,24.0,1,Master,Own,0,Web_Portal,APP-1667
+52,83230,6249,532,13.0,2,Master,Rent,0,Web_Portal,APP-1668
+59,134684,20201,736,,4,Master,Rent,0,Web_Portal,APP-1669
+29,94055,10686,832,31.0,3,Bachelor,Mortgage,0,Web_Portal,APP-1670
+62,76373,33007,702,10.0,1,PhD,Rent,0,Web_Portal,APP-1671
+63,51480,1661,352,17.0,0,Master,Rent,0,Web_Portal,APP-1672
+48,105230,31137,612,26.0,1,Bachelor,Mortgage,1,Web_Portal,APP-1673
+32,88836,11526,580,17.0,0,Master,Own,1,Web_Portal,APP-1674
+31,92258,4374,330,22.0,1,Master,Own,0,Web_Portal,APP-1675
+50,59986,26592,636,10.0,0,High School,Mortgage,0,Web_Portal,APP-1676
+65,44160,29982,482,20.0,0,High School,Mortgage,1,Web_Portal,APP-1677
+21,105595,1207,322,4.0,1,High School,Own,1,Web_Portal,APP-1678
+70,121358,36433,843,22.0,1,Bachelor,Own,0,Web_Portal,APP-1679
+69,99111,24197,745,24.0,0,PhD,Own,0,Web_Portal,APP-1680
+54,84929,34400,373,9.0,4,PhD,Own,0,Web_Portal,APP-1681
+42,93506,4083,309,21.0,1,Bachelor,Own,1,Web_Portal,APP-1682
+36,54911,30328,783,18.0,2,Master,Mortgage,0,Web_Portal,APP-1683
+45,107127,21103,755,0.0,3,Bachelor,Rent,0,Web_Portal,APP-1684
+27,51821,11754,459,6.0,0,Master,Own,0,Web_Portal,APP-1685
+48,95039,35447,313,3.0,0,Bachelor,Own,1,Web_Portal,APP-1686
+45,80535,16901,477,0.0,3,Bachelor,Rent,0,Web_Portal,APP-1687
+29,133453,34004,711,14.0,4,Bachelor,Rent,0,Web_Portal,APP-1688
+45,104458,8446,352,39.0,3,PhD,Rent,0,Web_Portal,APP-1689
+53,32175,38211,707,11.0,1,High School,Rent,0,Web_Portal,APP-1690
+70,139235,30301,321,21.0,3,Bachelor,Rent,0,Web_Portal,APP-1691
+60,74771,27116,329,21.0,0,PhD,Rent,0,Web_Portal,APP-1692
+26,126660,19752,559,16.0,3,High School,Mortgage,0,Web_Portal,APP-1693
+23,147157,33376,504,28.0,2,High School,Rent,1,Web_Portal,APP-1694
+77,141300,17669,358,13.0,1,Bachelor,Rent,0,Web_Portal,APP-1695
+72,106925,33916,770,19.0,3,Master,Mortgage,0,Web_Portal,APP-1696
+69,133374,14395,765,,0,Master,Rent,0,Web_Portal,APP-1697
+64,86358,21421,311,14.0,1,Master,Own,0,Web_Portal,APP-1698
+30,37327,27342,589,11.0,0,Bachelor,Own,0,Web_Portal,APP-1699
+48,67057,5895,653,39.0,4,Master,Rent,1,Web_Portal,APP-1700
+75,26150,12023,374,19.0,2,PhD,Mortgage,0,Web_Portal,APP-1701
+55,24425,11699,740,29.0,4,PhD,Own,0,Web_Portal,APP-1702
+44,143654,10715,540,37.0,2,PhD,Mortgage,1,Web_Portal,APP-1703
+40,36032,20169,453,2.0,3,PhD,Own,0,Web_Portal,APP-1704
+76,22198,17163,395,27.0,1,High School,Rent,1,Web_Portal,APP-1705
+55,80500,6782,593,25.0,3,PhD,Mortgage,0,Web_Portal,APP-1706
+29,73394,23641,508,29.0,2,Master,Mortgage,0,Web_Portal,APP-1707
+56,40079,19792,642,12.0,2,Bachelor,Mortgage,0,Web_Portal,APP-1708
+28,56220,36585,387,12.0,2,Master,Own,0,Web_Portal,APP-1709
+43,61874,31682,689,1.0,0,PhD,Own,0,Web_Portal,APP-1710
+54,33859,19880,624,36.0,1,High School,Own,0,Web_Portal,APP-1711
+68,70460,39067,456,37.0,3,PhD,Rent,0,Web_Portal,APP-1712
+54,51419,19073,436,1.0,3,Bachelor,Own,1,Web_Portal,APP-1713
+67,138865,37035,727,35.0,4,Master,Rent,0,Web_Portal,APP-1714
+55,28705,38174,751,,2,Bachelor,Mortgage,1,Web_Portal,APP-1715
+37,62880,25837,440,10.0,2,Bachelor,Mortgage,0,Web_Portal,APP-1716
+68,149838,18826,382,7.0,2,Bachelor,Rent,0,Web_Portal,APP-1717
+58,43236,25981,476,39.0,3,Master,Own,0,Web_Portal,APP-1718
+51,107955,11382,497,21.0,4,PhD,Rent,0,Web_Portal,APP-1719
+43,105514,5437,720,19.0,0,Bachelor,Mortgage,1,Web_Portal,APP-1720
+42,123145,6435,700,7.0,1,Master,Mortgage,0,Web_Portal,APP-1721
+51,35358,25819,770,28.0,0,High School,Rent,0,Web_Portal,APP-1722
+56,119713,37875,517,39.0,3,Master,Own,0,Web_Portal,APP-1723
+31,114914,32982,474,25.0,2,High School,Own,0,Web_Portal,APP-1724
+68,122870,34328,322,29.0,1,Master,Rent,0,Web_Portal,APP-1725
+74,96918,13329,534,16.0,3,PhD,Rent,0,Web_Portal,APP-1726
+32,139179,26169,312,19.0,3,Bachelor,Own,0,Web_Portal,APP-1727
+42,136243,22932,400,15.0,3,PhD,Mortgage,0,Web_Portal,APP-1728
+44,34596,35594,835,6.0,1,Master,Rent,0,Web_Portal,APP-1729
+54,53572,12421,822,15.0,1,Bachelor,Own,0,Web_Portal,APP-1730
+60,98757,8629,751,26.0,4,High School,Own,0,Web_Portal,APP-1731
+49,21279,9325,730,22.0,4,Master,Mortgage,1,Web_Portal,APP-1732
+36,83197,29495,832,23.0,0,Bachelor,Mortgage,0,Web_Portal,APP-1733
+68,131496,32750,592,8.0,1,High School,Mortgage,0,Web_Portal,APP-1734
+39,82516,30619,400,34.0,1,High School,Mortgage,0,Web_Portal,APP-1735
+67,27083,9264,801,19.0,1,PhD,Mortgage,0,Web_Portal,APP-1736
+44,140674,13686,603,36.0,4,Master,Rent,1,Web_Portal,APP-1737
+41,140307,25226,839,16.0,3,High School,Own,0,Web_Portal,APP-1738
+32,146457,7721,654,30.0,2,Bachelor,Rent,0,Web_Portal,APP-1739
+78,129397,21609,602,7.0,4,High School,Rent,0,Web_Portal,APP-1740
+38,37771,8373,795,14.0,1,High School,Rent,0,Web_Portal,APP-1741
+68,49975,39675,526,,4,PhD,Rent,0,Web_Portal,APP-1742
+55,65648,29937,535,29.0,0,PhD,Rent,0,Web_Portal,APP-1743
+31,145641,6656,754,19.0,1,Bachelor,Mortgage,0,Web_Portal,APP-1744
+60,68285,9984,312,38.0,0,PhD,Mortgage,0,Web_Portal,APP-1745
+38,39063,30984,509,11.0,1,High School,Own,0,Web_Portal,APP-1746
+31,87642,9286,696,16.0,4,High School,Rent,0,Web_Portal,APP-1747
+28,110093,6901,399,29.0,3,PhD,Own,0,Web_Portal,APP-1748
+26,134390,32552,330,28.0,2,High School,Mortgage,0,Web_Portal,APP-1749
+47,106143,26709,827,18.0,0,High School,Mortgage,0,Web_Portal,APP-1750
+33,57599,32055,628,10.0,4,Bachelor,Mortgage,0,Web_Portal,APP-1751
+50,71920,38685,465,33.0,3,PhD,Rent,0,Web_Portal,APP-1752
+71,48529,9429,758,6.0,4,High School,Rent,0,Web_Portal,APP-1753
+38,55954,15716,399,33.0,0,PhD,Mortgage,1,Web_Portal,APP-1754
+77,47856,12138,472,19.0,2,Bachelor,Own,1,Web_Portal,APP-1755
+66,22573,36298,461,37.0,4,PhD,Own,0,Web_Portal,APP-1756
+35,98344,24429,562,23.0,1,High School,Mortgage,0,Web_Portal,APP-1757
+72,55367,6772,573,9.0,3,PhD,Own,0,Web_Portal,APP-1758
+24,122337,36732,302,31.0,4,High School,Mortgage,0,Web_Portal,APP-1759
+54,126732,18347,327,14.0,3,High School,Own,0,Web_Portal,APP-1760
+31,119608,17920,625,36.0,1,High School,Mortgage,0,Web_Portal,APP-1761
+44,80774,32822,448,19.0,2,Bachelor,Own,1,Web_Portal,APP-1762
+71,43752,24563,839,2.0,2,PhD,Rent,0,Web_Portal,APP-1763
+78,75029,8967,787,36.0,1,Bachelor,Mortgage,0,Web_Portal,APP-1764
+40,37685,12871,737,39.0,3,PhD,Mortgage,0,Web_Portal,APP-1765
+55,71693,29763,364,7.0,4,Bachelor,Own,0,Web_Portal,APP-1766
+72,136739,12916,655,39.0,1,Master,Mortgage,0,Web_Portal,APP-1767
+42,75961,9734,832,22.0,0,High School,Mortgage,0,Web_Portal,APP-1768
+35,126937,34613,551,39.0,3,High School,Mortgage,0,Web_Portal,APP-1769
+76,144956,29179,534,10.0,2,Bachelor,Rent,0,Web_Portal,APP-1770
+58,96908,36262,526,7.0,1,Master,Rent,0,Web_Portal,APP-1771
+64,145537,13677,824,28.0,2,High School,Own,0,Web_Portal,APP-1772
+72,146678,19268,612,29.0,3,PhD,Rent,0,Web_Portal,APP-1773
+61,94532,13330,348,9.0,2,Bachelor,Own,0,Web_Portal,APP-1774
+77,101994,21733,417,38.0,1,High School,Rent,0,Web_Portal,APP-1775
+58,76133,38947,353,27.0,3,High School,Own,1,Web_Portal,APP-1776
+33,117425,28286,343,35.0,0,Bachelor,Rent,0,Web_Portal,APP-1777
+50,145055,7610,352,12.0,1,Bachelor,Rent,1,Web_Portal,APP-1778
+77,81268,7430,824,31.0,4,PhD,Own,1,Web_Portal,APP-1779
+24,112201,14828,401,35.0,1,PhD,Mortgage,0,Web_Portal,APP-1780
+54,58243,32497,697,36.0,3,High School,Mortgage,0,Web_Portal,APP-1781
+42,77384,37618,437,25.0,1,High School,Rent,1,Web_Portal,APP-1782
+48,51653,27526,686,21.0,0,Bachelor,Own,0,Web_Portal,APP-1783
+62,46657,31158,410,3.0,0,High School,Mortgage,0,Web_Portal,APP-1784
+30,59952,26032,316,30.0,4,High School,Own,1,Web_Portal,APP-1785
+37,42180,38846,481,17.0,2,Bachelor,Mortgage,0,Web_Portal,APP-1786
+66,117432,30794,835,37.0,3,High School,Own,0,Web_Portal,APP-1787
+31,141829,6448,840,23.0,3,High School,Rent,0,Web_Portal,APP-1788
+28,148377,29861,470,22.0,2,Master,Own,0,Web_Portal,APP-1789
+29,98411,29141,708,21.0,0,PhD,Mortgage,0,Web_Portal,APP-1790
+77,21622,10074,677,1.0,0,Bachelor,Rent,0,Web_Portal,APP-1791
+63,68756,7406,487,30.0,1,Master,Own,0,Web_Portal,APP-1792
+36,60809,32823,529,10.0,4,PhD,Mortgage,0,Web_Portal,APP-1793
+57,36725,24291,418,27.0,4,PhD,Rent,0,Web_Portal,APP-1794
+26,81396,33003,455,31.0,4,PhD,Own,0,Web_Portal,APP-1795
+65,71226,35406,764,4.0,1,Master,Mortgage,0,Web_Portal,APP-1796
+32,126296,24312,403,37.0,4,Master,Own,0,Web_Portal,APP-1797
+59,101182,2382,801,9.0,2,PhD,Own,0,Web_Portal,APP-1798
+61,102565,35171,474,,1,High School,Rent,0,Web_Portal,APP-1799
+28,49402,4292,720,23.0,2,High School,Rent,1,Web_Portal,APP-1800
+69,24263,34187,433,,1,Master,Mortgage,0,Web_Portal,APP-1801
+46,143489,13411,690,22.0,4,Master,Rent,0,Web_Portal,APP-1802
+77,116523,38285,800,16.0,2,Master,Mortgage,0,Web_Portal,APP-1803
+21,66828,16422,332,0.0,2,PhD,Own,1,Web_Portal,APP-1804
+24,140824,33371,354,30.0,2,High School,Own,0,Web_Portal,APP-1805
+48,67924,6693,818,30.0,1,Master,Mortgage,0,Web_Portal,APP-1806
+56,94182,34535,311,33.0,3,Master,Own,0,Web_Portal,APP-1807
+57,113065,15818,827,8.0,4,Bachelor,Rent,0,Web_Portal,APP-1808
+38,79052,32238,672,21.0,2,PhD,Own,0,Web_Portal,APP-1809
+27,31664,31874,783,12.0,3,Bachelor,Rent,0,Web_Portal,APP-1810
+67,55737,27715,527,24.0,4,High School,Mortgage,0,Web_Portal,APP-1811
+64,121332,28605,606,17.0,4,Bachelor,Mortgage,1,Web_Portal,APP-1812
+20,109563,35317,756,11.0,2,Bachelor,Own,0,Web_Portal,APP-1813
+41,49373,32174,459,39.0,2,Bachelor,Own,0,Web_Portal,APP-1814
+71,137369,10956,630,16.0,1,PhD,Rent,0,Web_Portal,APP-1815
+36,56397,39908,524,14.0,3,High School,Rent,1,Web_Portal,APP-1816
+26,148575,11837,803,14.0,3,Bachelor,Own,0,Web_Portal,APP-1817
+44,106145,4716,755,14.0,2,PhD,Own,1,Web_Portal,APP-1818
+64,121371,5481,344,38.0,4,High School,Mortgage,1,Web_Portal,APP-1819
+23,58709,25282,513,12.0,2,Master,Mortgage,0,Web_Portal,APP-1820
+55,136074,7548,358,16.0,4,Bachelor,Mortgage,0,Web_Portal,APP-1821
+25,81120,38605,494,31.0,4,High School,Own,0,Web_Portal,APP-1822
+79,39250,8758,788,8.0,2,Bachelor,Own,0,Web_Portal,APP-1823
+50,41172,24177,456,39.0,0,Master,Own,0,Web_Portal,APP-1824
+38,31555,25022,525,19.0,3,High School,Mortgage,0,Web_Portal,APP-1825
+63,107410,6542,711,25.0,4,PhD,Own,1,Web_Portal,APP-1826
+73,98617,26476,504,26.0,4,High School,Rent,0,Web_Portal,APP-1827
+58,73276,31784,378,20.0,0,PhD,Own,1,Web_Portal,APP-1828
+46,77492,23740,423,17.0,1,High School,Own,0,Web_Portal,APP-1829
+29,73002,25817,770,12.0,0,PhD,Own,0,Web_Portal,APP-1830
+45,140103,17052,517,15.0,0,Master,Own,1,Web_Portal,APP-1831
+38,144938,36153,815,8.0,4,Master,Own,0,Web_Portal,APP-1832
+58,109599,1671,403,11.0,3,Master,Rent,0,Web_Portal,APP-1833
+22,92355,1163,692,37.0,0,High School,Rent,0,Web_Portal,APP-1834
+64,111248,5795,733,18.0,1,Master,Own,0,Web_Portal,APP-1835
+32,44762,11634,630,6.0,2,Bachelor,Mortgage,0,Web_Portal,APP-1836
+69,31046,5798,442,34.0,0,Master,Own,0,Web_Portal,APP-1837
+47,116999,23420,839,17.0,0,PhD,Own,0,Web_Portal,APP-1838
+77,144130,30300,577,15.0,1,PhD,Own,1,Web_Portal,APP-1839
+39,136021,25345,532,38.0,3,PhD,Mortgage,0,Web_Portal,APP-1840
+47,48769,11749,828,3.0,0,High School,Mortgage,1,Web_Portal,APP-1841
+27,73302,39595,389,24.0,0,Bachelor,Mortgage,0,Web_Portal,APP-1842
+60,43150,26121,791,31.0,3,Master,Rent,0,Web_Portal,APP-1843
+58,88247,38487,498,39.0,1,Bachelor,Mortgage,0,Web_Portal,APP-1844
+20,24853,29411,661,12.0,0,Bachelor,Rent,0,Web_Portal,APP-1845
+22,114613,34361,740,16.0,3,PhD,Rent,1,Web_Portal,APP-1846
+32,140900,22223,325,36.0,0,PhD,Mortgage,0,Web_Portal,APP-1847
+47,109399,8394,324,,2,PhD,Mortgage,0,Web_Portal,APP-1848
+76,41792,15056,693,18.0,4,High School,Mortgage,0,Web_Portal,APP-1849
+79,79129,29380,806,12.0,2,Bachelor,Rent,0,Web_Portal,APP-1850
+68,126019,27035,600,25.0,0,Bachelor,Own,1,Web_Portal,APP-1851
+44,94478,31620,638,13.0,1,High School,Mortgage,1,Web_Portal,APP-1852
+75,133811,20877,566,30.0,4,High School,Mortgage,0,Web_Portal,APP-1853
+52,134130,31911,760,3.0,2,High School,Mortgage,0,Web_Portal,APP-1854
+57,87298,33784,755,38.0,3,Bachelor,Rent,0,Web_Portal,APP-1855
+72,51987,4191,659,7.0,1,Bachelor,Rent,0,Web_Portal,APP-1856
+25,35850,34160,367,24.0,2,PhD,Own,1,Web_Portal,APP-1857
+77,32112,26000,711,12.0,3,PhD,Mortgage,0,Web_Portal,APP-1858
+63,141789,4631,790,31.0,0,Bachelor,Rent,0,Web_Portal,APP-1859
+64,44058,7172,348,37.0,3,PhD,Own,0,Web_Portal,APP-1860
+51,65420,24561,401,,2,High School,Mortgage,1,Web_Portal,APP-1861
+64,58890,25817,515,27.0,2,Master,Rent,0,Web_Portal,APP-1862
+66,86017,21281,737,29.0,0,PhD,Mortgage,0,Web_Portal,APP-1863
+40,67304,29671,458,2.0,3,Bachelor,Mortgage,0,Web_Portal,APP-1864
+35,52921,26364,788,27.0,3,PhD,Rent,0,Web_Portal,APP-1865
+73,125921,28425,541,2.0,0,PhD,Rent,0,Web_Portal,APP-1866
+40,21524,29602,304,33.0,3,PhD,Rent,0,Web_Portal,APP-1867
+30,120424,24253,660,15.0,0,Master,Mortgage,0,Web_Portal,APP-1868
+79,35048,24472,758,21.0,1,High School,Mortgage,0,Web_Portal,APP-1869
+56,55111,9080,547,31.0,2,Bachelor,Own,0,Web_Portal,APP-1870
+55,57904,8099,721,37.0,1,Master,Mortgage,0,Web_Portal,APP-1871
+54,74912,26431,314,7.0,4,Bachelor,Rent,0,Web_Portal,APP-1872
+38,54008,32186,421,7.0,4,Bachelor,Mortgage,0,Web_Portal,APP-1873
+39,20060,31111,576,5.0,4,Bachelor,Own,0,Web_Portal,APP-1874
+76,94666,23614,752,13.0,0,Master,Own,0,Web_Portal,APP-1875
+37,103559,27724,689,31.0,3,High School,Rent,1,Web_Portal,APP-1876
+66,75337,5940,593,34.0,1,Bachelor,Rent,0,Web_Portal,APP-1877
+60,130616,29758,745,9.0,1,High School,Own,0,Web_Portal,APP-1878
+68,33350,37224,509,2.0,1,High School,Own,0,Web_Portal,APP-1879
+33,44354,8788,601,11.0,1,PhD,Own,0,Web_Portal,APP-1880
+34,65186,29082,522,30.0,4,Master,Rent,0,Web_Portal,APP-1881
+50,48145,25034,302,28.0,1,Master,Own,1,Web_Portal,APP-1882
+20,54020,36479,817,4.0,3,PhD,Own,0,Web_Portal,APP-1883
+72,106123,12280,392,24.0,4,PhD,Rent,0,Web_Portal,APP-1884
+73,126667,19052,819,30.0,1,High School,Mortgage,0,Web_Portal,APP-1885
+73,95186,17531,727,20.0,0,Bachelor,Mortgage,0,Web_Portal,APP-1886
+22,105469,23804,792,19.0,2,Master,Own,0,Web_Portal,APP-1887
+35,40581,29903,534,38.0,2,Bachelor,Mortgage,0,Web_Portal,APP-1888
+42,108929,11142,460,21.0,2,Bachelor,Mortgage,0,Web_Portal,APP-1889
+76,43051,10866,630,3.0,4,PhD,Mortgage,0,Web_Portal,APP-1890
+30,71474,5531,632,,1,Bachelor,Mortgage,1,Web_Portal,APP-1891
+31,111748,39098,349,19.0,4,High School,Own,1,Web_Portal,APP-1892
+29,145995,39278,822,12.0,3,PhD,Mortgage,0,Web_Portal,APP-1893
+51,134618,29138,791,16.0,0,Bachelor,Mortgage,0,Web_Portal,APP-1894
+35,89626,28065,571,35.0,0,PhD,Rent,1,Web_Portal,APP-1895
+27,26960,30956,551,32.0,2,High School,Own,0,Web_Portal,APP-1896
+57,55772,11759,389,0.0,2,High School,Rent,0,Web_Portal,APP-1897
+31,41520,6439,745,14.0,2,Bachelor,Rent,1,Web_Portal,APP-1898
+43,69481,29270,631,12.0,1,PhD,Own,1,Web_Portal,APP-1899
+47,56408,14279,438,16.0,3,Bachelor,Mortgage,0,Web_Portal,APP-1900
+72,114006,24888,656,23.0,3,Bachelor,Rent,0,Web_Portal,APP-1901
+27,148496,18630,573,7.0,3,PhD,Own,0,Web_Portal,APP-1902
+77,77134,36144,318,26.0,3,Bachelor,Mortgage,0,Web_Portal,APP-1903
+47,40491,32182,610,22.0,2,High School,Own,0,Web_Portal,APP-1904
+55,21341,26538,453,7.0,0,PhD,Rent,0,Web_Portal,APP-1905
+45,64623,12824,689,7.0,2,PhD,Mortgage,0,Web_Portal,APP-1906
+27,110327,33125,559,25.0,3,PhD,Mortgage,0,Web_Portal,APP-1907
+77,20338,7979,424,12.0,2,PhD,Own,0,Web_Portal,APP-1908
+79,91431,27189,653,,3,Bachelor,Mortgage,0,Web_Portal,APP-1909
+69,32254,13504,572,36.0,4,Bachelor,Rent,0,Web_Portal,APP-1910
+47,71860,21669,544,27.0,0,High School,Rent,0,Web_Portal,APP-1911
+47,31344,7910,749,24.0,4,Master,Rent,1,Web_Portal,APP-1912
+56,21750,35964,546,15.0,1,Master,Own,0,Web_Portal,APP-1913
+60,74756,21131,819,1.0,2,High School,Mortgage,0,Web_Portal,APP-1914
+55,87957,26227,440,17.0,1,Master,Mortgage,1,Web_Portal,APP-1915
+46,125423,6978,661,16.0,2,High School,Mortgage,0,Web_Portal,APP-1916
+73,78053,22991,307,29.0,4,Bachelor,Rent,0,Web_Portal,APP-1917
+36,90855,18153,777,38.0,3,PhD,Mortgage,1,Web_Portal,APP-1918
+28,35896,34548,651,12.0,3,PhD,Rent,0,Web_Portal,APP-1919
+52,75761,4983,794,31.0,2,Bachelor,Mortgage,0,Web_Portal,APP-1920
+72,82552,10503,726,28.0,3,PhD,Rent,0,Web_Portal,APP-1921
+39,140075,30921,338,29.0,4,PhD,Mortgage,0,Web_Portal,APP-1922
+32,97454,17905,486,,3,Master,Own,1,Web_Portal,APP-1923
+47,146522,24953,392,12.0,4,Bachelor,Own,1,Web_Portal,APP-1924
+67,138681,27806,385,20.0,1,Master,Rent,0,Web_Portal,APP-1925
+48,110600,23168,343,29.0,4,Master,Rent,0,Web_Portal,APP-1926
+32,142732,5583,436,20.0,0,PhD,Mortgage,0,Web_Portal,APP-1927
+65,132153,39714,720,16.0,0,PhD,Mortgage,0,Web_Portal,APP-1928
+54,142926,12889,373,39.0,0,Bachelor,Own,0,Web_Portal,APP-1929
+25,47935,28413,847,18.0,2,PhD,Mortgage,0,Web_Portal,APP-1930
+37,57641,13275,811,14.0,2,PhD,Rent,0,Web_Portal,APP-1931
+70,49711,3461,455,8.0,2,Bachelor,Rent,0,Web_Portal,APP-1932
+24,90342,15291,554,9.0,4,PhD,Rent,0,Web_Portal,APP-1933
+66,126896,12435,470,30.0,2,Master,Rent,0,Web_Portal,APP-1934
+44,32182,28935,469,22.0,1,Bachelor,Rent,0,Web_Portal,APP-1935
+21,107833,34453,621,29.0,0,PhD,Own,0,Web_Portal,APP-1936
+29,76276,19544,755,32.0,4,High School,Own,0,Web_Portal,APP-1937
+75,39541,13258,454,,0,Bachelor,Rent,0,Web_Portal,APP-1938
+49,114457,31841,648,0.0,2,Bachelor,Mortgage,0,Web_Portal,APP-1939
+69,102310,11736,750,34.0,4,High School,Rent,0,Web_Portal,APP-1940
+78,64813,38643,472,10.0,3,PhD,Own,1,Web_Portal,APP-1941
+64,57198,35964,309,33.0,1,PhD,Rent,0,Web_Portal,APP-1942
+24,28820,29044,564,15.0,2,Bachelor,Own,0,Web_Portal,APP-1943
+74,44070,16997,737,8.0,2,Bachelor,Own,0,Web_Portal,APP-1944
+75,89768,15215,546,31.0,1,PhD,Rent,0,Web_Portal,APP-1945
+52,31122,34069,845,14.0,1,PhD,Rent,0,Web_Portal,APP-1946
+73,100559,24911,798,11.0,3,Master,Mortgage,1,Web_Portal,APP-1947
+20,93543,18030,428,32.0,2,Bachelor,Own,0,Web_Portal,APP-1948
+37,103441,30334,626,13.0,2,Bachelor,Mortgage,1,Web_Portal,APP-1949
+51,61786,15571,703,7.0,0,High School,Rent,1,Web_Portal,APP-1950
+66,114934,29927,658,7.0,4,Master,Own,0,Web_Portal,APP-1951
+68,119804,21714,316,26.0,4,PhD,Mortgage,0,Web_Portal,APP-1952
+30,26737,24387,573,11.0,0,Master,Mortgage,0,Web_Portal,APP-1953
+40,56062,29444,415,0.0,4,PhD,Mortgage,0,Web_Portal,APP-1954
+45,74237,20921,390,39.0,1,PhD,Rent,0,Web_Portal,APP-1955
+44,71571,14057,381,10.0,4,Master,Rent,0,Web_Portal,APP-1956
+41,45510,25858,623,38.0,4,Bachelor,Rent,0,Web_Portal,APP-1957
+78,39426,27062,413,30.0,0,PhD,Own,0,Web_Portal,APP-1958
+46,57265,37850,357,16.0,3,Master,Rent,0,Web_Portal,APP-1959
+68,37850,21567,453,32.0,4,High School,Own,0,Web_Portal,APP-1960
+32,138249,30739,703,31.0,4,Master,Mortgage,0,Web_Portal,APP-1961
+52,86150,4754,565,28.0,3,High School,Mortgage,0,Web_Portal,APP-1962
+53,107312,28044,614,20.0,0,PhD,Rent,0,Web_Portal,APP-1963
+60,109613,2724,340,20.0,3,Master,Mortgage,0,Web_Portal,APP-1964
+54,94910,2376,404,39.0,0,Master,Rent,1,Web_Portal,APP-1965
+20,72375,9706,492,,1,High School,Own,0,Web_Portal,APP-1966
+40,141826,9894,700,5.0,0,Master,Mortgage,0,Web_Portal,APP-1967
+67,55435,19037,577,21.0,1,Master,Rent,0,Web_Portal,APP-1968
+74,116443,19450,653,37.0,1,PhD,Mortgage,0,Web_Portal,APP-1969
+25,77132,17406,555,36.0,0,Master,Mortgage,0,Web_Portal,APP-1970
+47,98945,30725,398,7.0,2,Bachelor,Rent,0,Web_Portal,APP-1971
+36,102050,6926,581,34.0,0,High School,Mortgage,0,Web_Portal,APP-1972
+24,149828,10496,702,10.0,4,Master,Mortgage,0,Web_Portal,APP-1973
+50,115402,37068,408,23.0,4,High School,Mortgage,0,Web_Portal,APP-1974
+24,22983,30806,498,20.0,2,High School,Mortgage,0,Web_Portal,APP-1975
+57,117241,23663,602,1.0,1,High School,Own,0,Web_Portal,APP-1976
+22,40662,37495,626,39.0,2,Master,Mortgage,0,Web_Portal,APP-1977
+72,43510,23656,453,,4,Master,Mortgage,1,Web_Portal,APP-1978
+42,98187,26860,704,38.0,2,High School,Rent,0,Web_Portal,APP-1979
+56,60998,17832,761,27.0,0,Bachelor,Own,0,Web_Portal,APP-1980
+72,76846,39787,431,16.0,2,High School,Rent,0,Web_Portal,APP-1981
+56,114071,22727,383,5.0,1,Bachelor,Rent,0,Web_Portal,APP-1982
+29,26640,30545,698,18.0,0,High School,Rent,1,Web_Portal,APP-1983
+29,64547,3520,408,37.0,3,PhD,Own,0,Web_Portal,APP-1984
+38,74620,4081,520,27.0,4,High School,Rent,0,Web_Portal,APP-1985
+36,35317,35196,667,1.0,4,High School,Rent,0,Web_Portal,APP-1986
+40,135608,37735,446,37.0,2,Master,Rent,0,Web_Portal,APP-1987
+33,27564,15566,411,36.0,0,Bachelor,Mortgage,1,Web_Portal,APP-1988
+28,47345,15042,793,3.0,3,PhD,Rent,0,Web_Portal,APP-1989
+65,133824,26498,804,21.0,0,Bachelor,Own,1,Web_Portal,APP-1990
+20,114223,12329,774,25.0,4,PhD,Own,0,Web_Portal,APP-1991
+70,143372,32656,570,35.0,0,High School,Mortgage,0,Web_Portal,APP-1992
+64,99273,3159,720,12.0,3,Master,Own,0,Web_Portal,APP-1993
+32,94859,38900,666,31.0,2,Master,Own,1,Web_Portal,APP-1994
+23,100765,20363,579,16.0,1,Bachelor,Mortgage,0,Web_Portal,APP-1995
+20,130017,20033,582,35.0,0,Master,Rent,0,Web_Portal,APP-1996
+68,94038,11805,339,18.0,1,Bachelor,Mortgage,1,Web_Portal,APP-1997
+59,143618,36851,488,34.0,4,Bachelor,Rent,0,Web_Portal,APP-1998
+51,72393,27832,463,39.0,2,PhD,Rent,0,Web_Portal,APP-1999

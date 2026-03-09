@@ -10,6 +10,7 @@ from datetime import datetime
 import numpy as np
 import pandas as pd
 import streamlit as st
+import statsmodels.api as sm
 
 from tanml.models.registry import infer_task_from_target
 from tanml.ui.reports import _generate_ranking_report_docx
@@ -62,7 +63,8 @@ def render_feature_ranking_page(run_dir):
     # Still allow new upload if nothing loaded OR if user wants to override (maybe?)
     # For now, if nothing loaded, show uploader.
     if df is None:
-        st.info("Please upload your **Preprocessed Dataset** here to analyze feature importance.")
+
+
 
         STANDARD_TYPES = [
             "csv",
@@ -78,15 +80,9 @@ def render_feature_ranking_page(run_dir):
             "tsv",
         ]
 
-        allow_any = st.checkbox(
-            "Allow any file type",
-            help="Enable to upload files with non-standard extensions (e.g., .names from UCI).",
-            key="chk_rank_any_ext",
-        )
-
         upl = st.file_uploader(
             "Upload Preprocessed Dataset",
-            type=None if allow_any else STANDARD_TYPES,
+            type=STANDARD_TYPES,
             key="upl_rank_standalone",
         )
         if upl:
@@ -165,6 +161,11 @@ def render_feature_ranking_page(run_dir):
             ["Statistical Correlation", "XGBoost", "Decision Tree"],
             index=0,
             key="rank_method",
+        )
+        st.caption(
+            "*(Note: The 'Power' score depends on the Machine Learning method selected above. "
+            "The 'p-value', however, is calculated independently for each feature using "
+            "standard univariate statistical tests.)*"
         )
 
         # Calculate Metrics DataFrame
@@ -286,13 +287,66 @@ def render_feature_ranking_page(run_dir):
             # Normalize Power
             power = (importancia / importancia.max()) * 100
 
+            # --- Independent Statistical Encoding for p-values ---
+            X_stat_base = df_sub[contenders].copy()
+            y_stat_base = df_sub[target].copy()
+            
+            # 1. Fill NaNs (Numeric -> Mean, Cat -> "Missing")
+            for c in X_stat_base.columns:
+                if pd.api.types.is_numeric_dtype(X_stat_base[c]):
+                    X_stat_base[c] = X_stat_base[c].fillna(X_stat_base[c].mean()).fillna(0)
+                else:
+                    X_stat_base[c] = X_stat_base[c].fillna("Missing")
+
+            # 2. Encode Categoricals
+            for c in X_stat_base.select_dtypes(include=["object", "category"]).columns:
+                X_stat_base[c] = X_stat_base[c].astype(str).astype("category").cat.codes
+
+            if task_type == "classification" and not np.issubdtype(y_stat_base.dtype, np.number):
+                y_stat_base = y_stat_base.astype("category").cat.codes
+            elif task_type == "classification":
+                y_stat_base = y_stat_base.astype(int)
+
             for f in contenders:
                 # Safe get
                 p_val = power.get(f, 0) if isinstance(power, pd.Series) else 0
                 m_val = missing.get(f, 0) * 100
 
+                # 4. Statistical Significance (p-value calculation - Independent of ML model)
+                p_val_stat = 1.0
+                try:
+                    # Univariate test for ranking significance
+                    feat_data = X_stat_base[f].values
+                    # Add constant for intercept
+                    X_stat_input = sm.add_constant(feat_data)
+                    
+                    if task_type == "regression":
+                        res_stat = sm.OLS(y_stat_base.values, X_stat_input).fit()
+                        p_val_stat = res_stat.pvalues[1] if len(res_stat.pvalues) > 1 else 1.0
+                    else:
+                        # For classification, we use Logit if target is binary
+                        if y_stat_base.nunique() == 2:
+                            try:
+                                res_stat = sm.Logit(y_stat_base.values, X_stat_input).fit(disp=0)
+                                p_val_stat = res_stat.pvalues[1] if len(res_stat.pvalues) > 1 else 1.0
+                            except:
+                                # Fallback for convergence errors
+                                p_val_stat = 1.0
+                        else:
+                            # Multiclass target: ANOVA or similar would be better, but for now 
+                            # we avoid crashing and return neutral significance.
+                            p_val_stat = 1.0
+                except:
+                    # Catch-all for any other statistical errors
+                    p_val_stat = 1.0
+
                 # Metrics dict
-                row = {"Feature": f, "Power": p_val, "Missing %": m_val}
+                row = {
+                    "Feature": f, 
+                    "Power": p_val, 
+                    "p-value": p_val_stat,
+                    "Missing %": m_val
+                }
 
                 if task_type == "regression":
                     # Calculate signed correlation for regression
@@ -340,20 +394,33 @@ def render_feature_ranking_page(run_dir):
             st.altair_chart(chart, width="stretch")
 
             # B. The Table
-            st.markdown("### Metrics Metrics Board")
+            st.markdown("### Feature Metrics Board")
 
             # Formatter
-            fmt = {"Power": "{:.1f}", "Missing %": "{:.1f}%"}
+            fmt = {"Power": "{:.1f}", "Missing %": "{:.1f}%", "p-value": "{:.3e}"}
             if task_type == "regression":
                 fmt["Correlation"] = "{:.3f}"
-                subset = ["Power", "Correlation"]
+                subset = ["Power", "Correlation", "p-value"]
             else:
                 fmt["IV (Est)"] = "{:.3f}"
                 fmt["Gini (Est)"] = "{:.3f}"
-                subset = ["Power"]
+                subset = ["Power", "p-value"]
+
+            def color_p_value(val):
+                """Color specific significance thresholds."""
+                if val < 0.01:
+                    return 'background-color: rgba(34, 197, 94, 0.2); color: #15803d;' # Significant (Strong)
+                if val < 0.05:
+                    return 'background-color: rgba(34, 197, 94, 0.1); color: #166534;' # Significant
+                if val < 0.1:
+                    return 'background-color: rgba(234, 179, 8, 0.1); color: #854d0e;' # Borderline
+                return ''
 
             st.dataframe(
-                m_df.style.background_gradient(subset=subset, cmap="Blues").format(fmt),
+                m_df.style
+                .background_gradient(subset=["Power"], cmap="Blues")
+                .applymap(color_p_value, subset=["p-value"])
+                .format(fmt),
                 width="stretch",
             )
 

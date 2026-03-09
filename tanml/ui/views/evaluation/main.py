@@ -51,9 +51,8 @@ def render_model_evaluation_page(run_dir):
     """,
         unsafe_allow_html=True,
     )
-    st.caption(
-        "Upload independent Training and Testing datasets to strictly evaluate model performance."
-    )
+
+
 
     # === 1. DATA UPLOAD ===
     STANDARD_TYPES = [
@@ -70,18 +69,12 @@ def render_model_evaluation_page(run_dir):
         "tsv",
     ]
 
-    allow_any = st.checkbox(
-        "Allow any file type",
-        help="Enable to upload files with non-standard extensions (e.g., .names from UCI).",
-        key="chk_eval_any_ext",
-    )
-
     c_up1, c_up2 = st.columns(2)
     f_train = c_up1.file_uploader(
-        "Upload Training Data", type=None if allow_any else STANDARD_TYPES, key="eval_u_train"
+        "Upload Training Data", type=STANDARD_TYPES, key="eval_u_train"
     )
     f_test = c_up2.file_uploader(
-        "Upload Testing Data", type=None if allow_any else STANDARD_TYPES, key="eval_u_test"
+        "Upload Testing Data", type=STANDARD_TYPES, key="eval_u_test"
     )
 
     # Persist uploads
@@ -177,22 +170,77 @@ def render_model_evaluation_page(run_dir):
             y_test = df_test[target]
 
             try:
-                model = build_estimator(library, algo, hp)
-                model.fit(X_train, y_train)
-                st.success("Model Trained successfully!")
+                if library == "statsmodels":
+                    import statsmodels.api as sm
+                    import numpy as np
+                    import pandas as pd
 
-                y_pred_tr = model.predict(X_train)
-                y_pred_te = model.predict(X_test)
+                    class StatsModelsWrapper:
+                        def __init__(self, sm_model, algo, feats):
+                            self.sm_model = sm_model
+                            self.algo = algo
+                            self.feats = feats
+                            self.classes_ = np.array([0, 1]) if algo == "Logit" else None
+                        
+                        def _prep(self, X):
+                            import pandas as pd
+                            import statsmodels.api as sm
+                            if not isinstance(X, pd.DataFrame):
+                                X = pd.DataFrame(X, columns=self.feats)
+                            return sm.add_constant(X, has_constant='add')
 
-                # Get probabilities if available
-                y_prob_tr = None
-                y_prob_te = None
-                if hasattr(model, "predict_proba") and task_type == "classification":
-                    try:
-                        y_prob_tr = model.predict_proba(X_train)[:, 1]
-                        y_prob_te = model.predict_proba(X_test)[:, 1]
-                    except:
-                        pass
+                        def predict(self, X):
+                            X_sm = self._prep(X)
+                            pred = self.sm_model.predict(X_sm)
+                            if self.algo == "Logit":
+                                return (pred >= 0.5).astype(int)
+                            return pred
+                            
+                        def predict_proba(self, X):
+                            import numpy as np
+                            if self.algo != "Logit":
+                                raise AttributeError("Not a classifier")
+                            X_sm = self._prep(X)
+                            pred = np.array(self.sm_model.predict(X_sm))
+                            return np.vstack([1 - pred, pred]).T
+
+                    X_tr_sm = sm.add_constant(X_train)
+                    if algo == "Logit":
+                        sm_model = sm.Logit(y_train, X_tr_sm).fit(disp=0)
+                    else:
+                        sm_model = sm.OLS(y_train, X_tr_sm).fit()
+
+                    model = StatsModelsWrapper(sm_model, algo, features)
+                    st.success("Statsmodels Model Trained successfully!")
+
+                    y_pred_tr = model.predict(X_train)
+                    y_pred_te = model.predict(X_test)
+
+                    y_prob_tr = None
+                    y_prob_te = None
+                    if task_type == "classification":
+                        try:
+                            y_prob_tr = model.predict_proba(X_train)[:, 1]
+                            y_prob_te = model.predict_proba(X_test)[:, 1]
+                        except:
+                            pass
+                else:
+                    model = build_estimator(library, algo, hp)
+                    model.fit(X_train, y_train)
+                    st.success("Model Trained successfully!")
+
+                    y_pred_tr = model.predict(X_train)
+                    y_pred_te = model.predict(X_test)
+
+                    # Get probabilities if available
+                    y_prob_tr = None
+                    y_prob_te = None
+                    if hasattr(model, "predict_proba") and task_type == "classification":
+                        try:
+                            y_prob_tr = model.predict_proba(X_train)[:, 1]
+                            y_prob_te = model.predict_proba(X_test)[:, 1]
+                        except:
+                            pass
 
                 # Save to session state
                 st.session_state["eval_chk_model"] = model
@@ -315,6 +363,11 @@ def render_model_evaluation_page(run_dir):
                     "benchmark_images": benchmark_imgs,
                     "explainability": context.results.get("explainability"),
                 }
+                
+                # Attach statsmodels inference if present
+                if "statsmodels_inference" in context.results:
+                    eval_data["statsmodels_inference"] = context.results["statsmodels_inference"]
+                    
                 report_bytes = _generate_eval_report_docx(eval_data)
 
                 st.download_button(

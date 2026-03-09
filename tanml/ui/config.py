@@ -88,10 +88,10 @@ def get_custom_css() -> str:
     
     /* Card styling - Merged Base */
     .tanml-card {
-        background: white;
+        background: transparent;
+        border: 1px solid rgba(128, 128, 128, 0.2);
         border-radius: 0.5rem;
         padding: 1rem;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         margin-bottom: 1rem;
     }
     
@@ -101,37 +101,16 @@ def get_custom_css() -> str:
         font-weight: 600;
         margin-bottom: 1rem;
         padding-bottom: 0.5rem;
-        border-bottom: 2px solid #e5e7eb;
+        border-bottom: 2px solid rgba(128, 128, 128, 0.2);
     }
     
     /* Status badges */
     .tanml-badge-ok { background-color: #dcfce7; color: #166534; padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem; font-weight: 500; }
-    .tanml-badge-warning { background-color: #fef3c7; color: #92400e; padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem; font-weight: 500; }
-    .tanml-badge-error { background-color: #fecaca; color: #991b1b; padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem; font-weight: 500; }
     
-    /* Metric tables */
-    .tanml-metrics-table td { padding: 0.5rem; border-bottom: 1px solid #e5e7eb; }
-    .tanml-metrics-table th { padding: 0.5rem; background-color: #f9fafb; font-weight: 600; text-align: left; }
+    /* Hide Streamlit Deploy button and Three-Dots Menu */
+    .stDeployButton {display: none !important;}
+    #MainMenu {visibility: hidden !important;}
     
-    /* Hide Streamlit branding */
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    
-    /* Custom scrollbar */
-    ::-webkit-scrollbar { width: 8px; height: 8px; }
-    ::-webkit-scrollbar-track { background: #f1f1f1; }
-    ::-webkit-scrollbar-thumb { background: #888; border-radius: 4px; }
-    ::-webkit-scrollbar-thumb:hover { background: #555; }
-    
-    /* --- APP SPECIFIC STYLES (Merged from app.py) --- */
-    
-    /* Global Background */
-    .stApp {
-        background-color: #f8fafc; /* Slate-50 */
-        color: #0f172a; /* Slate-900 - Force dark text on light bg for Dark Mode users */
-    }
-    
-    /* Layout Fixes */
     .block-container {
         padding-top: 1rem !important; 
         padding-bottom: 2rem !important;
@@ -141,7 +120,16 @@ def get_custom_css() -> str:
     header[data-testid="stHeader"] {
         background-color: transparent;
         height: 3rem;
+        visibility: hidden !important;
     }
+    
+    /* Custom scrollbar */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: rgba(128, 128, 128, 0.1); }
+    ::-webkit-scrollbar-thumb { background: rgba(128, 128, 128, 0.3); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(128, 128, 128, 0.5); }
+    
+    /* --- APP SPECIFIC STYLES --- */
     
     /* Typography */
     html, body, [class*="css"] {
@@ -182,48 +170,35 @@ def get_custom_css() -> str:
         background-color: #1d4ed8;
         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     }
-    div.stButton > button:first-child:disabled {
-        background-color: #cbd5e1;
-        color: #94a3b8;
-        cursor: not-allowed;
-    }
     
-    /* File Uploader Container */
-    [data-testid='stFileUploader'] {
-        background-color: #ffffff;
-        border: 1px solid #e2e8f0;
-        border-radius: 8px;
-        padding: 1rem;
-        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-    }
-    
-    /* Enhanced Card Styling */
+    /* Container styling with subtle borders instead of hard backgrounds */
     [data-testid="stVerticalBlockBorderWrapper"] {
-        background-color: white;
-        border: 1px solid #e2e8f0;
+        border: 1px solid rgba(128, 128, 128, 0.2);
         border-radius: 12px;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         padding: 2rem;
     }
     
     /* Task Badges */
     .task-badge {
-        background-color: #dbeafe;
-        color: #1e40af;
+        background-color: rgba(37, 99, 235, 0.1);
+        color: #2563eb;
         padding: 4px 12px;
         border-radius: 16px;
         font-size: 0.85rem;
         font-weight: 600;
         display: inline-block;
-        border: 1px solid #bfdbfe;
+        border: 1px solid rgba(37, 99, 235, 0.3);
     }
     
-    /* Success/Info boxes - Make them flatter */
-    .stAlert {
-        border-radius: 6px;
-        border: none;
-        box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05);
+    /* Dark Mode specific overrides */
+    @media (prefers-color-scheme: dark) {
+        .task-badge {
+            background-color: rgba(96, 165, 250, 0.2);
+            color: #60a5fa;
+            border-color: rgba(96, 165, 250, 0.4);
+        }
     }
+    </style>
     </style>
     """
 
