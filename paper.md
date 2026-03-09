@@ -78,7 +78,7 @@ The application is divided into distinct execution layers, designed to mirror th
 
 Figure 1 illustrates the modular workflow of TanML, including the main stages from data profiling and preprocessing to evaluation and reporting.
 
-![High-level modular workflow of TanML, from data profiling and preprocessing to evaluation and reporting.](architecture.png)
+![](architecture.png)
 
 
 
