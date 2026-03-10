@@ -158,12 +158,21 @@ def _render_rich_profile(df):
             try:
                 arr = df[num_sel].dropna()
 
-                # Outlier Filtering Toggle
-                hide_outliers = st.checkbox(
-                    "Hide Outliers (Standard 1.5 IQR)",
-                    key=f"hide_out_{num_sel}",
-                    help="Removes extreme values to show the core distribution better.",
-                )
+                # Axis Controls: Log Scale & Outlier Filtering
+                c_ctrl1, c_ctrl2 = st.columns(2)
+                with c_ctrl1:
+                    log_scale = st.toggle(
+                        "Logarithmic Scale (Y-axis)",
+                        key=f"log_{num_sel}",
+                        help="Apply log transformation to the Y-axis to better visualize skewed data.",
+                    )
+                with c_ctrl2:
+                    hide_outliers = st.checkbox(
+                        "Hide Outliers (1.5 IQR)",
+                        key=f"hide_out_{num_sel}",
+                        help="Removes extreme values to show the core distribution better.",
+                    )
+                
                 if hide_outliers and len(arr) > 0:
                     q1 = arr.quantile(0.25)
                     q3 = arr.quantile(0.75)
@@ -183,6 +192,8 @@ def _render_rich_profile(df):
                     st.caption("Histogram")
                     fig_hist, ax_hist = plt.subplots(figsize=(5, 4))
                     ax_hist.hist(arr, bins=30, edgecolor="black", alpha=0.7, color="steelblue")
+                    if log_scale:
+                        ax_hist.set_yscale("log")
                     ax_hist.set_xlabel(num_sel, fontsize=10)
                     ax_hist.set_ylabel("Frequency", fontsize=10)
                     ax_hist.xaxis.set_major_formatter(plt.FuncFormatter(lambda x, p: f"{x:.2f}"))
@@ -376,36 +387,16 @@ def render_data_profiling_hub(run_dir):
     """,
         unsafe_allow_html=True,
     )
-    st.caption("Upload any dataset to generate a comprehensive data quality profile.")
+
 
     # 1. State Management for Profiling Data
     if "df_profiling" not in st.session_state:
         st.session_state["df_profiling"] = None
 
+
     # 2. Upload Logic
-    # Standard extensions for data files
-    STANDARD_TYPES = [
-        "csv",
-        "xlsx",
-        "xls",
-        "parquet",
-        "dta",
-        "sav",
-        "sas7bdat",
-        "data",
-        "test",
-        "txt",
-        "tsv",
-    ]
-
-    allow_any = st.checkbox(
-        "Allow any file type",
-        help="Enable this to upload files with non-standard extensions (e.g., .names, .info from UCI). TanML will attempt to parse them as tabular data.",
-        key="chk_prof_any_ext",
-    )
-
     upl = st.file_uploader(
-        "Upload Dataset", type=None if allow_any else STANDARD_TYPES, key="upl_prof_unified"
+        "Upload Dataset", type=None, key="upl_prof_unified"
     )
     if upl:
         path = _save_upload(upl, run_dir)

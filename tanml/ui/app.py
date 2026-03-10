@@ -54,6 +54,31 @@ _LOGO_PATH = Path(__file__).parent / "assets" / "logo.png"
 
 
 def main():
+    # Handle direct links from dashboard tiles via query parameters
+    # Handle direct links from dashboard tiles via query parameters
+    if "page" in st.query_params:
+        target_page = st.query_params["page"]
+        valid_pages = [
+            "Data Profiling", 
+            "Data Preprocessing", 
+            "Feature Power Ranking", 
+            "Model Development", 
+            "Model Evaluation"
+        ]
+        if target_page in valid_pages:
+            st.session_state.nav_selection = target_page
+            # Clearing query params helps avoid loops on rerun
+            st.query_params.clear()
+            st.rerun()
+
+    # Handle programmatic navigation (internal session state)
+    if "requested_page" in st.session_state:
+        st.session_state.nav_selection = st.session_state.pop("requested_page")
+
+    # Initialize navigation state
+    if "nav_selection" not in st.session_state:
+        st.session_state.nav_selection = "Home"
+
     st.set_page_config(page_title="TanML", layout="wide")
     load_css()  # Inject styles
 
@@ -78,6 +103,7 @@ def main():
                 "Model Development",
                 "Model Evaluation",
             ],
+            key="nav_selection",
         )
 
         st.markdown("---")

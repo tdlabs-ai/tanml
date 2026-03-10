@@ -1,21 +1,26 @@
 # tanml/analysis/drift.py
 """
-Feature drift analysis module.
+Feature drift analysis module for internal and external validation.
 
-Provides PSI (Population Stability Index) and KS (Kolmogorov-Smirnov)
-statistics for detecting distribution shifts between train and test data.
+This module provides statistical tools to detect whether the distribution of
+machine learning features has changed between two points in time or between
+two datasets (e.g., Training vs. Serving).
+
+Key Metrics:
+    - PSI (Population Stability Index): A single number indicating the
+      magnitude of the shift.
+    - KS Test (Kolmogorov-Smirnov): A non-parametric test to determine if
+      two samples come from different distributions.
 
 Example:
-    from tanml.analysis.drift import analyze_drift
-
-    drift_results = analyze_drift(
-        train_df=X_train,
-        test_df=X_test,
-        numeric_cols=["age", "income", "score"],
-    )
-
-    for col, metrics in drift_results.items():
-        print(f"{col}: PSI={metrics['psi']:.3f}, KS={metrics['ks']:.3f}")
+    >>> import pandas as pd
+    >>> from tanml.analysis.drift import analyze_drift
+    >>>
+    >>> # Compare Training and Serving data
+    >>> results = analyze_drift(train_df, serving_df)
+    >>> for col, metrics in results.items():
+    ...     if metrics["has_drift"]:
+    ...         print(f"Drift detected in {col}: PSI={metrics['psi']:.3f}")
 """
 
 from __future__ import annotations
@@ -116,26 +121,29 @@ def analyze_drift(
     ks_threshold: float = 0.05,
 ) -> dict[str, dict[str, Any]]:
     """
-    Analyze feature drift between training and test datasets.
+    Perform a comprehensive drift analysis on all continuous features.
+
+    This function iterates through the numeric columns, calculates both
+    PSI and KS statistics, and flags features that exceed regulatory or
+    statistical thresholds.
 
     Args:
-        train_df: Training dataset
-        test_df: Test dataset
-        numeric_cols: List of numeric columns to analyze (auto-detected if None)
-        psi_threshold: PSI threshold for flagging drift
-        ks_threshold: KS p-value threshold for flagging drift
+        train_df: The baseline/reference dataset (e.g., historical training data).
+        test_df: The target dataset to check for drift (e.g., current production batch).
+        numeric_cols: List of columns to analyze. If None, all numeric columns
+            common to both datasets will be checked.
+        psi_threshold: The PSI value above which drift is considered "moderate".
+            Default is 0.1.
+        ks_threshold: The p-value below which the KS test is considered
+            statistically significant (identifying a difference). Default is 0.05.
 
     Returns:
-        Dictionary with drift metrics for each column:
-        {
-            "column_name": {
-                "psi": float,
-                "ks_statistic": float,
-                "ks_pvalue": float,
-                "has_drift": bool,
-                "drift_level": "none" | "moderate" | "severe"
-            }
-        }
+        A dictionary mapping column names to their drift metadata:
+            - `psi`: The calculated Population Stability Index.
+            - `ks_statistic`: The Kolmogorov-Smirnov distance.
+            - `ks_pvalue`: The p-value from the KS test.
+            - `has_drift`: Boolean flag if PSI >= psi_threshold.
+            - `drift_level`: String enum ("none", "moderate", "severe").
     """
     if numeric_cols is None:
         numeric_cols = train_df.select_dtypes(include=[np.number]).columns.tolist()

@@ -24,37 +24,20 @@ Launch the dashboard to begin:
 tanml ui
 ```
 
-### 1. Data Ingestion
-The first step is loading your data. TanML supports **CSV** and **Parquet** formats.
-- **Upload**: Drop your training and testing datasets into the upload area.
-- **Target Selection**: Identify the column you want to predict. TanML will automatically infer if it is a **Classification** or **Regression** task.
+### Step 1: Understand Your Data (Data Profiling)
+Start by uploading your raw dataset (**CSV** or **Parquet** format). Once you select your **Target Variable**, TanML will automatically analyze your data quality onscreen, identifying missing values, highlighting outliers, and visualizing the distribution of each variable to provide a baseline understanding of your data.
 
-### 2. Data Profiling
-Before modeling, you must understand your distributions.
-- Navigate to the **Profiling** tab to see descriptive statistics and histograms for every feature.
-- Look for outliers, data quality issues, or unexpected shifts that might impact model performance.
+### Step 2: Clean & Split (Data Preprocessing)
+Raw data often requires preparation before modeling. Upload your dataset to apply imputation strategies for missing values and encode text categories. Then, use the built-in **Data Splitter** at the bottom of the page to divide your cleaned dataset into a dedicated *Training Set* (for model learning) and an independent *Testing Set* (for final validation). You can export and download these datasets for the next steps.
 
-### 3. Preprocessing
-TanML simplifies data cleaning for tabular ML.
-- **Null Handling**: View missing value counts and apply automated imputation (Mean/Median for numeric, Mode for categorical).
-- **Encoding**: Automatically convert categorical text into model-ready numeric formats.
+### Step 3: Analyze Features (Feature Power Ranking)
+Upload your newly created *Training Set*. TanML will mathematically rank your features onscreen to identify which ones show predictive power for your target variable, and which ones are statistically insignificant. Use these insights to drop low-ranking features and streamline your dataset. **Click 'Generate Feature Report'** to download a detailed report of your variables.
 
-### 4. Feature Power Ranking
-Identify which features actually drive your model.
-- The **Ranking** tab uses mutual information and correlation analysis to rank features by their predictive strength.
-- Use this to prune "noise" features and focus your validation on the most influential variables.
+### Step 4: Build & Iterate (Model Development)
+Upload your optimized *Training Set* and experiment with different algorithms, from classical regressions to tree-based models. TanML handles Cross-Validation in the background to ensure your model learns the underlying patterns, helping you identify the best performing configuration. **Click 'Generate Development Report'** to download a comprehensive summary of your model's performance.
 
-### 5. Benchmark & Evaluation
-Train a high-performance benchmark (XGBoost/LightGBM) to establish a baseline.
-- **Performance**: View ROC curves, Precision-Recall charts, and Confusion Matrices.
-- **Drift**: Calculate the **Population Stability Index (PSI)** to see if your test data has shifted away from your training data.
-- **XAI**: Generate **SHAP** beeswarm plots to see *why* the model is making specific decisions.
-
-### 6. Reporting
-The final and most critical step for compliance.
-- Click **Generate Report** in the sidebar.
-- TanML programmatically builds a professional **.docx** file containing all charts, metrics, and data summaries.
-- This report is ready-to-edit for your Model Risk Management (MRM) or audit folder.
+### Step 5: Validate Performance (Model Evaluation)
+Once you have selected a model configuration from Step 4, upload your original *Training Set* alongside your unseen *Testing Set*. TanML will evaluate your final model onscreen to check how well it generalizes to unseen data, monitor for Data Drift, and generate Explainability (SHAP) plots to help interpret the results. **Click 'Generate Evaluation Report'** to download a complete, audit-ready document proving your final model's real-world readiness.
 
 ---
 

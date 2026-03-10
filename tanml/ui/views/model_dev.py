@@ -62,7 +62,8 @@ def render_model_development_page(run_dir):
     """,
         unsafe_allow_html=True,
     )
-    st.write("Upload a dedicated Development Dataset to experiment with models.")
+
+
 
     # 1. Dedicated Upload
     STANDARD_TYPES = [
@@ -79,15 +80,9 @@ def render_model_development_page(run_dir):
         "tsv",
     ]
 
-    allow_any = st.checkbox(
-        "Allow any file type",
-        help="Enable to upload files with non-standard extensions (e.g., .names from UCI).",
-        key="chk_dev_any_ext",
-    )
-
     upl = st.file_uploader(
         "Upload Model Development Dataset",
-        type=None if allow_any else STANDARD_TYPES,
+        type=STANDARD_TYPES,
         key="upl_dev",
     )
     df_dev = None
@@ -185,9 +180,6 @@ def render_model_development_page(run_dir):
     # 3. Execution (Compute & Store)
     if st.button("Run Development Experiments", type="primary"):
         try:
-            # Build estimator
-            model = build_estimator(library, algo, hp)
-
             # --- Robust Data Prep ---
             # 1. subset to features + target
             temp_df = df_dev[[*features, target]].copy()
@@ -208,38 +200,173 @@ def render_model_development_page(run_dir):
             X = temp_df[features]
             y = temp_df[target]
 
-            with st.status("Running Experiments...", expanded=True) as status:
-                st.write(f"Running {n_folds}-Fold Cross-Validation (×{n_repeats} repeats)...")
-                stats = _run_repeated_cv(
-                    model, X, y, task_type, n_splits=n_folds, n_repeats=n_repeats
+            if library == "statsmodels":
+                import statsmodels.api as sm
+                from sklearn.model_selection import KFold, StratifiedKFold
+                from sklearn.metrics import (
+                    mean_squared_error, r2_score, accuracy_score, precision_score, 
+                    recall_score, f1_score, roc_auc_score, log_loss, average_precision_score, 
+                    balanced_accuracy_score, brier_score_loss, matthews_corrcoef, 
+                    mean_absolute_error, median_absolute_error, roc_curve, precision_recall_curve
                 )
 
-                st.write("Training Final Model...")
-                model.fit(X, y)
-                y_pred = model.predict(X)
-                y_prob = None
-                if hasattr(model, "predict_proba"):
-                    try:
-                        y_prob = model.predict_proba(X)[:, 1]
-                    except:
-                        pass
+                X_sm = sm.add_constant(X)
+                
+                with st.status("Running statsmodels Experiments...", expanded=True) as status:
+                    # 1. Cross-Validation
+                    st.write(f"Running manual {n_folds}-Fold CV...")
+                    if task_type == "classification":
+                        cv = StratifiedKFold(n_splits=n_folds, shuffle=True, random_state=42)
+                    else:
+                        cv = KFold(n_splits=n_folds, shuffle=True, random_state=42)
+                    
+                    cv_scores = {}
+                    def _add_score(k, v):
+                        cv_scores.setdefault(k, []).append(v)
+                    
+                    oof_y_true = []
+                    oof_y_pred = []
+                    oof_y_prob = []
+                    y_probs_folds = []
+                    y_trues_folds = []
+                    curves = {"roc": [], "pr": []}
 
-                status.update(label="Experiments Complete!", state="complete", expanded=False)
+                    for train_idx, test_idx in cv.split(X_sm, y):
+                        X_tr, X_val = X_sm.iloc[train_idx], X_sm.iloc[test_idx]
+                        y_tr, y_val = y.iloc[train_idx], y.iloc[test_idx]
+                        
+                        if algo == "Logit":
+                            m_fold = sm.Logit(y_tr, X_tr).fit(disp=0)
+                            y_prob_f = m_fold.predict(X_val)
+                            y_pred_f = (y_prob_f >= 0.5).astype(int)
+                            _add_score("accuracy", accuracy_score(y_val, y_pred_f))
+                            _add_score("precision", precision_score(y_val, y_pred_f, zero_division=0))
+                            _add_score("recall", recall_score(y_val, y_pred_f, zero_division=0))
+                            _add_score("f1", f1_score(y_val, y_pred_f, zero_division=0))
+                            _add_score("roc_auc", roc_auc_score(y_val, y_prob_f))
+                            _add_score("log_loss", log_loss(y_val, y_prob_f))
+                            _add_score("bal_acc", balanced_accuracy_score(y_val, y_pred_f))
+                            _add_score("mcc", matthews_corrcoef(y_val, y_pred_f))
+                            _add_score("brier", brier_score_loss(y_val, y_prob_f))
+                            _add_score("gini", 2 * roc_auc_score(y_val, y_prob_f) - 1)
+                            _add_score("pr_auc", average_precision_score(y_val, y_prob_f))
+                            
+                            try:
+                                p0 = y_prob_f[y_val == 0]
+                                p1 = y_prob_f[y_val == 1]
+                                from scipy.stats import ks_2samp
+                                _add_score("ks", ks_2samp(p0, p1).statistic)
+                            except: pass
 
-            # Save Results to Session State (Persist)
-            st.session_state["dev_results"] = {
-                "stats": stats,
-                "model": model,
-                "X": X,
-                "y": y,
-                "task_type": task_type,
-                "target": target,
-                "features": features,
-                "y_pred": y_pred,
-                "y_prob": y_prob,
-                "config": {"library": library, "algorithm": algo, "hp": hp},
-                "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            }
+                            try:
+                                fpr, tpr, th_roc = roc_curve(y_val, y_prob_f)
+                                curves["roc"].append((fpr, tpr, th_roc))
+                            except: pass
+                            try:
+                                prec, rec, th_pr = precision_recall_curve(y_val, y_prob_f)
+                                curves["pr"].append((rec, prec, th_pr))
+                            except: pass
+
+                            oof_y_prob.extend(y_prob_f.tolist())
+                            y_probs_folds.append(y_prob_f.tolist())
+                            y_trues_folds.append(y_val.tolist())
+                        else: # OLS
+                            m_fold = sm.OLS(y_tr, X_tr).fit()
+                            y_pred_f = m_fold.predict(X_val)
+                            _add_score("rmse", np.sqrt(mean_squared_error(y_val, y_pred_f)))
+                            _add_score("r2", r2_score(y_val, y_pred_f))
+                            _add_score("mae", np.mean(np.abs(y_val - y_pred_f)))
+                            _add_score("median_ae", median_absolute_error(y_val, y_pred_f))
+                        
+                        oof_y_true.extend(y_val.tolist())
+                        oof_y_pred.extend(y_pred_f.tolist())
+                    
+                    stats = {}
+                    for k, vals in cv_scores.items():
+                        arr = np.array(vals)
+                        stats[k] = {
+                            "mean": float(np.mean(arr)),
+                            "std": float(np.std(arr)),
+                            "p05": float(np.percentile(arr, 5)),
+                            "p50": float(np.median(arr)),
+                            "p95": float(np.percentile(arr, 95)),
+                            "min": float(np.min(arr)),
+                            "max": float(np.max(arr)),
+                            "raw": vals
+                        }
+                    stats["oof"] = {"y_true": oof_y_true, "y_pred": oof_y_pred}
+                    if oof_y_prob:
+                        stats["oof"]["y_prob"] = oof_y_prob
+                    if curves["roc"] or curves["pr"]:
+                        stats["curves"] = curves
+                    if y_probs_folds:
+                        stats["y_probs"] = y_probs_folds
+                        stats["y_trues"] = y_trues_folds
+
+                    # 2. Final Fit
+                    st.write("Fitting Final Inference Model...")
+                    if algo == "Logit":
+                        model = sm.Logit(y, X_sm).fit(disp=0)
+                        y_prob = model.predict(X_sm)
+                        y_pred = (y_prob >= 0.5).astype(int)
+                    else:
+                        model = sm.OLS(y, X_sm).fit()
+                        y_pred = model.predict(X_sm)
+                        y_prob = None
+                    
+                    status.update(label="statsmodels Complete!", state="complete", expanded=False)
+
+                # Specialized Result Storage
+                st.session_state["dev_results"] = {
+                    "stats": stats,
+                    "model": model,
+                    "sm_results": model,  # Store results object for summary()
+                    "X": X_sm,
+                    "y": y,
+                    "task_type": task_type,
+                    "target": target,
+                    "features": features,
+                    "y_pred": y_pred,
+                    "y_prob": y_prob,
+                    "config": {"library": library, "algorithm": algo, "hp": hp},
+                    "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                }
+
+            else:
+                # Original sklearn path
+                model = build_estimator(library, algo, hp)
+                with st.status("Running Experiments...", expanded=True) as status:
+                    st.write(f"Running {n_folds}-Fold Cross-Validation (×{n_repeats} repeats)...")
+                    stats = _run_repeated_cv(
+                        model, X, y, task_type, n_splits=n_folds, n_repeats=n_repeats
+                    )
+
+                    st.write("Training Final Model...")
+                    model.fit(X, y)
+                    y_pred = model.predict(X)
+                    y_prob = None
+                    if hasattr(model, "predict_proba"):
+                        try:
+                            y_prob = model.predict_proba(X)[:, 1]
+                        except:
+                            pass
+
+                    status.update(label="Experiments Complete!", state="complete", expanded=False)
+
+                # Save Results to Session State (Persist)
+                st.session_state["dev_results"] = {
+                    "stats": stats,
+                    "model": model,
+                    "X": X,
+                    "y": y,
+                    "task_type": task_type,
+                    "target": target,
+                    "features": features,
+                    "y_pred": y_pred,
+                    "y_prob": y_prob,
+                    "config": {"library": library, "algorithm": algo, "hp": hp},
+                    "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                }
         except Exception as e:
             msg = str(e)
             st.error("❌ **Experiment Failed**")
@@ -368,7 +495,7 @@ def render_model_development_page(run_dir):
 
                     # --- CV ROW 1: ROC & PR ---
                     with c_d1:
-                        if "roc" in stats["curves"]:
+                        if "curves" in stats and "roc" in stats["curves"]:
                             data_roc = [(item[0], item[1]) for item in stats["curves"]["roc"]]
                             fig = _plot_spaghetti(data_roc, "ROC Curve", "FPR", "TPR", mode="roc")
                             fig.axes[0].plot([0, 1], [0, 1], "r--")
@@ -381,7 +508,7 @@ def render_model_development_page(run_dir):
                             plt.close(fig)
 
                     with c_d2:
-                        if "pr" in stats["curves"]:
+                        if "curves" in stats and "pr" in stats["curves"]:
                             data_pr = [(item[0], item[1]) for item in stats["curves"]["pr"]]
                             fig = _plot_spaghetti(
                                 data_pr, "PR Curve", "Recall", "Precision", mode="pr"
@@ -399,7 +526,7 @@ def render_model_development_page(run_dir):
 
                     with c_d3:
                         # F1 Curve
-                        if "pr" in stats["curves"]:
+                        if "curves" in stats and "pr" in stats["curves"]:
                             data_f1 = []
                             for rec, prec, th in stats["curves"]["pr"]:
                                 with np.errstate(divide="ignore", invalid="ignore"):
@@ -681,6 +808,80 @@ def render_model_development_page(run_dir):
         st.divider()
         st.subheader("2. Final Model Evaluation")
 
+        # --- statsmodels Inference Section ---
+        if res["config"].get("library") == "statsmodels":
+            sm_res = res.get("sm_results")
+            if sm_res:
+                st.markdown("### 🔬 Statistical Inference")
+                
+                # Coefficients Tab
+                t_coef, t_summ, t_odds = st.tabs(["📊 Coefficients", "📝 Model Summary", "🎲 Odds Ratios" if task_type == "classification" else "N/A"])
+                
+                with t_coef:
+                    st.write("**Model Coefficients & Significance**")
+                    df_coef = pd.DataFrame({
+                        "Coef.": sm_res.params,
+                        "Std.Err.": sm_res.bse,
+                        "t/z": sm_res.tvalues if hasattr(sm_res, "tvalues") else sm_res.pvalues, # fallback
+                        "P > |t/z|": sm_res.pvalues,
+                        "[0.025": sm_res.conf_int()[0],
+                        "0.975]": sm_res.conf_int()[1]
+                    })
+                    def color_p_value(val):
+                        """Color specific significance thresholds."""
+                        if val < 0.01:
+                            return 'background-color: rgba(34, 197, 94, 0.2); color: #15803d;' # Significant (Strong)
+                        if val < 0.05:
+                            return 'background-color: rgba(34, 197, 94, 0.1); color: #166534;' # Significant
+                        if val < 0.1:
+                            return 'background-color: rgba(234, 179, 8, 0.1); color: #854d0e;' # Borderline
+                        return ''
+
+                    st.dataframe(df_coef.style.format("{:.4f}").applymap(
+                        color_p_value, subset=["P > |t/z|"]
+                    ))
+                    st.caption("Significance: Strong Green (< 0.01), Green (< 0.05), Yellow (< 0.10)")
+                
+                with t_summ:
+                    st.write("**Model Fit Indices**")
+                    summ_data = {
+                        "Observations (Nobs)": sm_res.nobs,
+                        "AIC": sm_res.aic,
+                        "BIC": sm_res.bic,
+                        "Log-Likelihood": sm_res.llf,
+                    }
+                    if task_type == "regression":
+                        summ_data["R-squared"] = sm_res.rsquared
+                        summ_data["Adj. R-squared"] = sm_res.rsquared_adj
+                        summ_data["F-statistic"] = sm_res.fvalue
+                        summ_data["Prob (F-statistic)"] = sm_res.f_pvalue
+                    else: # classification
+                        summ_data["Pseudo R-squared"] = sm_res.prsquared
+                        summ_data["LLR p-value"] = sm_res.llr_pvalue
+                    
+                    st.json(summ_data)
+
+                if task_type == "classification":
+                    with t_odds:
+                        st.write("**Odds Ratios (exp(Coef))**")
+                        or_df = pd.DataFrame({
+                            "Odds Ratio": np.exp(sm_res.params),
+                            "Lower 95%": np.exp(sm_res.conf_int()[0]),
+                            "Upper 95%": np.exp(sm_res.conf_int()[1])
+                        })
+                        st.dataframe(or_df.style.format("{:.4f}"))
+                        st.info("Odds Ratio interpretaton: A unit increase in X increases the odds of Y by a factor of the Odds Ratio.")
+                
+                # Update Report Payload for statsmodels
+                sm_payload = {
+                    "coef_table": df_coef.to_dict(orient="index"),
+                    "summary_stats": summ_data,
+                }
+                if task_type == "classification":
+                    sm_payload["odds_ratios"] = or_df.to_dict(orient="index")
+                
+                res["statsmodels_inference"] = sm_payload
+
         # Calculate Metrics (RESTORE FULL LIST & ORDER)
         scores_dict = {}
         if task_type == "classification":
@@ -725,6 +926,9 @@ def render_model_development_page(run_dir):
             "cv_metrics": cv_metrics_dict,
             "images": {},
         }
+        if "statsmodels_inference" in res:
+            report_payload["statsmodels_inference"] = res["statsmodels_inference"]
+            
         _update_report_buffer("development", report_payload)
 
         # Tabs Final

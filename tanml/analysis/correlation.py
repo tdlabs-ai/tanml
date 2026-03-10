@@ -129,9 +129,17 @@ def calculate_vif(
 
     # Calculate VIF for each feature
     vif_values = {}
+    import warnings
     for i, col in enumerate(features):
         try:
-            vif = variance_inflation_factor(X.values, i)
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore", RuntimeWarning)
+                # Silence numpy divide-by-zero warnings during VIF calculation
+                old_settings = np.seterr(divide="ignore", invalid="ignore")
+                try:
+                    vif = variance_inflation_factor(X.values, i)
+                finally:
+                    np.seterr(**old_settings)
             vif_values[col] = float(vif) if not np.isinf(vif) else float("inf")
         except Exception:
             vif_values[col] = np.nan

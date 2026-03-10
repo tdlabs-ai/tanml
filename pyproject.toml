@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tanml"
-version = "0.1.10"
+version = "0.2.0"
 description = "Automated validation toolkit for tabular ML models—MRM, credit risk, insurance, and other regulated use cases."
 readme = { file = "README.md", content-type = "text/markdown" }
 requires-python = ">=3.10"
@@ -70,7 +70,9 @@ dependencies = [
   "scikit-learn>=1.3",
   "statsmodels>=0.14",
   "xgboost>=2.0.3",
-  "numba>=0.59.0",
+  "numba>=0.59.0, <0.61.0; python_version < '3.11'",
+  "numba>=0.59.0; python_version >= '3.11' and python_version < '3.13'",
+  "numba>=0.61.0; python_version >= '3.13'",
   "matplotlib>=3.8.0",
   "seaborn>=0.13.0",
   "Pillow>=10.0",

@@ -117,6 +117,33 @@ def _add_md_paragraph(doc, text: str, style=None):
     return p
 
 
+def _create_table_from_dict(doc, data_dict, first_col_name="Feature"):
+    """Helper to create a formatted DOCX table from a nested dictionary."""
+    if not data_dict:
+        return None
+
+    # Get column headers from the first item
+    first_item = list(data_dict.values())[0]
+    col_names = [first_col_name] + list(first_item.keys())
+    
+    table = doc.add_table(rows=1, cols=len(col_names))
+    table.style = "Table Grid"
+    hdr = table.rows[0].cells
+    for i, name in enumerate(col_names):
+        hdr[i].text = str(name)
+        
+    for row_name, row_data in data_dict.items():
+        r = table.add_row().cells
+        r[0].text = str(row_name)
+        for i, col_name in enumerate(col_names[1:], start=1):
+            val = row_data.get(col_name, "")
+            if isinstance(val, (float, int)):
+                r[i].text = f"{val:.4f}" if isinstance(val, float) else str(val)
+            else:
+                r[i].text = str(val)
+    return table
+
+
 def _generate_dev_report_docx(dev_data):
     doc = Document()
     doc.add_heading("Model Development Report", 0)
@@ -230,6 +257,34 @@ def _generate_dev_report_docx(dev_data):
             for name, img_bytes in imgs.items():
                 doc.add_paragraph(name.replace("_", " ").title())
                 doc.add_picture(io.BytesIO(img_bytes), width=Inches(4))
+
+        # 3. statsmodels Inference (New)
+        sm_inf = dev_data.get("statsmodels_inference")
+        if sm_inf:
+            doc.add_heading("3. Statistical Inference", level=1)
+            
+            # 3.1 Coefficients
+            doc.add_heading("3.1 Model Coefficients", level=2)
+            coefs = sm_inf.get("coef_table", {})
+            if coefs:
+                _create_table_from_dict(doc, coefs, "Feature")
+
+            # 3.2 Odds Ratios (if applicable)
+            odds = sm_inf.get("odds_ratios")
+            if odds:
+                doc.add_heading("3.2 Odds Ratios", level=2)
+                _create_table_from_dict(doc, odds, "Feature")
+
+            # 3.3 Summary Stats
+            doc.add_heading("3.3 Model Fit Summary", level=2)
+            summary_stats = sm_inf.get("summary_stats", {})
+            if summary_stats:
+                table = doc.add_table(rows=0, cols=2)
+                table.style = "Table Grid"
+                for k, v in summary_stats.items():
+                    r = table.add_row().cells
+                    r[0].text = str(k)
+                    r[1].text = f"{v:.4f}" if isinstance(v, (float, int)) else str(v)
 
     # Appendix: Glossary
     doc.add_page_break()
@@ -816,6 +871,37 @@ def _generate_eval_report_docx(buf):
     else:
         doc.add_paragraph("Explainability not run.")
 
+    # StatsModels Inference Section
+    sm_data = buf.get("statsmodels_inference")
+    if sm_data:
+        doc.add_page_break()
+        doc.add_heading("4. Statistical Inference", level=1)
+        doc.add_paragraph("Comprehensive statistical inference tables for this model.")
+
+        if "coef_table" in sm_data:
+            doc.add_heading("4.1 Model Coefficients", level=2)
+            _create_table_from_dict(doc, sm_data["coef_table"], "Feature")
+
+        if "odds_ratios" in sm_data:
+            doc.add_heading("4.2 Odds Ratios", level=2)
+            _add_md_paragraph(
+                doc,
+                "_Odds Ratios indicate how a one-unit increase in the feature multiplies the odds of the positive dependent variable outcome._",
+            )
+            _create_table_from_dict(doc, sm_data["odds_ratios"], "Feature")
+
+        if "summary_stats" in sm_data:
+            doc.add_heading("4.3 Model Fit Summary", level=2)
+            summ_tab = doc.add_table(rows=1, cols=2)
+            summ_tab.style = "Table Grid"
+            for k, v in sm_data["summary_stats"].items():
+                rt = summ_tab.add_row().cells
+                rt[0].text = str(k)
+                if isinstance(v, (int, float)):
+                    rt[1].text = f"{v:.4f}" if isinstance(v, float) else str(v)
+                else:
+                    rt[1].text = str(v)
+
     # Appendix: Glossary
     doc.add_page_break()
     doc.add_heading("Appendix: Guide to Metrics", level=1)
@@ -843,6 +929,8 @@ def _generate_eval_report_docx(buf):
             if m in GLOSSARY:
                 doc.add_paragraph(f"**{m}**: {GLOSSARY[m]}", style="List Bullet")
 
+    doc.add_heading("4. Glossary", level=1)
+    
     # Validation Concepts
     doc.add_paragraph(f"**PSI**: {GLOSSARY['PSI']}", style="List Bullet")
     doc.add_paragraph(f"**Stress Test**: {GLOSSARY['Stress Test']}", style="List Bullet")

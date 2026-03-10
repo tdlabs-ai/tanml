@@ -1,0 +1,37 @@
+name: Compile JOSS Paper
+
+on:
+  push:
+    branches:
+      - main
+      - 'dev/**'
+    paths:
+      - 'paper.md'
+      - 'paper.bib'
+      - 'architecture.png'
+      - '.github/workflows/joss-paper.yml'
+  pull_request:
+    paths:
+      - 'paper.md'
+      - 'paper.bib'
+  workflow_dispatch: # Allows manual trigger from the GitHub Actions tab
+
+jobs:
+  build_paper:
+    runs-on: ubuntu-latest
+    name: Build JOSS Paper Draft
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Build Draft Paper
+        uses: openjournals/openjournals-draft-action@master
+        with:
+          journal: joss
+          paper-path: paper.md
+
+      - name: Upload PDF
+        uses: actions/upload-artifact@v4
+        with:
+          name: paper
+          path: paper.pdf
