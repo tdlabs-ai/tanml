@@ -43,15 +43,9 @@ Tabular machine learning models are widely used in high-stakes domains such as f
 
 The open-source ecosystem already includes several widely used tools that address important parts of the tabular machine learning lifecycle. Data profiling packages such as ydata-profiling [@ydata-profiling] emphasize exploratory analysis and dataset understanding. Monitoring frameworks such as Evidently [@evidently] focus on drift detection and production observability. Validation libraries such as Deepchecks [@deepchecks] provide programmable checks for data and model quality. AutoML frameworks such as PyCaret [@pycaret] and AutoGluon [@autogluon] focus on model training, comparison, and selection. These tools are valuable within their intended scope, but their primary objectives differ from TanML’s integrated validation-and-documentation focus.
 
-Table: Comparison of TanML with commonly used tools across primary focus, scope, outputs, and drift-analysis approach. \label{table:comparison}
-
-| Tool | Primary Focus | Scope | Output | Drift Logic |
-|---|---|---|---|---|
-| **TanML** | Model Risk Management | Data + Model + Governance | Audit-ready `.docx` | PSI and KS |
-| **Evidently AI** | Monitoring | Data + Model | Dashboards | Statistical tests |
-| **Deepchecks** | Testing / CI | Data + Model | Reports | Multiple methods |
-| **AutoML (PyCaret/AutoGluon)** | Model Training | Model building | Models | N/A |
 | **ydata-profiling** | Data EDA | Data only | HTML report | Warnings |
+
+: Comparison of TanML with commonly used tools across primary focus, scope, outputs, and drift-analysis approach. \label{table:comparison}
 
 Profiling tools are centered on dataset exploration rather than end-to-end model validation. Monitoring tools are designed mainly for observability and post-deployment drift analysis rather than pre-deployment validation workflows. Validation libraries provide useful checks, but they are generally oriented toward developer-driven testing rather than stakeholder-facing validation workflows. AutoML systems improve modeling efficiency, but they do not primarily address governance, documentation, or audit-ready reporting requirements.
 
