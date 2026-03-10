@@ -42,7 +42,7 @@ Tabular machine learning models are widely used in high-stakes domains such as f
 # State of the field
 
 The open-source ecosystem already includes several widely used tools that address important parts of the tabular machine learning lifecycle. Data profiling packages such as ydata-profiling [@ydata-profiling] emphasize exploratory analysis and dataset understanding. Monitoring frameworks such as Evidently [@evidently] focus on drift detection and production observability. Validation libraries such as Deepchecks [@deepchecks] provide programmable checks for data and model quality. AutoML frameworks such as PyCaret [@pycaret] and AutoGluon [@autogluon] focus on model training, comparison, and selection. These tools are valuable within their intended scope, but their primary objectives differ from TanML’s integrated validation-and-documentation focus.
-Table 1 summarizes how TanML compares with commonly used tools across primary focus, scope, outputs, and drift-analysis approach.
+Table 1: Comparison of TanML with commonly used tools across primary focus, scope, outputs, and drift-analysis approach.
 
 | Tool | Primary Focus | Scope | Output | Drift Logic |
 |---|---|---|---|---|
