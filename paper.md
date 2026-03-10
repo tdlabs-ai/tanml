@@ -64,9 +64,7 @@ The open-source ecosystem already includes several widely used tools that addres
 : Comparison of TanML with commonly used tools across primary focus, scope, outputs, and drift-analysis approach. \label{table:comparison}
 
 
-Profiling tools are centered on dataset exploration rather than end-to-end model validation. Monitoring tools are designed mainly for observability and post-deployment drift analysis rather than pre-deployment validation workflows. Validation libraries provide useful checks, but they are generally oriented toward developer-driven testing rather than stakeholder-facing validation workflows. AutoML systems improve modeling efficiency, but they do not primarily address governance, documentation, or audit-ready reporting requirements.
-
-TanML was developed to fill this gap by integrating validation-oriented tasks into a single workflow for tabular machine learning. Rather than replacing existing tools individually, it combines model evaluation, explainability, drift analysis, and stakeholder-ready reporting in one UI-driven system. This also motivates the build-versus-contribute decision. TanML’s scholarly contribution lies at the workflow level rather than in a single isolated method. The software was built as a standalone package because existing profiling, monitoring, testing, and AutoML tools do not fully address the combined need for tabular model validation and stakeholder ready documentation.
+Profiling tools are centered on dataset exploration rather than end-to-end model validation. Monitoring tools are designed mainly for observability and post-deployment drift analysis rather than pre-deployment validation workflows. Validation libraries provide useful checks, but they are generally oriented toward developer-driven testing rather than stakeholder-facing validation workflows. AutoML systems improve modeling efficiency, but they do not primarily address governance, documentation, or audit-ready reporting requirements. TanML was developed to fill this gap by integrating validation-oriented tasks into a single workflow for tabular machine learning. Rather than replacing existing tools individually, it combines model evaluation, explainability, drift analysis, and stakeholder ready reporting in one UI-driven system. This also motivates the build-versus-contribute decision. TanML’s scholarly contribution lies at the workflow level rather than in a single isolated method. The software was built as a standalone package because existing profiling, monitoring, testing, and AutoML tools do not fully address the combined need for tabular model validation and stakeholder ready documentation.
 
 # Software design
 
@@ -77,7 +75,7 @@ TanML was explicitly designed as a modular, privacy-first desktop application th
 The system is built upon three primary pillars:
 1. **Session State Manager:** A centralized session management system handles data flow between modules without requiring a persistent database. This architectural approach allows sensitive financial data to remain local to the user's environment, either held transiently in memory or stored in ephemeral local directories, rather than being transmitted to external hosted services.
 2. **Model Registry:** A dynamic factory pattern (`tanml.models.registry`) standardizes the instantiation of various estimators (XGBoost, CatBoost, LightGBM) with pre-configured hyperparameters. This decoupling allows researchers to easily inject novel models without altering the core validation engine UI.
-3. **Reporting Engine:** The `docx`-based generator serializes the analysis results into a structured Word document, mapping complex Python objects (such as **Matplotlib** [@Hunter:2007] figures and **Pandas** [@reback2020pandas] DataFrames) into native Open XML formats.
+3. **Reporting Engine:** The `docx`-based generator serializes the analysis results into a structured document, mapping complex Python objects (such as **Matplotlib** [@Hunter:2007] figures and **Pandas** [@reback2020pandas] DataFrames) into native Open XML formats.
 
 ### Modular Workflow
 
@@ -88,7 +86,6 @@ The application is divided into distinct execution layers, designed to mirror th
 * **Model Development:** Facilitates champion-challenger comparisons using K-Fold Cross-Validation.
 * **Evaluation (The Validation Suite):** The core engine which calculates Population Stability Index (PSI) for drift analysis, tree-based SHAP values [@lundberg2017unified] for explainability, and segmented performance metrics.
 
-Figure 1 illustrates the modular workflow of TanML, including the main stages from data profiling and preprocessing to evaluation and reporting.
 
 ![High-level modular workflow of TanML. \label{fig:arch}](architecture.png)
 
@@ -100,6 +97,5 @@ Portions of the `TanML` codebase, including specific unit tests and documentatio
 
 # Acknowledgements
 
-We acknowledge the valuable feedback from the pyOpenSci editor and reviewers, whose insights significantly shaped and improved the toolkit.
-
+We acknowledge the valuable feedback from the pyOpenSci editor and reviewers, whose insights significantly shaped and improved the toolkit. We also express our appreciation to the maintainers and contributors of the open-source libraries that TanML builds upon, including NumPy, pandas, SciPy, Numba, scikit-learn, statsmodels, XGBoost, matplotlib, seaborn, Pillow, python-docx, Streamlit,openpyxl, pyarrow, pyreadstat, and seaborn. In addition, we are grateful to all those who shared ideas, suggestions, and feature requests that helped inform the development of TanML.
 # References
