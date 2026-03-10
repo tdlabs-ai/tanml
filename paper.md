@@ -32,7 +32,7 @@ bibliography: paper.bib
 
 # Summary
 
-TanML [@tanml_2025] is an open-source toolkit for validating tabular machine learning models through a user-friendly Streamlit interface. It supports an end-to-end workflow that includes data profiling, preprocessing, feature ranking, model development, evaluation, and export of editable audit-ready Word reports. The toolkit is designed to help users validate models built with common Python ML libraries such as scikit-learn [@scikit-learn], XGBoost [@xgboost], LightGBM [@lightgbm], and CatBoost [@catboost]. TanML is especially useful in regulated and documentation-heavy settings because it combines model validation, explainability, drift and stress analysis, and report generation in a single local-first workflow. It is intended for data scientists, quantitative analysts, and model risk stakeholders who need a practical way to review and document tabular ML models without building custom validation pipelines from scratch.
+TanML [@tanml_2026] is an open-source toolkit for validating tabular machine learning models through a user-friendly Streamlit interface. It supports an end-to-end workflow that includes data profiling, preprocessing, feature ranking, model development, evaluation, and export of editable audit-ready Word reports. The toolkit is designed to help users validate models built with common Python ML libraries such as NumPy [@numpy], Pandas [@pandas], scikit-learn [@scikit-learn], XGBoost [@xgboost], LightGBM [@lightgbm], and CatBoost [@catboost]. TanML is especially useful in regulated and documentation-heavy settings [@sr11-7] because it combines model validation, explainability, drift and stress analysis, and report generation in a single local-first workflow. It is intended for data scientists, quantitative analysts, and model risk stakeholders who need a practical way to review and document tabular ML models without building custom validation pipelines from scratch.
 
 # Statement of need
 
@@ -47,7 +47,7 @@ Table 1 summarizes how TanML compares with commonly used tools across primary fo
 | Tool          | Primary Focus | Scope             | Output              | Drift Logic       |
 +===============+===============+===================+=====================+===================+
 | **TanML**     | Model Risk    | Data + Model      | Audit-ready         | PSI and KS        |
-|               | Management    | + Governance      | `.docx`             |                   |
+|               | Management    | + Governance      | `.docx`             | (SR 11-7) [@sr11-7]|
 +---------------+---------------+-------------------+---------------------+-------------------+
 | **Evidently   | Monitoring    | Data + Model      | Dashboards          | Statistical tests |
 | AI**          |               |                   |                     |                   |
@@ -77,7 +77,7 @@ TanML was explicitly designed as a modular, privacy-first desktop application th
 The system is built upon three primary pillars:
 1. **Session State Manager:** A centralized session management system handles data flow between modules without requiring a persistent database. This architectural approach allows sensitive financial data to remain local to the user's environment, either held transiently in memory or stored in ephemeral local directories, rather than being transmitted to external hosted services.
 2. **Model Registry:** A dynamic factory pattern (`tanml.models.registry`) standardizes the instantiation of various estimators (XGBoost, CatBoost, LightGBM) with pre-configured hyperparameters. This decoupling allows researchers to easily inject novel models without altering the core validation engine UI.
-3. **Reporting Engine:** The `docx`-based generator serializes the analysis results into a structured Word document, mapping complex Python objects (such as `matplotlib` figures and `pandas` DataFrames) into native Open XML formats.
+3. **Reporting Engine:** The `docx`-based generator serializes the analysis results into a structured Word document, mapping complex Python objects (such as **Matplotlib** [@matplotlib] figures and **Pandas** [@pandas] DataFrames) into native Open XML formats.
 
 ### Modular Workflow
 
