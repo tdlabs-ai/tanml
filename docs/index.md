@@ -2,6 +2,7 @@
 
 [![PyPI](https://img.shields.io/pypi/v/tanml.svg)](https://pypi.org/project/tanml/)
 [![Downloads](https://pepy.tech/badge/tanml)](https://pepy.tech/project/tanml)
+[![Python Version](https://img.shields.io/badge/3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue?logo=python&logoColor=white)](https://pypi.org/project/tanml/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 [![Give Feedback](https://img.shields.io/badge/Feedback-Give%20Now-blue?style=for-the-badge)](https://forms.gle/oG2JHvt7tLXE5Atu7)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17317165.svg)](https://doi.org/10.5281/zenodo.17317165)
@@ -9,17 +10,16 @@
 
 > **TanML bridges the gap between data science tools (for building models) and governance requirements (for validating them). It's not just an ML library—it's a validation workflow with built-in documentation.**
 
-* **Status:** Beta (`0.x`)
 * **License:** MIT
-* **Python:** 3.8–3.13
+* **Python:** ![Python Versions](https://img.shields.io/badge/3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue?logo=python&logoColor=white)
 * **OS:** Linux / macOS / Windows (incl. WSL)
 
 ---
 
 ## Why TanML?
 
-* **End-to-end workflow:** Data Profiling → Preprocessing → Feature Ranking → Model Development → Evaluation → Reports—all in one UI.
-* **Audit-ready Word reports:** Generate editable .docx documents for stakeholders and compliance reviews.
+* **End-to-end workflow:** Data Profiling → Preprocessing → Feature Power Ranking → Model Development → Evaluation → Reports—all in one UI.
+* **Audit-ready reports:** Generate editable documents for stakeholders and compliance reviews.
 * **Built for regulated industries:** Designed for MRM, credit risk, insurance, and SR 11-7 contexts.
 * **No code required:** Fully UI-driven—no Python knowledge needed.
 * **Robust evaluation:** Drift detection, stress testing, SHAP explainability, cluster coverage.
@@ -92,7 +92,7 @@ $env:TANML_SERVER_ADDRESS="0.0.0.0"; $env:TANML_PORT="9000"; $env:TANML_MAX_MB="
 
 ## Reports
 
-TanML generates audit-ready Word reports (.docx) programmatically:
+TanML generates audit-ready reports programmatically:
 
 * **Model Development Report** — Cross-validation metrics, diagnostics, and performance summary
 * **Model Evaluation Report** — Train/Test comparison, drift analysis, stress testing, SHAP explainability
@@ -116,21 +116,21 @@ Reports are generated via `tanml/ui/reports/generators.py` and exported directly
 **License:** MIT. See [LICENSE](https://github.com/tdlabs-ai/tanml/blob/main/LICENSE).  
 SPDX-License-Identifier: MIT
 
-© 2025 Tanmay Sah and Dolly Sah. You may use, modify, and distribute this software with appropriate attribution.
+© 2026 Tanmay Sah and Dolly Sah. You may use, modify, and distribute this software with appropriate attribution.
 
 ### How to cite
 
 If TanML helps your work or publications, please cite:
 
-> Sah, T., & Sah, D. (2025). *TanML: Automated Model Validation Toolkit for Tabular Machine Learning* [Software]. Zenodo. [https://doi.org/10.5281/zenodo.17317165](https://doi.org/10.5281/zenodo.17317165)
+> Sah, T., & Sah, D. (2026). *TanML: Automated Model Validation Toolkit for Tabular Machine Learning* [Software]. Zenodo. [https://doi.org/10.5281/zenodo.17317165](https://doi.org/10.5281/zenodo.17317165)
 
 Or in BibTeX (version-agnostic):
 
 ```bibtex
-@software{tanml_2025,
+@software{tanml_2026,
   author       = {Sah, Tanmay and Sah, Dolly},
   title        = {TanML: Automated Model Validation Toolkit for Tabular Machine Learning},
-  year         = {2025},
+  year         = {2026},
   publisher    = {Zenodo},
   doi          = {10.5281/zenodo.17317165},
   url          = {https://doi.org/10.5281/zenodo.17317165},
