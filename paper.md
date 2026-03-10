@@ -42,25 +42,13 @@ Tabular machine learning models are widely used in high-stakes domains such as f
 # State of the field
 
 The open-source ecosystem already includes several widely used tools that address important parts of the tabular machine learning lifecycle. Data profiling packages such as ydata-profiling [@clemente2023ydata] emphasize exploratory analysis and dataset understanding. Monitoring frameworks such as Evidently [@evidently] focus on drift detection and production observability. Validation libraries such as Deepchecks [@deepchecks] provide programmable checks for data and model quality. AutoML frameworks such as PyCaret [@pycaret] and AutoGluon [@erickson2020autogluon] focus on model training, comparison, and selection. These tools are valuable within their intended scope, but their primary objectives differ from TanML’s integrated validation-and-documentation focus.
-Table 1 summarizes how TanML compares with commonly used tools across primary focus, scope, outputs, and drift-analysis approach.
-+---------------+---------------+-------------------+---------------------+-------------------+
-| Tool          | Primary Focus | Scope             | Output              | Drift Logic       |
-+===============+===============+===================+=====================+===================+
-| **TanML**     | Model Risk    | Data + Model      | Audit-ready         | PSI and KS        |
-|               | Management    | + Governance      | `.docx`             | (SR 11-7)         |
-+---------------+---------------+-------------------+---------------------+-------------------+
-| **Evidently   | Monitoring    | Data + Model      | Dashboards          | Statistical tests |
-| AI**          |               |                   |                     |                   |
-+---------------+---------------+-------------------+---------------------+-------------------+
-| **Deepchecks**| Testing / CI  | Data + Model      | Reports             | Multiple methods  |
-+---------------+---------------+-------------------+---------------------+-------------------+
-| **AutoML      | Model         | Model building    | Models              | N/A               |
-| (PyCaret/     | Training      |                   |                     |                   |
-| AutoGluon)**  |               |                   |                     |                   |
-+---------------+---------------+-------------------+---------------------+-------------------+
-| **ydata-      | Data EDA      | Data only         | HTML report         | Warnings          |
-| profiling**   |               |                   |                     |                   |
-+---------------+---------------+-------------------+---------------------+-------------------+
+| Tool | Primary Focus | Scope | Output | Drift Logic |
+| :--- | :--- | :--- | :--- | :--- |
+| **TanML** | Model Risk Management | Data + Model + Governance | Audit-ready `.docx` | PSI and KS (SR 11-7) |
+| **Evidently AI** | Monitoring | Data + Model | Dashboards | Statistical tests |
+| **Deepchecks** | Testing / CI | Data + Model | Reports | Multiple methods |
+| **AutoML (PyCaret / AutoGluon)** | Model Training | Model building | Models | N/A |
+| **ydata-profiling** | Data EDA | Data only | HTML report | Warnings |
 
 : Comparison of TanML with commonly used tools across primary focus, scope, outputs, and drift-analysis approach. \label{table:comparison}
 
