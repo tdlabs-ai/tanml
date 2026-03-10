@@ -13,7 +13,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Feature C: Logarithmic Scale toggle for Data Profiling graphs.
 - Feature D: Integrated Train-Test Split step in the Preprocessing pipeline.
 - Feature E: Statsmodels integration for p-values and statistical significance.
-- **Phase 3 Core Analytics**: Integrated Tree-based SHAP values for explainability.
 - **JOSS Publication**: Added a programmatic architecture diagram and detailed comparison matrices for the pyOpenSci/JOSS submission.
 - **Testing & CI**: Implemented automated unit testing via GitHub Actions across Python versions 3.10-3.13.
 - **Quality Tooling**: Integrated Ruff for automated linting and formatting.
