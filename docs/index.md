@@ -39,6 +39,9 @@ source .venv/bin/activate  # Linux/Mac
 
 # Install TanML
 pip install tanml
+
+# Upgrade an existing installation
+python -m pip install --upgrade tanml
 ```
 
 ## Quick Start (UI)
