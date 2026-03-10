@@ -51,8 +51,7 @@ Table 1 summarizes how TanML compares with commonly used tools across primary fo
 | **Deepchecks** | Testing / CI | Data + Model | Reports | Multiple methods |
 | **AutoML (PyCaret/AutoGluon)** | Model Training | Model building | Models | N/A |
 | **ydata-profiling** | Data EDA | Data only | HTML report | Warnings |
-
-: Comparison of TanML with commonly used tools across primary focus, scope, outputs, and drift-analysis approach. \label{table:comparison}
+  : Comparison of TanML with commonly used tools across primary focus, scope, outputs, and drift-analysis approach. \label{table:comparison}
 
 Profiling tools are centered on dataset exploration rather than end-to-end model validation. Monitoring tools are designed mainly for observability and post-deployment drift analysis rather than pre-deployment validation workflows. Validation libraries provide useful checks, but they are generally oriented toward developer-driven testing rather than stakeholder-facing validation workflows. AutoML systems improve modeling efficiency, but they do not primarily address governance, documentation, or audit-ready reporting requirements.
 
