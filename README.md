@@ -287,3 +287,4 @@ A machine-readable citation file (`CITATION.cff`) is included for citation tools
 ## AI Disclosure
 
 Portions of this codebase (including tests, documentation, and the data_loader module) were refactored and generated with the assistance of Large Language Models (LLMs). All AI-generated contributions have been reviewed and verified by the human maintainers.
+
