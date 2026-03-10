@@ -63,6 +63,7 @@ The open-source ecosystem already includes several widely used tools that addres
 +---------------+---------------+-------------------+---------------------+-------------------+
 : Comparison of TanML with commonly used tools across primary focus, scope, outputs, and drift-analysis approach. \label{table:comparison}
 
+
 Profiling tools are centered on dataset exploration rather than end-to-end model validation. Monitoring tools are designed mainly for observability and post-deployment drift analysis rather than pre-deployment validation workflows. Validation libraries provide useful checks, but they are generally oriented toward developer-driven testing rather than stakeholder-facing validation workflows. AutoML systems improve modeling efficiency, but they do not primarily address governance, documentation, or audit-ready reporting requirements.
 
 TanML was developed to fill this gap by integrating validation-oriented tasks into a single workflow for tabular machine learning. Rather than replacing existing tools individually, it combines model evaluation, explainability, drift analysis, and stakeholder-ready reporting in one UI-driven system. This also motivates the build-versus-contribute decision. TanML’s scholarly contribution lies at the workflow level rather than in a single isolated method. The software was built as a standalone package because existing profiling, monitoring, testing, and AutoML tools do not fully address the combined need for tabular model validation and stakeholder ready documentation.
