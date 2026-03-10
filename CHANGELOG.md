@@ -14,9 +14,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Feature D: Integrated Train-Test Split step in the Preprocessing pipeline.
 - Feature E: Statsmodels integration for p-values and statistical significance.
 - **Phase 3 Core Analytics**: Integrated Tree-based SHAP values for explainability.
-- **Phase 3 Core Analytics**: Implemented comprehensive Validation Suite including Metrics Comparison, Diagnostic Plots, Cluster Coverage, Benchmarking, and Stress Testing.
-- **Phase 3 Core Analytics**: Added PSI and KS statistics for Drift Analysis.
-- **Reporting Engine**: Implemented export of editable, audit-ready Word document (`.docx`) reports.
 - **JOSS Publication**: Added a programmatic architecture diagram and detailed comparison matrices for the pyOpenSci/JOSS submission.
 - New `dev/v0.2.0` development branch strategy for safe feature iteration.
 
