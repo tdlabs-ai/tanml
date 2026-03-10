@@ -98,4 +98,5 @@ Portions of the `TanML` codebase, including specific unit tests and documentatio
 # Acknowledgements
 
 We acknowledge the valuable feedback from the pyOpenSci editor and reviewers, whose insights significantly shaped and improved the toolkit. We also express our appreciation to the maintainers and contributors of the open-source libraries that TanML builds upon, including NumPy, pandas, SciPy, Numba, scikit-learn, statsmodels, XGBoost, matplotlib, seaborn, Pillow, python-docx, Streamlit,openpyxl, pyarrow, pyreadstat, and seaborn. In addition, we are grateful to all those who shared ideas, suggestions, and feature requests that helped inform the development of TanML.
+
 # References
