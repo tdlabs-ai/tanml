@@ -26,5 +26,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Reporting**: Initiated refactor of Word report generators to improve maintainability.
 - Added Python 3.13 to the official testing matrix.
 
-## [0.1.10] - 2024-03-07
+## [0.1.10] - 2026-03-07
 - Initial baseline for pyOpenSci submission.
