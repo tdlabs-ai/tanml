@@ -269,10 +269,10 @@ If TanML helps your work or publications, please cite:
 Or in BibTeX (version-agnostic):
 
 ```bibtex
-@software{tanml_2025,
+@software{tanml_2026,
   author       = {Sah, Tanmay and Sah, Dolly},
   title        = {TanML: Automated Model Validation Toolkit for Tabular Machine Learning},
-  year         = {2025},
+  year         = {2026},
   publisher    = {Zenodo},
   doi          = {10.5281/zenodo.17317165},
   url          = {https://doi.org/10.5281/zenodo.17317165},
