@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Modernized CI dependencies and testing logic for faster, more reliable builds.
 
 ### Fixed
+- **UI**: Fixed an issue where text was illegible in Dark Mode because the font color matched the background color.
 - **Infrastructure**: Pinned `numba>=0.61.0` to resolve installation failures on Python 3.10.
 - **Reporting**: Initiated refactor of Word report generators to improve maintainability.
 - Added Python 3.13 to the official testing matrix.
