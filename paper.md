@@ -54,9 +54,9 @@ The open-source ecosystem already includes several widely used tools that addres
 +---------------+---------------+-------------------+---------------------+-------------------+
 | **Deepchecks**| Testing / CI  | Data, Model       | Reports             | Multiple methods  |
 +---------------+---------------+-------------------+---------------------+-------------------+
-| **AutoML      | Model         | Model building    | Models              | N/A               |
-| (PyCaret/     | Training      |                   |                     |                   |
-| AutoGluon)**  |               |                   |                     |                   |
+| **AutoML**    | Model         | Model building    | Models              | N/A               |
+|               | Training      |                   |                     |                   |
+|               |               |                   |                     |                   |
 +---------------+---------------+-------------------+---------------------+-------------------+
 | **ydata-      | Data EDA      | Data only         | HTML report         | Warnings          |
 | profiling**   |               |                   |                     |                   |
