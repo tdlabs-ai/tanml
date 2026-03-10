@@ -39,4 +39,7 @@ jobs:
           pip install ".[dev]"
       - name: Verify package imports
         run: python -c "import tanml.models.registry; import tanml.analysis.drift; print('API modules importable!')"
-      - run: mkdocs gh-deploy --force
+      - name: Sync README to Docs Home
+        run: cp README.md docs/index.md
+      - name: Deploy to GitHub Pages
+        run: mkdocs gh-deploy --force
