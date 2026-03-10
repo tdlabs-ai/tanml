@@ -15,9 +15,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Feature E: Statsmodels integration for p-values and statistical significance.
 - **Phase 3 Core Analytics**: Integrated Tree-based SHAP values for explainability.
 - **JOSS Publication**: Added a programmatic architecture diagram and detailed comparison matrices for the pyOpenSci/JOSS submission.
+- **Testing & CI**: Implemented automated unit testing via GitHub Actions across Python versions 3.10-3.13.
+- **Quality Tooling**: Integrated Ruff for automated linting and formatting.
+- **Quality Tooling**: Integrated Mypy for static type checking across the library.
 - New `dev/v0.2.0` development branch strategy for safe feature iteration.
 
 ### Changed
+- **Documentation**: Moved the main documentation link to the top of the README for immediate visibility.
+- **Documentation**: Added dedicated "Testing" section to the README with local verification and pip install instructions (`pip install -e ".[dev]"`).
 - Updated CI workflow (`ci.yml`) to support automated testing for development branches.
 - Modernized CI dependencies and testing logic for faster, more reliable builds.
 
