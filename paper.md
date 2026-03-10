@@ -1,5 +1,5 @@
 ---
-title: 'TanML: Automated Model Validation Toolkit for Tabular Machine Learning'
+title: 'TanML: Automated Model Validation Toolkit for Tabular Machine Learning Models'
 tags:
   - Python
   - machine learning
@@ -46,13 +46,13 @@ The open-source ecosystem already includes several widely used tools that addres
 +---------------+---------------+-------------------+---------------------+-------------------+
 | Tool          | Primary Focus | Scope             | Output              | Drift Logic       |
 +===============+===============+===================+=====================+===================+
-| **TanML**     | Model Risk    | Data + Model      | Audit-ready         | PSI and KS        |
-|               | Management    | + Governance      | `.docx`             | [@sr11-7]         |
+| **TanML**     | Model Risk    | Data, Model       | Audit-ready         | PSI and KS        |
+|               | Management    | , Governance      | report              |                   |
 +---------------+---------------+-------------------+---------------------+-------------------+
-| **Evidently   | Monitoring    | Data + Model      | Dashboards          | Statistical tests |
+| **Evidently   | Monitoring    | Data, Model       | Dashboards          | Statistical tests |
 | AI**          |               |                   |                     |                   |
 +---------------+---------------+-------------------+---------------------+-------------------+
-| **Deepchecks**| Testing / CI  | Data + Model      | Reports             | Multiple methods  |
+| **Deepchecks**| Testing / CI  | Data, Model       | Reports             | Multiple methods  |
 +---------------+---------------+-------------------+---------------------+-------------------+
 | **AutoML      | Model         | Model building    | Models              | N/A               |
 | (PyCaret/     | Training      |                   |                     |                   |
