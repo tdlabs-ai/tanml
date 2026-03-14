@@ -255,13 +255,13 @@ We welcome issues and PRs! See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed s
 **License:** MIT. See [LICENSE](https://github.com/tdlabs-ai/tanml/blob/main/LICENSE).  
 SPDX-License-Identifier: MIT
 
-© 2025 Tanmay Sah and Dolly Sah. You may use, modify, and distribute this software with appropriate attribution.
+© 2026 Tanmay Sah and Dolly Sah. You may use, modify, and distribute this software with appropriate attribution.
 
 ### How to cite
 
 If TanML helps your work or publications, please cite:
 
-> Sah, T., & Sah, D. (2025). *TanML: Automated Model Validation Toolkit for Tabular Machine Learning Models* [Software]. Zenodo. [https://doi.org/10.5281/zenodo.17317165](https://doi.org/10.5281/zenodo.17317165)
+> Sah, T., & Sah, D. (2026). *TanML: Automated Model Validation Toolkit for Tabular Machine Learning Models* [Software]. Zenodo. [https://doi.org/10.5281/zenodo.17317165](https://doi.org/10.5281/zenodo.17317165)
 
 Or in BibTeX (version-agnostic):
 
