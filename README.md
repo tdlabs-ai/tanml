@@ -14,6 +14,11 @@
 
 ---
 
+### 🚀 See TanML in Action (2-Minute Walkthrough)
+![TanML Product Demo](tanml_demo.gif)
+
+---
+
 ## 📖 Documentation
 
 For detailed guides, API reference, and tutorials, visit our official documentation:
