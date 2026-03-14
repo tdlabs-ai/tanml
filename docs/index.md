@@ -18,7 +18,7 @@
 
 ## Why TanML?
 
-* **End-to-end workflow:** Data Profiling → Preprocessing → Feature Power Ranking → Model Development → Evaluation → Reports—all in one UI.
+* **End-to-end workflow:** Data Profiling → Data Preprocessing → Feature Power Ranking → Model Development → Evaluation → Reports—all in one UI.
 * **Audit-ready reports:** Generate editable documents for stakeholders and compliance reviews.
 * **Built for regulated industries:** Designed for MRM, credit risk, insurance, and SR 11-7 contexts.
 * **No code required:** Fully UI-driven—no Python knowledge needed.
