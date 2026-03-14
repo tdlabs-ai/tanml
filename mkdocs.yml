@@ -38,3 +38,4 @@ markdown_extensions:
   - pymdownx.details
   - attr_list
   - pymdownx.superfences
+# Automatic documentation build trigger
