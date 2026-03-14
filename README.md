@@ -50,7 +50,7 @@ For detailed guides, API reference, and tutorials, visit our official documentat
 
 ### Comparison to Similar Tools
 
-| Feature | TanML | Evidently AI | Deepchecks | AutoML (PyCaret/AutoGluon) | ydata-profiling |
+| Feature | TanML | Evidently AI | Deepchecks | AutoML (PyCaret/AutoGluon) | YData Profiling |
 | :--- | :---: | :---: | :---: | :---: | :---: |
 | **Primary Focus** | **Model Risk Management** | Monitoring | Testing / CI | Model Training | Data EDA Only |
 | **Scope** | **Data + Model + Governance** | Data + Model | Data + Model | Model Building | Data Only |
