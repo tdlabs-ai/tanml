@@ -113,7 +113,7 @@ tanml/
 | Layer | Technology |
 |-------|------------|
 | Web Framework | Streamlit |
-| ML Libraries | scikit-learn, XGBoost, LightGBM, CatBoost |
+| ML Libraries | Scikit-learn, XGBoost, LightGBM, CatBoost, statsmodels |
 | Explainability | SHAP |
 | Data Processing | pandas, NumPy |
 | Visualization | Matplotlib, Seaborn, Altair |
