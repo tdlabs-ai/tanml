@@ -46,7 +46,7 @@ For detailed guides, API reference, and tutorials, visit our official documentat
 * **Built for regulated industries:** Designed for MRM, credit risk, insurance, and SR 11-7 contexts.
 * **No code required:** Fully UI-driven—no Python knowledge needed.
 * **Robust evaluation:** Drift detection, stress testing, SHAP explainability, cluster coverage.
-* **Works with your stack:** Scikit-learn, XGBoost, LightGBM, CatBoost, statsmodels.
+* **Works with your stack:** Scikit-learn, XGBoost, LightGBM, CatBoost, Statsmodels.
 
 ### Comparison to Similar Tools
 
