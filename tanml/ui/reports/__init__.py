@@ -2,7 +2,7 @@
 """
 Modular report generation for TanML.
 
-This module provides a plugin-based architecture for generating Word reports.
+This module provides a plugin-based architecture for generating reports.
 Contributors can add new report sections by implementing the ReportSection protocol.
 """
 
