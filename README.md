@@ -12,7 +12,6 @@
 
 > **TanML bridges the gap between data science tools (for building models) and governance requirements (for validating them). It's not just an ML library—it's a validation workflow with built-in documentation.**
 
-
 ---
 
 ## 📖 Documentation
