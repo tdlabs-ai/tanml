@@ -1,7 +1,5 @@
 site_name: TanML
 site_description: Automated validation toolkit for tabular ML models—MRM, credit risk, insurance, and other regulated use cases.
-extra:
-  version: 0.2.0
 site_url: https://tdlabs-ai.github.io/tanml/
 
 repo_url: https://github.com/tdlabs-ai/tanml
