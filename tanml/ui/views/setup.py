@@ -183,7 +183,7 @@ def render_setup_page(run_dir):
             <div class="workflow-card">
                 <div class="icon">📝</div>
                 <h3>Generate Reports</h3>
-                <p>Download audit-ready reports.</p>
+                <p>Download audit ready reports.</p>
             </div>
         </a>
         """,
@@ -227,7 +227,7 @@ def render_setup_page(run_dir):
         </p>
         <p style="margin-bottom: 0;">
             <b>Step 5: Validate Performance (Model Evaluation)</b><br>
-            Once you have selected a model configuration from Step 4, upload your original <i>Training Set</i> alongside your unseen <i>Testing Set</i>. TanML will evaluate your final model onscreen to check how well it generalizes to unseen data, monitor for Data Drift, and generate Explainability (SHAP) plots to help interpret the results. <b>Click 'Generate Evaluation Report' to download a complete, audit-ready document proving your final model's real-world readiness.</b>
+            Once you have selected a model configuration from Step 4, upload your original <i>Training Set</i> alongside your unseen <i>Testing Set</i>. TanML will evaluate your final model onscreen to check how well it generalizes to unseen data, monitor for Data Drift, and generate Explainability (SHAP) plots to help interpret the results. <b>Click 'Generate Evaluation Report' to download a complete, audit ready document proving your final model's real-world readiness.</b>
         </p>
     </div>
     """, unsafe_allow_html=True)

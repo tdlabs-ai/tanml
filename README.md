@@ -211,7 +211,7 @@ $env:TANML_SERVER_ADDRESS="0.0.0.0"; $env:TANML_PORT="9000"; $env:TANML_MAX_MB="
 
 ## Reports
 
-TanML generates audit-ready reports (.docx) programmatically:
+TanML generates audit ready reports (.docx) programmatically:
 
 * **Model Development Report** — Cross-validation metrics, diagnostics, and performance summary
 * **Model Evaluation Report** — Train/Test comparison, drift analysis, stress testing, SHAP explainability
