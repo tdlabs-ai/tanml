@@ -32,3 +32,4 @@ catboost_info/
 .streamlit/secrets.toml
 tanml/tmp_report_assets/
 site/
+tanml_runs/
