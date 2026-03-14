@@ -1,4 +1,4 @@
-# TanML: Automated Model Validation Toolkit for Tabular Machine Learning
+# TanML: Automated Model Validation Toolkit for Tabular Machine Learning Models
 
 [![PyPI](https://img.shields.io/pypi/v/tanml.svg)](https://pypi.org/project/tanml/)
 [![Downloads](https://pepy.tech/badge/tanml)](https://pepy.tech/project/tanml)
@@ -125,14 +125,14 @@ SPDX-License-Identifier: MIT
 
 If TanML helps your work or publications, please cite:
 
-> Sah, T., & Sah, D. (2026). *TanML: Automated Model Validation Toolkit for Tabular Machine Learning* [Software]. Zenodo. [https://doi.org/10.5281/zenodo.17317165](https://doi.org/10.5281/zenodo.17317165)
+> Sah, T., & Sah, D. (2026). *TanML: Automated Model Validation Toolkit for Tabular Machine Learning Models* [Software]. Zenodo. [https://doi.org/10.5281/zenodo.17317165](https://doi.org/10.5281/zenodo.17317165)
 
 Or in BibTeX (version-agnostic):
 
 ```bibtex
 @software{tanml_2026,
   author       = {Sah, Tanmay and Sah, Dolly},
-  title        = {TanML: Automated Model Validation Toolkit for Tabular Machine Learning},
+  title        = {TanML: Automated Model Validation Toolkit for Tabular Machine Learning Models},
   year         = {2026},
   publisher    = {Zenodo},
   doi          = {10.5281/zenodo.17317165},
