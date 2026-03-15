@@ -14,8 +14,8 @@
 
 ---
 
-### 🚀 See TanML in Action (2-Minute Walkthrough)
-<video muted autoplay loop playsinline width="100%" src="https://tdlabs-ai.github.io/tanml/assets/tanml_demo.mp4?v=2"></video>
+### 🚀 [See TanML in Action (2-Minute Walkthrough)](https://tdlabs-ai.github.io/tanml/assets/tanml_demo.mp4?v=2)
+<video muted autoplay loop playsinline controls width="100%" src="https://tdlabs-ai.github.io/tanml/assets/tanml_demo.mp4?v=2"></video>
 
 ---
 
