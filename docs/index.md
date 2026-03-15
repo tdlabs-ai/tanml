@@ -10,6 +10,9 @@
 
 > **TanML bridges the gap between data science tools (for building models) and governance requirements (for validating them). It's not just an ML library—it's a validation workflow with built-in documentation.**
 
+### 🚀 See TanML in Action (2-Minute Walkthrough)
+<video src="https://tdlabs-ai.github.io/tanml/assets/tanml_demo.mp4" width="100%" autoplay loop muted playsinline></video>
+
 * **License:** MIT
 * **Python:** ![Python Versions](https://img.shields.io/badge/3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue?logo=python&logoColor=white)
 * **OS:** Linux / macOS / Windows (incl. WSL)
