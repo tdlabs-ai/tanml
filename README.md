@@ -164,7 +164,7 @@ TanML uses `pytest` for automated unit testing. To run tests locally:
 
 ```bash
 # 1. Navigate to the project root
-cd ./tanml/
+cd tanml
 
 # 2. Install with dev dependencies
 pip install -e ".[dev]"
