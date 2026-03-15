@@ -248,7 +248,7 @@ Reports are generated via `tanml/ui/reports/generators.py` and exported directly
 
 We welcome issues and PRs! See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed setup instructions.
 
-1. **Clone & Setup**: `git clone https://github.com/tdlabs-ai/tanml.git`
+1. **Clone & Setup**: `git clone https://github.com/tdlabs-ai/tanml.git && cd tanml`
 2. **Environment**: `python -m venv .venv && source .venv/bin/activate`
 3. **Install**: `pip install -e .[dev]`
 4. **Test**: `pytest`
