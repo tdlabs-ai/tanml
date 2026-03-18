@@ -18,7 +18,7 @@ def generate_png(mermaid_code, output_path):
     except Exception as e:
         print(f"Kroki Error for {output_path}: {e}")
 
-# 1. Main Pipeline Diagram (Clean & High-Level)
+# 1. Main Pipeline Diagram (36px font)
 main_pipeline_mermaid = """
 graph LR
     A[Data Profiling] --> B[Data Preprocessing]
@@ -38,26 +38,25 @@ graph LR
     class F reporting;
 """
 
-# 2. Validation Suite Detail Diagram (Independent Modules, NO ARROWS)
+# 2. Validation Suite Detail Diagram - BOOSTED (48px font to compensate for scaling)
 validation_detail_mermaid = """
 graph LR
     subgraph VS ["Validation Suite Components"]
         direction LR
-        V1["<div style='width:250px; height:100px; display:flex; align-items:center; justify-content:center;'>Explainability</div>"]
-        V2["<div style='width:250px; height:100px; display:flex; align-items:center; justify-content:center;'>Stress Testing</div>"]
-        V3["<div style='width:250px; height:100px; display:flex; align-items:center; justify-content:center;'>Benchmarking</div>"]
-        V4["<div style='width:250px; height:100px; display:flex; align-items:center; justify-content:center;'>Cluster Coverage</div>"]
-        V5["<div style='width:250px; height:100px; display:flex; align-items:center; justify-content:center;'>Drift Analysis</div>"]
-        V6["<div style='width:250px; height:100px; display:flex; align-items:center; justify-content:center;'>Diagnostic Plots</div>"]
-        V7["<div style='width:250px; height:100px; display:flex; align-items:center; justify-content:center;'>Metrics Comparison</div>"]
+        V1["<div style='width:300px; height:120px; display:flex; align-items:center; justify-content:center;'>Explainability</div>"]
+        V2["<div style='width:300px; height:120px; display:flex; align-items:center; justify-content:center;'>Stress Testing</div>"]
+        V3["<div style='width:300px; height:120px; display:flex; align-items:center; justify-content:center;'>Benchmarking</div>"]
+        V4["<div style='width:300px; height:120px; display:flex; align-items:center; justify-content:center;'>Cluster Coverage</div>"]
+        V5["<div style='width:300px; height:120px; display:flex; align-items:center; justify-content:center;'>Drift Analysis</div>"]
+        V6["<div style='width:300px; height:120px; display:flex; align-items:center; justify-content:center;'>Diagnostic Plots</div>"]
+        V7["<div style='width:300px; height:120px; display:flex; align-items:center; justify-content:center;'>Metrics Comparison</div>"]
         
-        %% Use invisible links to force horizontal alignment without showing arrows or lines
         V1 ~~~ V2 ~~~ V3 ~~~ V4 ~~~ V5 ~~~ V6 ~~~ V7
     end
 
-    %% High-Quality Styling (Synced with first diagram)
-    classDef validation fill:#e8f8ec,stroke:#2b9c4c,stroke-width:2px,font-size:32px,padding:15px,color:#1a5e2e;
-    classDef suite fill:#f9fff9,stroke:#2b9c4c,stroke-width:4px,font-size:42px,padding:30px,color:#1a5e2e;
+    %% Boosted Styling to 48px to offset the auto-scaling in wide diagrams
+    classDef validation fill:#e8f8ec,stroke:#2b9c4c,stroke-width:2px,font-size:48px,padding:20px,color:#1a5e2e;
+    classDef suite fill:#f9fff9,stroke:#2b9c4c,stroke-width:4px,font-size:52px,padding:40px,color:#1a5e2e;
 
     class V1,V2,V3,V4,V5,V6,V7 validation;
     class VS suite;
