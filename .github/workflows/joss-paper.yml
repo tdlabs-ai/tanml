@@ -8,7 +8,9 @@ on:
     paths:
       - 'paper.md'
       - 'paper.bib'
-      - 'architecture.png'
+      - 'architecture_main.png'
+      - 'architecture_validation.png'
+      - 'generate_diagram_v2.py'
       - '.github/workflows/joss-paper.yml'
   pull_request:
     paths:
