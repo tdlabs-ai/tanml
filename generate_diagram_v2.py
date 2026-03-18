@@ -38,20 +38,21 @@ graph LR
     class F reporting;
 """
 
-# 2. Validation Suite Detail Diagram (Single Horizontal Row with HIGH-QUALITY borders)
+# 2. Validation Suite Detail Diagram (Independent Modules, NO ARROWS)
 validation_detail_mermaid = """
 graph LR
     subgraph VS ["Validation Suite Components"]
         direction LR
-        V1["<div style='width:280px; height:100px; display:flex; align-items:center; justify-content:center;'>Explainability</div>"]
-        V2["<div style='width:280px; height:100px; display:flex; align-items:center; justify-content:center;'>Stress Testing</div>"]
-        V3["<div style='width:280px; height:100px; display:flex; align-items:center; justify-content:center;'>Benchmarking</div>"]
-        V4["<div style='width:280px; height:100px; display:flex; align-items:center; justify-content:center;'>Cluster Coverage</div>"]
-        V5["<div style='width:280px; height:100px; display:flex; align-items:center; justify-content:center;'>Drift Analysis</div>"]
-        V6["<div style='width:280px; height:100px; display:flex; align-items:center; justify-content:center;'>Diagnostic Plots</div>"]
-        V7["<div style='width:280px; height:100px; display:flex; align-items:center; justify-content:center;'>Metrics Comparison</div>"]
+        V1["<div style='width:250px; height:100px; display:flex; align-items:center; justify-content:center;'>Explainability</div>"]
+        V2["<div style='width:250px; height:100px; display:flex; align-items:center; justify-content:center;'>Stress Testing</div>"]
+        V3["<div style='width:250px; height:100px; display:flex; align-items:center; justify-content:center;'>Benchmarking</div>"]
+        V4["<div style='width:250px; height:100px; display:flex; align-items:center; justify-content:center;'>Cluster Coverage</div>"]
+        V5["<div style='width:250px; height:100px; display:flex; align-items:center; justify-content:center;'>Drift Analysis</div>"]
+        V6["<div style='width:250px; height:100px; display:flex; align-items:center; justify-content:center;'>Diagnostic Plots</div>"]
+        V7["<div style='width:250px; height:100px; display:flex; align-items:center; justify-content:center;'>Metrics Comparison</div>"]
         
-        V1 --- V2 --- V3 --- V4 --- V5 --- V6 --- V7
+        %% Use invisible links to force horizontal alignment without showing arrows or lines
+        V1 ~~~ V2 ~~~ V3 ~~~ V4 ~~~ V5 ~~~ V6 ~~~ V7
     end
 
     %% High-Quality Styling (Synced with first diagram)
