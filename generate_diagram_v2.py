@@ -18,49 +18,48 @@ def generate_png(mermaid_code, output_path):
     except Exception as e:
         print(f"Kroki Error for {output_path}: {e}")
 
-# 1. Main Pipeline Diagram (36px font)
-main_pipeline_mermaid = """
+# Unified Architecture Diagram
+unified_architecture_mermaid = """
 graph LR
     A[Data Profiling] --> B[Data Preprocessing]
     B --> C[Feature Power Ranking]
-    C --> D{Model Build}
-    D --> E[Validation Suite]
-    E --> F[Report Generation]
+    C --> MB
+    MB --> VS
+    VS --> F[Report Generation]
 
-    classDef preproc fill:#e8f4f8,stroke:#2b7b9c,stroke-width:2px,font-size:36px,padding:20px,color:#1a4a5e;
-    classDef modeling fill:#f3e8f8,stroke:#6b2b9c,stroke-width:2px,font-size:36px,padding:20px,color:#401a5e;
-    classDef validation fill:#e8f8ec,stroke:#2b9c4c,stroke-width:2px,font-size:36px,padding:20px,color:#1a5e2e;
-    classDef reporting fill:#fff3e0,stroke:#e65100,stroke-width:2px,font-size:36px,padding:20px,color:#4d1b00;
-
-    class A,B preproc;
-    class C,D modeling;
-    class E validation;
-    class F reporting;
-"""
-
-# 2. Validation Suite Detail Diagram - BOOSTED (48px font to compensate for scaling)
-validation_detail_mermaid = """
-graph LR
-    subgraph VS ["Validation Suite Components"]
-        direction LR
-        V1["<div style='width:300px; height:120px; display:flex; align-items:center; justify-content:center;'>Explainability</div>"]
-        V2["<div style='width:300px; height:120px; display:flex; align-items:center; justify-content:center;'>Stress Testing</div>"]
-        V3["<div style='width:300px; height:120px; display:flex; align-items:center; justify-content:center;'>Benchmarking</div>"]
-        V4["<div style='width:300px; height:120px; display:flex; align-items:center; justify-content:center;'>Cluster Coverage</div>"]
-        V5["<div style='width:300px; height:120px; display:flex; align-items:center; justify-content:center;'>Drift Analysis</div>"]
-        V6["<div style='width:300px; height:120px; display:flex; align-items:center; justify-content:center;'>Diagnostic Plots</div>"]
-        V7["<div style='width:300px; height:120px; display:flex; align-items:center; justify-content:center;'>Metrics Comparison</div>"]
-        
-        V1 ~~~ V2 ~~~ V3 ~~~ V4 ~~~ V5 ~~~ V6 ~~~ V7
+    subgraph MB [Model Build]
+        direction TB
+        D1[Regression]
+        D2[Classification]
     end
 
-    %% Boosted Styling to 48px to offset the auto-scaling in wide diagrams
-    classDef validation fill:#e8f8ec,stroke:#2b9c4c,stroke-width:2px,font-size:48px,padding:20px,color:#1a5e2e;
-    classDef suite fill:#f9fff9,stroke:#2b9c4c,stroke-width:4px,font-size:52px,padding:40px,color:#1a5e2e;
+    subgraph VS [Validation Suite]
+        direction TB
+        V1[Explainability]
+        V2[Stress Testing]
+        V3[Benchmarking]
+        V4[Cluster Coverage]
+        V5[Drift Analysis]
+        V6[Diagnostic Plots]
+        V7[Metrics Comparison]
+    end
 
-    class V1,V2,V3,V4,V5,V6,V7 validation;
-    class VS suite;
+    %% Styling
+    classDef blue fill:#e8f4f8,stroke:#2b7b9c,stroke-width:2px,font-size:30px,padding:15px,color:#1a4a5e;
+    classDef purple fill:#f3e8f8,stroke:#6b2b9c,stroke-width:2px,font-size:30px,padding:15px,color:#401a5e;
+    classDef green fill:#e8f8ec,stroke:#2b9c4c,stroke-width:2px,font-size:30px,padding:15px,color:#1a5e2e;
+    classDef orange fill:#fff3e0,stroke:#e65100,stroke-width:2px,font-size:30px,padding:15px,color:#4d1b00;
+    
+    classDef mb_cont fill:#f3e8f8,stroke:#6b2b9c,stroke-width:3px,font-size:34px,color:#401a5e;
+    classDef vs_cont fill:#e8f8ec,stroke:#2b9c4c,stroke-width:3px,font-size:34px,color:#1a5e2e;
+
+    class A,B blue;
+    class C,D1,D2 purple;
+    class V1,V2,V3,V4,V5,V6,V7 green;
+    class F orange;
+    
+    class MB mb_cont;
+    class VS vs_cont;
 """
 
-generate_png(main_pipeline_mermaid, "/Users/dolly/TanML v11/architecture_main.png")
-generate_png(validation_detail_mermaid, "/Users/dolly/TanML v11/architecture_validation.png")
+generate_png(unified_architecture_mermaid, "/Users/dolly/TanML v11/architecture.png")

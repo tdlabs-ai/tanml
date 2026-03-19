@@ -32,3 +32,19 @@ catboost_info/
 .streamlit/secrets.toml
 tanml/tmp_report_assets/
 site/
+
+# local media & branding (don't commit)
+tanml_avatar.png
+tanml_demo_fast.mp4
+tanml_official_demo.mov
+
+# intermediate diagram versions
+architecture_v2.png
+architecture_main.png
+architecture_validation.png
+generate_diagram_v3.py
+
+# local outputs
+reconstructed_data/
+tanml_runs/
+tanml_test.log

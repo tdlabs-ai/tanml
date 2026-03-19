@@ -12,10 +12,13 @@ authors:
     orcid: 0009-0004-8583-2208
     affiliation: 1
   - name: Dolly Sah
+    orcid: 0009-0008-9190-9143
     affiliation: 2
   - name: Harshul Jain
+    orcid: 0009-0005-8083-5108
     affiliation: 3
   - name: Tanya Sah
+    orcid: 0000-0002-7366-2318
     affiliation: 3
   - name: Kayden Jordan
     affiliation: 1
@@ -26,7 +29,7 @@ affiliations:
     index: 2
   - name: New York University
     index: 3
-date: 7 March 2026
+date: 18 March 2026
 bibliography: paper.bib
 ---
 
@@ -36,7 +39,9 @@ TanML [@tanml_2026] is an open-source toolkit for validating machine learning mo
 
 # Statement of need
 
-Machine learning models trained on structured, tabular data are widely used in high-stakes domains such as finance, insurance, and other regulated settings. In these environments, building a predictive model is only one part of the workflow, because practitioners must also assess data quality, model behavior, predictive performance, robustness, and interpretability while producing documentation that supports internal review, governance, and compliance processes. For example, banking institutions developing credit scoring or fraud detection models are required to produce comprehensive model validation reports documenting data integrity, performance benchmarking, and sensitivity analyses before regulatory approval [@sr11-7]. Similarly, insurance firms building claims forecasting models must demonstrate that their automated systems are fair, explainable, and robust to distributional shifts. In practice, these validation activities are often fragmented across notebooks, scripts, visualization libraries, and manually prepared reports, making workflows difficult to standardize, reproduce, and communicate, especially when results must be reviewed by stakeholders beyond the original model developer. TanML was developed to address this problem by providing a unified workflow for validating and documenting models trained on tabular data. Instead of requiring practitioners to assemble separate tools for analysis, evaluation, and reporting, TanML organizes these activities within a single interface intended to make validation outputs easier to reproduce, review, and communicate. The primary target audience includes data scientists, quantitative analysts, model validation teams, and other practitioners working in regulated or documentation heavy settings who need reviewable validation artifacts in addition to numerical metrics or exploratory analysis.
+Machine learning models trained on structured, tabular data are widely used in high-stakes domains such as finance, insurance, and other regulated settings. In these environments, building a predictive model is only one part of the workflow, because practitioners must also assess data quality, model behavior, predictive performance, robustness, and interpretability while producing documentation that supports internal review, governance, and compliance processes. For example, banking institutions developing credit scoring or fraud detection models are required to produce comprehensive model validation reports documenting data integrity, performance benchmarking, and sensitivity analyses before regulatory approval [@sr11-7]. Similarly, insurance firms building claims models must demonstrate that their automated systems are fair, explainable, and robust to distributional shifts [@oecd2020insuranceai]. 
+
+In practice, these validation activities are often fragmented across notebooks, scripts, visualization libraries, and manually prepared reports, making workflows difficult to standardize, reproduce, and communicate, especially when results must be reviewed by stakeholders beyond the original model developer. TanML was developed to address this problem by providing a unified workflow for validating and documenting models trained on tabular data. Instead of requiring practitioners to assemble separate tools for analysis, evaluation, and reporting, TanML organizes these activities within a single interface intended to make validation outputs easier to reproduce, review, and communicate. The primary target audience includes data scientists, quantitative analysts, model validation teams, and other practitioners working in regulated or documentation heavy settings who need reviewable validation artifacts in addition to numerical metrics or exploratory analysis.
 
 
 # State of the field
@@ -71,6 +76,8 @@ TanML was explicitly designed as a modular, privacy-first desktop application th
 
 ### Core Architecture
 
+TanML is built on three foundational components that collectively enable its modular workflow: a session-based data management layer that preserves data privacy, a dynamic model registry for extensibility, and a document generation engine for automated reporting.
+
 The first pillar is a centralized **Session State Manager** that handles data flow between modules without requiring a persistent database. This approach allows sensitive financial data to remain local to the user's environment, either held transiently in memory or stored in ephemeral local directories, rather than being transmitted to external hosted services. For example, when a practitioner uploads a loan-level dataset for credit model validation, the data persists only for the duration of the session and is never written to a remote store.
 
 The second pillar is the **Model Registry**, a dynamic factory pattern (`tanml.models.registry`) that standardizes the instantiation of various estimators (XGBoost, CatBoost, LightGBM) with pre-configured hyperparameters. This decoupling allows researchers to easily inject novel models without altering the core validation engine UI.
@@ -87,13 +94,11 @@ The **Feature Power Ranking** layer assesses predictive power and statistical si
 
 The **Model Development** layer facilitates champion-challenger comparisons using K-Fold Cross-Validation. Users can train and compare multiple estimators side-by-side, selecting a champion model while retaining challenger results for documentation purposes.
 
-The **Evaluation Suite** is the core validation engine. It calculates Population Stability Index (PSI) for drift analysis, tree-based SHAP values [@lundberg2017unified] for explainability, and segmented performance metrics. For example, a model risk team validating an insurance claims model can use PSI to assess whether the production data has drifted from the training distribution, examine SHAP plots to verify that feature contributions align with domain expectations, and review performance breakdowns across customer segments to detect potential fairness or stability issues. These outputs are then serialized directly into the generated validation report.
+The **Evaluation Suite** is the core validation engine. It calculates Population Stability Index (PSI) for drift analysis [@yurdakul2018statistical], tree-based SHAP values [@lundberg2017unified] for explainability, and segmented performance metrics. For example, a model risk team validating an insurance claims model can use PSI to assess whether the production data has drifted from the training distribution, examine SHAP plots to verify that feature contributions align with domain expectations, and review performance breakdowns across customer segments to detect potential fairness or stability issues. These outputs are then serialized directly into the generated validation report.
 
-To illustrate a complete workflow: a quantitative analyst at a financial institution receives a challenger credit model and its associated dataset. Using TanML, the analyst profiles the data to check for quality issues, ranks features by predictive power, retrains the model under cross-validation to verify reported performance, runs drift and SHAP analyses against a holdout or production sample, and exports a structured Word report. This report can then be circulated to model governance committees and regulators with minimal additional preparation. To illustrate the system flow, **Figure \ref{fig:arch}** shows the high-level end-to-end pipeline, while **Figure \ref{fig:validation}** provides a modular overview of the specific validation functionalities included in the toolkit.
+To illustrate a complete workflow: a quantitative analyst at a financial institution receives a challenger credit model and its associated dataset. Using TanML, the analyst profiles the data to check for quality issues, ranks features by predictive power, retrains the model under cross-validation to verify reported performance, runs drift and SHAP analyses against a holdout or production sample, and exports a structured Word report. This report can then be circulated to model governance committees and regulators with minimal additional preparation. To illustrate the system flow, **Figure \ref{fig:arch}** provides a modular overview of the end-to-end pipeline and specific validation functionalities included in the toolkit.
 
-![High-level modular workflow of TanML. \label{fig:arch}](architecture_main.png)
-
-![Detailed internal structure of the TanML Validation Suite. \label{fig:validation}](architecture_validation.png)
+![High-level modular workflow of TanML. \label{fig:arch}](architecture.png)
 
 # Research impact statement
 
