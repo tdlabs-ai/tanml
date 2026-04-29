@@ -419,7 +419,7 @@ def render_feature_ranking_page(run_dir):
             st.dataframe(
                 m_df.style
                 .background_gradient(subset=["Power"], cmap="Blues")
-                .applymap(color_p_value, subset=["p-value"])
+                .map(color_p_value, subset=["p-value"])
                 .format(fmt),
                 width="stretch",
             )
