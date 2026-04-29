@@ -837,7 +837,7 @@ def render_model_development_page(run_dir):
                             return 'background-color: rgba(234, 179, 8, 0.1); color: #854d0e;' # Borderline
                         return ''
 
-                    st.dataframe(df_coef.style.format("{:.4f}").applymap(
+                    st.dataframe(df_coef.style.format("{:.4f}").map(
                         color_p_value, subset=["P > |t/z|"]
                     ))
                     st.caption("Significance: Strong Green (< 0.01), Green (< 0.05), Yellow (< 0.10)")
