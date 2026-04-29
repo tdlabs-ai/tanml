@@ -53,7 +53,7 @@ def render(context):
                 return 'background-color: rgba(234, 179, 8, 0.1); color: #854d0e;' # Borderline
             return ''
 
-        st.dataframe(df_coef.style.format("{:.4f}").applymap(
+        st.dataframe(df_coef.style.format("{:.4f}").map(
             color_p_value, subset=["P>|t|"] if "P>|t|" in df_coef.columns else []
         ))
         
@@ -71,7 +71,7 @@ def render(context):
                 
                 df_p = df_p.sort_values(by="P>|t|", ascending=True)
                 df_p = df_p[["P>|t|", "Coef"]]
-                st.dataframe(df_p.style.format("{:.4f}").applymap(
+                st.dataframe(df_p.style.format("{:.4f}").map(
                     color_p_value, subset=["P>|t|"]
                 ))
             

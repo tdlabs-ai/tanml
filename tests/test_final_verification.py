@@ -36,7 +36,7 @@ def test_1_data_loader_optimization():
         print(f"   'low_card' dtype: {loaded_df['low_card'].dtype} (Expected: category)")
 
         # Assertions
-        assert loaded_df["high_card"].dtype == "object", "High cardinality should remain object"
+        assert loaded_df["high_card"].dtype in ["object", "string", "str"], "High cardinality should remain string/object"
         assert isinstance(loaded_df["low_card"].dtype, pd.CategoricalDtype), (
             "Low cardinality should be categorical"
         )
