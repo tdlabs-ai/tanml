@@ -86,7 +86,7 @@ def render(context):
         st.dataframe(
             df_drift.style
             .format({"PSI": "{:.4f}", "KS Stat": "{:.4f}", "KS p-value": "{:.4f}"})
-            .applymap(color_p_value, subset=["KS p-value"])
+            .map(color_p_value, subset=["KS p-value"])
         )
 
         # Plot top drift feature
