@@ -33,13 +33,7 @@ from tanml.ui.views.preprocessing import render_preprocessing_hub
 from tanml.ui.views.profiling import render_data_profiling_hub
 from tanml.ui.views.ranking import render_feature_ranking_page
 
-try:
-    _max_mb = int(os.environ.get("TANML_MAX_MB", "1024"))
-    st.set_option("server.maxUploadSize", _max_mb)
-    st.set_option("server.maxMessageSize", _max_mb)
-    st.set_option("browser.gatherUsageStats", False)
-except Exception:
-    pass
+
 
 
 from pathlib import Path
@@ -54,7 +48,20 @@ _LOGO_PATH = Path(__file__).parent / "assets" / "logo.png"
 
 
 def main():
-    # Handle direct links from dashboard tiles via query parameters
+    # 1. Page Configuration MUST be the very first Streamlit command!
+    from tanml.ui.config import configure_page
+    configure_page()
+
+    # 2. Options can now safely be set
+    try:
+        import os
+        _max_mb = int(os.environ.get("TANML_MAX_MB", "1024"))
+        st.set_option("server.maxUploadSize", _max_mb)
+        st.set_option("server.maxMessageSize", _max_mb)
+        st.set_option("browser.gatherUsageStats", False)
+    except Exception:
+        pass
+
     # Handle direct links from dashboard tiles via query parameters
     if "page" in st.query_params:
         target_page = st.query_params["page"]
@@ -79,7 +86,7 @@ def main():
     if "nav_selection" not in st.session_state:
         st.session_state.nav_selection = "Home"
 
-    st.set_page_config(page_title="TanML", layout="wide")
+    # st.set_page_config is DELETED from here!
     load_css()  # Inject styles
 
     run_dir = _session_dir()
@@ -120,6 +127,7 @@ def main():
         render_model_development_page(run_dir)
     elif "Model Evaluation" in nav:
         render_model_evaluation_page(run_dir)
+
 
 
 if __name__ == "__main__":
