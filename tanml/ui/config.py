@@ -120,7 +120,7 @@ def get_custom_css() -> str:
     header[data-testid="stHeader"] {
         background-color: transparent;
         height: 3rem;
-        visibility: hidden !important;
+        
     }
     
     /* Custom scrollbar */
