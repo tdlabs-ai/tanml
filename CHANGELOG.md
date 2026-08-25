@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.1] - 2026-08-25
+
+### Fixed
+- **Pandas 2.1+ Compatibility**: Replaced deprecated `DataFrame.applymap()` calls with `DataFrame.map()` across all UI views and tables.
+- **Streamlit Lifecycle**: Ensured `configure_page()` is called first during startup to prevent Streamlit page configuration errors.
+- **Type Checking**: Resolved Mypy typing annotations for dictionary parameters in UI form components.
+- **Testing**: Updated string dtype assertions in data loader optimization tests for cross-backend compatibility.
+
+### Changed
+- **Documentation**: Expanded the comprehensive 5-step model validation lifecycle guide in `getting-started.md`.
+- **Assets**: Embedded high-resolution walkthrough MP4 demo video into documentation.
+
 ## [0.2.0] - 2026-03-09
 
 ### Added

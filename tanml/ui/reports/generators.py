@@ -123,8 +123,8 @@ def _create_table_from_dict(doc, data_dict, first_col_name="Feature"):
         return None
 
     # Get column headers from the first item
-    first_item = list(data_dict.values())[0]
-    col_names = [first_col_name] + list(first_item.keys())
+    first_item = next(iter(data_dict.values()))
+    col_names = [first_col_name, *list(first_item.keys())]
     
     table = doc.add_table(rows=1, cols=len(col_names))
     table.style = "Table Grid"

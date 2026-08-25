@@ -6,12 +6,12 @@ Data Preprocessing page logic.
 from __future__ import annotations
 
 from datetime import datetime
+from pathlib import Path
 
 import pandas as pd
 import streamlit as st
 from sklearn.impute import KNNImputer, SimpleImputer
 from sklearn.preprocessing import LabelEncoder
-from pathlib import Path
 
 
 def render_preprocessing_hub(run_dir):
@@ -253,7 +253,7 @@ def render_preprocessing_hub(run_dir):
     with col2:
         stratify_col = st.selectbox(
             "Stratify by (Optional)", 
-            ["None"] + list(df_for_split.columns),
+            ["None", *list(df_for_split.columns)],
             help="Ensures the Train/Test sets have the same proportion of classes as the original data for the selected column (useful for imbalanced targets)."
         )
         shuffle = st.checkbox(
@@ -398,7 +398,7 @@ def render_preprocessing_hub(run_dir):
                     dataframe.to_csv(target_path, index=False)
                     st.warning(f"Native write for '{ext}' is unsupported. Saved as CSV instead.")
                 return target_path
-            except ModuleNotFoundError as e:
+            except ModuleNotFoundError:
                 st.error(f"Missing dependency for {ext}. Try installing pyreadstat/pyarrow. Falling back to CSV.")
                 target_path = target_path.with_suffix(".csv")
                 dataframe.to_csv(target_path, index=False)

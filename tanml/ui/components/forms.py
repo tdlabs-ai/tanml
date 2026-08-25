@@ -5,6 +5,8 @@ Configuration forms and input widgets for TanML UI.
 
 from __future__ import annotations
 
+from typing import Any
+
 import streamlit as st
 
 from tanml.models.registry import (
@@ -43,7 +45,7 @@ def render_model_form(y_train, seed_global: int, target_name: str = "default"):
     defaults = spec.defaults or {}
 
     seed_keys = [k for k in ("random_state", "seed", "random_seed") if k in defaults]
-    params = {}
+    params: dict[str, Any] = {}
 
     with st.expander("Hyperparameters", expanded=True):
         # Seed input - let user choose

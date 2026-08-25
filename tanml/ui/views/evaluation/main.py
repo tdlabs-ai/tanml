@@ -171,9 +171,9 @@ def render_model_evaluation_page(run_dir):
 
             try:
                 if library == "statsmodels":
-                    import statsmodels.api as sm
                     import numpy as np
                     import pandas as pd
+                    import statsmodels.api as sm
 
                     class StatsModelsWrapper:
                         def __init__(self, sm_model, algo, feats):
@@ -183,7 +183,6 @@ def render_model_evaluation_page(run_dir):
                             self.classes_ = np.array([0, 1]) if algo == "Logit" else None
                         
                         def _prep(self, X):
-                            import pandas as pd
                             import statsmodels.api as sm
                             if not isinstance(X, pd.DataFrame):
                                 X = pd.DataFrame(X, columns=self.feats)

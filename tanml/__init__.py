@@ -14,7 +14,7 @@ Quick Start:
     from tanml.checks.explainability.shap_check import SHAPCheck
 """
 
-__version__ = "0.2.0"
+__version__ = "0.2.1"
 
 __all__ = [
     "__version__",

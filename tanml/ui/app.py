@@ -24,23 +24,19 @@ if os.environ.get("TANML_CLI_LAUNCH") != "1":
     )
     sys.exit(1)
 
+from pathlib import Path
+
 import streamlit as st
 
+from tanml.ui.config import load_css
+from tanml.ui.services.session import _session_dir
+from tanml.ui.views.evaluation import render_model_evaluation_page
 from tanml.ui.views.model_dev import render_model_development_page
 from tanml.ui.views.preprocessing import render_preprocessing_hub
 
 # TanML Pages
 from tanml.ui.views.profiling import render_data_profiling_hub
 from tanml.ui.views.ranking import render_feature_ranking_page
-
-
-
-
-from pathlib import Path
-
-from tanml.ui.config import load_css
-from tanml.ui.services.session import _session_dir
-from tanml.ui.views.evaluation import render_model_evaluation_page
 from tanml.ui.views.setup import render_setup_page
 
 # Logo path

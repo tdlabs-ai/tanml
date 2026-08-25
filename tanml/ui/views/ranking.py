@@ -9,8 +9,8 @@ from datetime import datetime
 
 import numpy as np
 import pandas as pd
-import streamlit as st
 import statsmodels.api as sm
+import streamlit as st
 
 from tanml.models.registry import infer_task_from_target
 from tanml.ui.reports import _generate_ranking_report_docx
@@ -323,19 +323,18 @@ def render_feature_ranking_page(run_dir):
                     if task_type == "regression":
                         res_stat = sm.OLS(y_stat_base.values, X_stat_input).fit()
                         p_val_stat = res_stat.pvalues[1] if len(res_stat.pvalues) > 1 else 1.0
-                    else:
-                        # For classification, we use Logit if target is binary
-                        if y_stat_base.nunique() == 2:
-                            try:
-                                res_stat = sm.Logit(y_stat_base.values, X_stat_input).fit(disp=0)
-                                p_val_stat = res_stat.pvalues[1] if len(res_stat.pvalues) > 1 else 1.0
-                            except:
-                                # Fallback for convergence errors
-                                p_val_stat = 1.0
-                        else:
-                            # Multiclass target: ANOVA or similar would be better, but for now 
-                            # we avoid crashing and return neutral significance.
+                    # For classification, we use Logit if target is binary
+                    elif y_stat_base.nunique() == 2:
+                        try:
+                            res_stat = sm.Logit(y_stat_base.values, X_stat_input).fit(disp=0)
+                            p_val_stat = res_stat.pvalues[1] if len(res_stat.pvalues) > 1 else 1.0
+                        except:
+                            # Fallback for convergence errors
                             p_val_stat = 1.0
+                    else:
+                        # Multiclass target: ANOVA or similar would be better, but for now 
+                        # we avoid crashing and return neutral significance.
+                        p_val_stat = 1.0
                 except:
                     # Catch-all for any other statistical errors
                     p_val_stat = 1.0
@@ -400,11 +399,9 @@ def render_feature_ranking_page(run_dir):
             fmt = {"Power": "{:.1f}", "Missing %": "{:.1f}%", "p-value": "{:.3e}"}
             if task_type == "regression":
                 fmt["Correlation"] = "{:.3f}"
-                subset = ["Power", "Correlation", "p-value"]
             else:
                 fmt["IV (Est)"] = "{:.3f}"
                 fmt["Gini (Est)"] = "{:.3f}"
-                subset = ["Power", "p-value"]
 
             def color_p_value(val):
                 """Color specific significance thresholds."""

@@ -4,9 +4,11 @@ Generate reproducible demo datasets for TanML.
 This script creates a synthetic credit risk dataset with realistic distributions.
 """
 
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
-from pathlib import Path
+
 
 def generate_demo_data(seed=42, output_dir="demo_datasets"):
     """
@@ -65,7 +67,7 @@ def generate_demo_data(seed=42, output_dir="demo_datasets"):
     train_df.to_csv(train_file, index=False)
     test_df.to_csv(test_file, index=False)
     
-    print(f"Successfully saved:")
+    print("Successfully saved:")
     print(f"  - {train_file} ({len(train_df)} rows)")
     print(f"  - {test_file} ({len(test_df)} rows)")
 

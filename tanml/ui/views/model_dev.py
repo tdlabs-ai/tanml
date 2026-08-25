@@ -202,13 +202,25 @@ def render_model_development_page(run_dir):
 
             if library == "statsmodels":
                 import statsmodels.api as sm
-                from sklearn.model_selection import KFold, StratifiedKFold
                 from sklearn.metrics import (
-                    mean_squared_error, r2_score, accuracy_score, precision_score, 
-                    recall_score, f1_score, roc_auc_score, log_loss, average_precision_score, 
-                    balanced_accuracy_score, brier_score_loss, matthews_corrcoef, 
-                    mean_absolute_error, median_absolute_error, roc_curve, precision_recall_curve
+                    accuracy_score,
+                    average_precision_score,
+                    balanced_accuracy_score,
+                    brier_score_loss,
+                    f1_score,
+                    log_loss,
+                    matthews_corrcoef,
+                    mean_absolute_error,
+                    mean_squared_error,
+                    median_absolute_error,
+                    precision_recall_curve,
+                    precision_score,
+                    r2_score,
+                    recall_score,
+                    roc_auc_score,
+                    roc_curve,
                 )
+                from sklearn.model_selection import KFold, StratifiedKFold
 
                 X_sm = sm.add_constant(X)
                 
