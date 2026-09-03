@@ -8,7 +8,7 @@
 [![Documentation](https://img.shields.io/badge/docs-stable-blue.svg)](https://tdlabs-ai.github.io/tanml/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 [![Give Feedback](https://img.shields.io/badge/Feedback-Give%20Now-blue?style=for-the-badge)](https://forms.gle/oG2JHvt7tLXE5Atu7)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17317165.svg)](https://doi.org/10.5281/zenodo.17317165)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22285793.svg)](https://doi.org/10.5281/zenodo.22285793)
 
 
 > **TanML bridges the gap between data science tools (for building models) and governance requirements (for validating them). It's not just an ML library—it's a validation workflow with built-in documentation.**
@@ -267,7 +267,7 @@ SPDX-License-Identifier: MIT
 
 If TanML helps your work or publications, please cite:
 
-> Sah, T., & Sah, D. (2026). *TanML: Automated Model Validation Toolkit for Tabular Machine Learning Models* [Software]. Zenodo. [https://doi.org/10.5281/zenodo.17317165](https://doi.org/10.5281/zenodo.17317165)
+> Sah, T., & Sah, D. (2026). *TanML: Automated Model Validation Toolkit for Tabular Machine Learning Models* [Software]. Zenodo. [https://doi.org/10.5281/zenodo.22285793](https://doi.org/10.5281/zenodo.22285793)
 
 Or in BibTeX (version-agnostic):
 
@@ -277,8 +277,8 @@ Or in BibTeX (version-agnostic):
   title        = {TanML: Automated Model Validation Toolkit for Tabular Machine Learning Models},
   year         = {2026},
   publisher    = {Zenodo},
-  doi          = {10.5281/zenodo.17317165},
-  url          = {https://doi.org/10.5281/zenodo.17317165},
+  doi          = {10.5281/zenodo.22285793},
+  url          = {https://doi.org/10.5281/zenodo.22285793},
   license      = {MIT}
 }
 ```
