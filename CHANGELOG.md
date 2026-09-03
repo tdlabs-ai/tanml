@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.2] - 2026-09-03
+
+### Added
+- **pyOpenSci Peer-Reviewed**: Added the official pyOpenSci peer-reviewed badge following formal review approval (Issue #280).
+
+### Changed
+- **Python Support**: Dropped Python 3.10 support; upgraded minimum Python requirement to `Python >= 3.11` (supporting Python 3.11, 3.12, 3.13).
+- **Build & Quality**: Updated linters and package classifiers for Python 3.11+.
+
 ## [0.2.1] - 2026-08-25
 
 ### Fixed

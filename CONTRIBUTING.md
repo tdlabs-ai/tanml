@@ -119,7 +119,7 @@ vif_results = calculate_vif(df, features=["col1", "col2"])
 
 ## Setup and Installation
 
-TanML requires **Python 3.10** or higher.
+TanML requires **Python 3.11** or higher.
 
 ```bash
 # 1. Clone the repository
