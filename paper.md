@@ -29,7 +29,7 @@ affiliations:
     index: 2
   - name: New York University
     index: 3
-date: 18 March 2026
+date: 3 September 2026
 bibliography: paper.bib
 ---
 
