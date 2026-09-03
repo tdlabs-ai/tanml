@@ -1,29 +1,33 @@
-# TanML: Automated Model Validation Toolkit for Tabular Machine Learning
+# TanML: Automated Model Validation Toolkit for Tabular Machine Learning Models
 
+[![pyOpenSci Peer-Reviewed](https://pyopensci.org/badges/peer-reviewed.svg)](https://github.com/pyOpenSci/software-submission/issues/280)
 [![PyPI](https://img.shields.io/pypi/v/tanml.svg)](https://pypi.org/project/tanml/)
 [![Downloads](https://pepy.tech/badge/tanml)](https://pepy.tech/project/tanml)
-[![Python Version](https://img.shields.io/badge/3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue?logo=python&logoColor=white)](https://pypi.org/project/tanml/)
+[![Python Version](https://img.shields.io/badge/3.11%20%7C%203.12%20%7C%203.13-blue?logo=python&logoColor=white)](https://pypi.org/project/tanml/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 [![Give Feedback](https://img.shields.io/badge/Feedback-Give%20Now-blue?style=for-the-badge)](https://forms.gle/oG2JHvt7tLXE5Atu7)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17317165.svg)](https://doi.org/10.5281/zenodo.17317165)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22285793.svg)](https://doi.org/10.5281/zenodo.22285793)
 
 
 > **TanML bridges the gap between data science tools (for building models) and governance requirements (for validating them). It's not just an ML library—it's a validation workflow with built-in documentation.**
 
+### 🚀 [See TanML in Action (2-Minute Walkthrough)](https://tdlabs-ai.github.io/tanml/assets/tanml_demo.mp4?v=2)
+<video muted autoplay loop playsinline controls width="100%" src="https://tdlabs-ai.github.io/tanml/assets/tanml_demo.mp4?v=2"></video>
+
 * **License:** MIT
-* **Python:** ![Python Versions](https://img.shields.io/badge/3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue?logo=python&logoColor=white)
+* **Python:** ![Python Versions](https://img.shields.io/badge/3.11%20%7C%203.12%20%7C%203.13-blue?logo=python&logoColor=white)
 * **OS:** Linux / macOS / Windows (incl. WSL)
 
 ---
 
 ## Why TanML?
 
-* **End-to-end workflow:** Data Profiling → Preprocessing → Feature Power Ranking → Model Development → Evaluation → Reports—all in one UI.
+* **End-to-end workflow:** Data Profiling → Data Preprocessing → Feature Power Ranking → Model Development → Evaluation → Reports—all in one UI.
 * **Audit-ready reports:** Generate editable documents for stakeholders and compliance reviews.
 * **Built for regulated industries:** Designed for MRM, credit risk, insurance, and SR 11-7 contexts.
 * **No code required:** Fully UI-driven—no Python knowledge needed.
 * **Robust evaluation:** Drift detection, stress testing, SHAP explainability, cluster coverage.
-* **Works with your stack:** scikit-learn, XGBoost, LightGBM, CatBoost.
+* **Works with your stack:** Scikit-learn, XGBoost, LightGBM, CatBoost, Statsmodels.
 
 ---
 
@@ -95,7 +99,7 @@ $env:TANML_SERVER_ADDRESS="0.0.0.0"; $env:TANML_PORT="9000"; $env:TANML_MAX_MB="
 
 ## Reports
 
-TanML generates audit-ready reports programmatically:
+TanML generates audit ready reports programmatically:
 
 * **Model Development Report** — Cross-validation metrics, diagnostics, and performance summary
 * **Model Evaluation Report** — Train/Test comparison, drift analysis, stress testing, SHAP explainability
@@ -125,18 +129,18 @@ SPDX-License-Identifier: MIT
 
 If TanML helps your work or publications, please cite:
 
-> Sah, T., & Sah, D. (2026). *TanML: Automated Model Validation Toolkit for Tabular Machine Learning* [Software]. Zenodo. [https://doi.org/10.5281/zenodo.17317165](https://doi.org/10.5281/zenodo.17317165)
+> Sah, T., & Sah, D. (2026). *TanML: Automated Model Validation Toolkit for Tabular Machine Learning Models* [Software]. Zenodo. [https://doi.org/10.5281/zenodo.22285793](https://doi.org/10.5281/zenodo.22285793)
 
 Or in BibTeX (version-agnostic):
 
 ```bibtex
 @software{tanml_2026,
   author       = {Sah, Tanmay and Sah, Dolly},
-  title        = {TanML: Automated Model Validation Toolkit for Tabular Machine Learning},
+  title        = {TanML: Automated Model Validation Toolkit for Tabular Machine Learning Models},
   year         = {2026},
   publisher    = {Zenodo},
-  doi          = {10.5281/zenodo.17317165},
-  url          = {https://doi.org/10.5281/zenodo.17317165},
+  doi          = {10.5281/zenodo.22285793},
+  url          = {https://doi.org/10.5281/zenodo.22285793},
   license      = {MIT}
 }
 ```
