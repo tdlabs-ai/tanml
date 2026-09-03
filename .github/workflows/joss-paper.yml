@@ -3,14 +3,13 @@ name: Compile JOSS Paper
 on:
   push:
     branches:
+      - paper
       - main
       - 'dev/**'
     paths:
       - 'paper.md'
       - 'paper.bib'
-      - 'architecture_main.png'
-      - 'architecture_validation.png'
-      - 'generate_diagram_v2.py'
+      - 'architecture.png'
       - '.github/workflows/joss-paper.yml'
   pull_request:
     paths:
