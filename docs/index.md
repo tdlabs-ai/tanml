@@ -1,5 +1,6 @@
 # TanML: Automated Model Validation Toolkit for Tabular Machine Learning Models
 
+[![JOSS](https://joss.theoj.org/papers/10.21105/joss.11253/status.svg)](https://doi.org/10.21105/joss.11253)
 [![pyOpenSci Peer-Reviewed](https://pyopensci.org/badges/peer-reviewed.svg)](https://github.com/pyOpenSci/software-submission/issues/280)
 [![PyPI](https://img.shields.io/pypi/v/tanml.svg)](https://pypi.org/project/tanml/)
 [![Downloads](https://pepy.tech/badge/tanml)](https://pepy.tech/project/tanml)
@@ -127,22 +128,25 @@ SPDX-License-Identifier: MIT
 
 ### How to cite
 
-If TanML helps your work or publications, please cite:
+If you use TanML in your research or work, please cite our article in the *Journal of Open Source Software*:
 
-> Sah, T., & Sah, D. (2026). *TanML: Automated Model Validation Toolkit for Tabular Machine Learning Models* [Software]. Zenodo. [https://doi.org/10.5281/zenodo.22285793](https://doi.org/10.5281/zenodo.22285793)
+> Sah, T., Sah, D., Jain, H., Sah, T., & Jordan, K. (2026). TanML: Automated Model Validation Toolkit for Tabular Machine Learning Models. *Journal of Open Source Software*, 11(125), 11253. https://doi.org/10.21105/joss.11253
 
-Or in BibTeX (version-agnostic):
+BibTeX:
 
 ```bibtex
-@software{tanml_2026,
-  author       = {Sah, Tanmay and Sah, Dolly},
-  title        = {TanML: Automated Model Validation Toolkit for Tabular Machine Learning Models},
-  year         = {2026},
-  publisher    = {Zenodo},
-  doi          = {10.5281/zenodo.22285793},
-  url          = {https://doi.org/10.5281/zenodo.22285793},
-  license      = {MIT}
+@article{Sah2026,
+  doi = {10.21105/joss.11253},
+  url = {https://doi.org/10.21105/joss.11253},
+  year = {2026},
+  publisher = {The Open Journal},
+  volume = {11},
+  number = {125},
+  pages = {11253},
+  author = {Tanmay Sah and Dolly Sah and Harshul Jain and Tanya Sah and Kayden Jordan},
+  title = {TanML: Automated Model Validation Toolkit for Tabular Machine Learning Models},
+  journal = {Journal of Open Source Software}
 }
 ```
 
-A machine-readable citation file (`CITATION.cff`) is included for citation tools and GitHub’s “Cite this repository” button.
+A machine-readable citation file (`CITATION.cff`) is included in this repository.
