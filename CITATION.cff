@@ -1,45 +1,47 @@
-cff-version: 1.2.0
-message: "If you use TanML, please cite this repository as follows."
-title: "TanML: Automated Model Validation Toolkit for Tabular Machine Learning"
-license: MIT
-repository-code: https://github.com/tdlabs-ai/tanml
-keywords:
-  - model validation
-  - model risk management
-  - model governance
-  - SR 11-7
-  - tabular ML
-  - credit risk
-  - insurance analytics
-  - explainability
-  - XAI
-  - SHAP
-  - stress testing
-  - reporting
-  - docx
-  - streamlit
-  - xgboost
-  - lightgbm
-  - catboost
-
+cff-version: "1.2.0"
+message: "If you use this software, please cite our article in the Journal of Open Source Software."
+title: "TanML: Automated Model Validation Toolkit for Tabular Machine Learning Models"
+doi: "10.5281/zenodo.22285793"
 authors:
   - family-names: Sah
     given-names: Tanmay
-    orcid: https://orcid.org/0009-0004-8583-2208
+    orcid: "https://orcid.org/0009-0004-8583-2208"
   - family-names: Sah
     given-names: Dolly
-
+    orcid: "https://orcid.org/0009-0008-9190-9143"
+  - family-names: Jain
+    given-names: Harshul
+    orcid: "https://orcid.org/0009-0005-8083-5108"
+  - family-names: Sah
+    given-names: Tanya
+    orcid: "https://orcid.org/0000-0002-7366-2318"
+  - family-names: Jordan
+    given-names: Kayden
 preferred-citation:
-  type: software
-  title: "TanML: Automated Model Validation Toolkit for Tabular Machine Learning"
+  type: article
+  title: "TanML: Automated Model Validation Toolkit for Tabular Machine Learning Models"
+  journal: "Journal of Open Source Software"
+  publisher:
+    name: "Open Journals"
   authors:
     - family-names: Sah
       given-names: Tanmay
-      orcid: https://orcid.org/0009-0004-8583-2208
+      orcid: "https://orcid.org/0009-0004-8583-2208"
     - family-names: Sah
       given-names: Dolly
-  repository-code: https://github.com/tdlabs-ai/tanml
-  license: MIT
-  year: 2026
-  doi: 10.5281/zenodo.22285793
-  url: https://doi.org/10.5281/zenodo.22285793
+      orcid: "https://orcid.org/0009-0008-9190-9143"
+    - family-names: Jain
+      given-names: Harshul
+      orcid: "https://orcid.org/0009-0005-8083-5108"
+    - family-names: Sah
+      given-names: Tanya
+      orcid: "https://orcid.org/0000-0002-7366-2318"
+    - family-names: Jordan
+      given-names: Kayden
+  date-published: "2026-09-04"
+  doi: "10.21105/joss.11253"
+  url: "https://joss.theoj.org/papers/10.21105/joss.11253"
+  volume: 11
+  issue: 125
+  start: 11253
+  issn: "2475-9066"
