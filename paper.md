@@ -51,8 +51,8 @@ The open source ecosystem already includes several widely used tools that addres
 +---------------+---------------+-------------------+---------------------+-------------------+
 | Tool          | Primary Focus | Scope             | Output              | Drift Logic       |
 +===============+===============+===================+=====================+===================+
-| **TanML**     | Model Risk    | Data, Model       | Audit-ready         | PSI and KS        |
-|               | Management    | , Governance      | report              |                   |
+| **TanML**     | Model Risk    | Data, Model,      | Audit-ready         | PSI and KS        |
+|               | Management    | Governance        | report              |                   |
 +---------------+---------------+-------------------+---------------------+-------------------+
 | **Evidently   | Monitoring    | Data, Model       | Dashboards          | Statistical tests |
 | AI**          |               |                   |                     |                   |
@@ -74,7 +74,7 @@ The open source ecosystem already includes several widely used tools that addres
 
 TanML was explicitly designed as a modular, privacy-first desktop application that balances analytical rigor with non-developer accessibility. By rejecting a traditional web-based frontend (e.g., React/JS) and instead managing the entire application flow locally in pure Python via **Streamlit** [@streamlit], the toolkit lowers the barrier to entry for quantitative analysts and model risk practitioners. This trade-off allows users to inspect, extend, and deploy the UI code directly alongside their statistical models without requiring dedicated web engineering teams. Importantly, the local-first architecture ensures that sensitive financial and regulatory data never leaves the user's machine. In domains such as banking and insurance, transmitting customer-level loan data or proprietary risk scores to cloud-hosted services may violate internal data governance policies or regulatory requirements. TanML avoids this risk entirely by keeping all computation and data in the user's local environment.
 
-### Core Architecture
+### Core architecture
 
 TanML is built on three foundational components that collectively enable its modular workflow: a session-based data management layer that preserves data privacy, a dynamic model registry for extensibility, and a document generation engine for automated reporting.
 
@@ -84,7 +84,7 @@ The second pillar is the **Model Registry**, a dynamic factory pattern (`tanml.m
 
 The third pillar is the **Reporting Engine**, a `docx`-based generator that serializes analysis results into a structured document, mapping complex Python objects (such as **Matplotlib** [@Hunter:2007] figures and **Pandas** [@reback2020pandas] DataFrames) into native Open XML formats. The resulting Word document is immediately editable, allowing validation teams to annotate findings, append narrative commentary, and route the report through internal review processes without reformatting.
 
-### Modular Workflow
+### Modular workflow
 
 The application is divided into distinct execution layers, designed to mirror the standard Model Risk Management lifecycle.
 
@@ -102,7 +102,7 @@ To illustrate a complete workflow: a quantitative analyst at a financial institu
 
 # Research impact statement
 
-TanML has accumulated over 5,000 downloads on PyPI since its initial release in July 2025. The toolkit is packaged and installable via `pip install tanml`, archived on Zenodo with a persistent DOI [@tanml_2026], and documented through a published MkDocs site. The repository includes an automated test suite run via GitHub Actions CI, a `CONTRIBUTING.md` guide, a code of conduct, and an open issue tracker to support community contributions. Reproducible demo datasets and example workflows are provided in the repository so that new users can evaluate the toolkit's end-to-end validation capabilities on representative tabular data without requiring proprietary datasets. The modular architecture, described in the Software Design section, provides a clear extension pathway for contributors seeking to add new model families, evaluation metrics, or report templates.
+TanML has accumulated over 5,000 downloads on PyPI since its initial release in July 2025. The toolkit is packaged and installable via `pip install tanml`, archived on Zenodo with a persistent DOI [@tanml_2026], and documented through a published MkDocs site. The repository includes an automated test suite run via GitHub Actions CI, a `CONTRIBUTING.md` guide, a code of conduct, and an open issue tracker to support community contributions. Reproducible demo datasets and example workflows are provided in the repository so that new users can evaluate the toolkit's end-to-end validation capabilities on representative tabular data without requiring proprietary datasets. The modular architecture, described in the Software design section, provides a clear extension pathway for contributors seeking to add new model families, evaluation metrics, or report templates.
 
 # AI usage disclosure
 
